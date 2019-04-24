@@ -1,0 +1,35 @@
+Title;Labels
+Como administrador quiero dar de alta una propiedad para poder alquilarla.;administración propiedades
+Como administrador quiero dar de baja una propiedad para eliminarla del sistema.;administración propiedades
+Como administrador quiero ver el listado de propiedades candidatas a oferta especial para generar una oferta.;administración propiedades
+Como administrador quiero generar ofertas especiales para alquilar aquellas propiedades que no fueron reservadas.;administración propiedades
+Como administrador quiero ver el listado de propiedades reservadas para mantener registro de las mismas.;administración propiedades
+Como administrador quiero ver el detalle de una propiedad para ver las semanas que se encuentra alquilada.;administración propiedades
+Como administrador quiero ver el listado de propiedades para ver el estado de las mismas;administración propiedades
+Como administrador quiero ver el pool de ofertas especiales para reportar el estado de las mismas.;administración propiedades
+Como administrador quiero iniciar sesión para poder utilizar el sistema.;administración usuarios
+Como administrador quiero cerrar sesión para dejar de utilizar el sistema.;administración usuarios
+Como administrador quiero rechazar una solicitud de pase a premium para no conceder permisos a un usuario.;administración usuarios
+Como administrador quiero aprobar una solicitud de pase a premium para aumentar los permisos de un usuario.;administración usuarios
+Como administrador quiero ver el pool de solicitudes a premium para aprobar o rechazar las mismas.;administración usuarios
+Como administrador quiero ver el listado los usuarios para verificar estatus de su cuenta y reservas realizadas.;administración usuarios
+Como cliente quiero poder modificar los datos de mi perfil;clientes perfil
+Como cliente quiero cancelar una reserva;clientes perfil
+Como cliente quiero poder ver los datos de mi perfil;clientes perfil
+Como cliente premium quiero solicitar el pase a estandar para pagar menos membresía.;clientes perfil
+Como cliente quiero darme de baja para anular mi membresía.;clientes perfil
+Como usuario registrado quiero iniciar sesión para poder utilizar el sistema.;clientes perfil
+Como cliente estandar quiero solicitar el alta como premium para poder acceder a las reservas directas.;clientes perfil
+Como cliente quiero poder ver mis reservas;clientes reservas
+Como cliente quiero cerrar sesión para dejar de utilizar el sistema.;clientes reservas
+Como cliente quiero ver las ofertas especiales para elegir una.;clientes reservas
+Como cliente quiero comprar una oferta especial para irme de vacaciones.;clientes reservas
+Como cliente quiero ver las suabstas disponibles para participar en alguna.;clientes reservas
+Como cliente quiero pujar en una subasta para obtener una reserva.;clientes reservas
+Como cliente premium quiero ver el listado de propiedades disponibles para reserva directa para elegir una.;clientes reservas
+Como cliente Premium quiero reservar una propiedad de forma directa para irme de vacaciones.;clientes reservas
+Como cliente quiero ver las propiedades disponibles para oferta especial para alquilar una.;clientes reservas
+Como cliente quiero ver las propiedades disponibles para subasta para alquilar una.;clientes reservas
+Como cliente quiero ver las propiedades disponibles para reserva directa para alquilar una.;clientes reservas
+Como usuario no registrado quiero ver los alquileres disponibles para reservar uno.;usuarios
+Como usuario no registrado quiero registrarme en el sistema para poder reservar un propiedad.;usuarios
