@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ title }}</title>
+        <script src="{% static 'jquery-3.4.1.js' %}"></script>
+        <script src="{% static 'bootstrap.min.js' %}"></script>
+        <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}" />
+    </head>
+    <body>
+        <header class="jumbotron">
+            {% include 'header_base.html' %}
+        </header>
+        <section class="container">
+            {% block content %}{% endblock %}
+        </section>
+        <footer class="jumbotron">
+            {% include 'footer_base.html' %}
+        </footer>
+    </body>
+</html>
