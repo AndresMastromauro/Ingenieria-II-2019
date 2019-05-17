@@ -10,3 +10,8 @@ def home(request):
 def about(request):
     return render(request, 'app/about.html', {'title': 'About'})
 
+def detail_auction(request, pk):
+    detalle = Properties.objects.get(pk=pk)
+    return render(request, 'app/detail_auction.html', {'title': 'Detalle Subasta', 'detalle': detalle})
+
+

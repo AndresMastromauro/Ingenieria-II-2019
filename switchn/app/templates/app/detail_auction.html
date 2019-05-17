@@ -1,0 +1,17 @@
+{% extends "app/base.html" %}
+{% block content %}
+
+        <article class="media content-section">
+			<div class="media-body">
+				<div class="article-metadata">
+					<a class="mr-2" href="#">{{ detalle.author }}</a>
+					<small class="text-muted">{{ post.date_posted | date:"d F Y" }}</small>
+				</div>
+				<img src="{{ detalle.img.url }}" alt="">
+				<h2><a class="article-title"  >{{ detalle.name }}</a></h2>
+				<p class="article-content">{{ detalle.ubication }}</p>
+			</div>
+		</article>
+
+
+{% endblock content %}
