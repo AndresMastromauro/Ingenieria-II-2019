@@ -1,16 +1,20 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(Properties)
+# admin.site.register(Properties)
 
 @admin.register(Reserva)
 class ReservaAdmin (admin.ModelAdmin):
-    # esto en realidad es automatico
     pass
+
+class ReservaInline(admin.StackedInline):
+    model = Reserva
 
 @admin.register(Subasta)
 class SubastaAdmin (admin.ModelAdmin):
-    pass
+    inlines = [
+        ReservaInline
+    ]
 
 @admin.register(Estado)
 class EstadoAdmin (admin.ModelAdmin):
@@ -20,6 +24,7 @@ class EstadoAdmin (admin.ModelAdmin):
 class OfertaSubastaAdmin (admin.ModelAdmin):
     pass
 
+'''
 @admin.register(Calle)
 class CalleAdmin (admin.ModelAdmin):
     pass
@@ -51,10 +56,16 @@ class PaisAdmin (admin.ModelAdmin):
         ProvinciaInline
     ]
 
+
 @admin.register(Propiedad)
 class PropiedadAdmin (admin.ModelAdmin):
     pass
+'''
 
 @admin.register(TipoPropiedad)
 class TipoPropiedad(admin.ModelAdmin):
+    pass
+
+@admin.register(PropiedadLiviana)
+class PropiedadLiviana(admin.ModelAdmin):
     pass
