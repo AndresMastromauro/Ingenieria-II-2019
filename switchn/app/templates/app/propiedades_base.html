@@ -1,0 +1,14 @@
+{% extends "app/base.html" %}
+{% block content %}
+{% for post in posts %}
+<article class="media content-section">
+	<div class="media-body">
+		<img class="account-img" src="{{ post.imagen.url }}">
+		<img src="{{ post.imagen.url }}" alt="">
+		<h2><a class="article-title" href="#">{{ post.titulo }}</a></h2>
+		<p><small>{{ post.direccion }}</small></p>
+		<p class="article-content">{{ post.descripcion }}</p>
+	</div>
+</article>
+{% endfor %}
+{% endblock content %}
