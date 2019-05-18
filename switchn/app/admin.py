@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.forms import inlineformset_factory
 from .models import *
+from .forms import *
 
 # admin.site.register(Properties)
 
@@ -12,9 +14,7 @@ class ReservaInline(admin.StackedInline):
 
 @admin.register(Subasta)
 class SubastaAdmin (admin.ModelAdmin):
-    inlines = [
-
-    ]
+    formset = inlineformset_factory(Reserva, Subasta, form=SubastaForm)
 
 @admin.register(Estado)
 class EstadoAdmin (admin.ModelAdmin):

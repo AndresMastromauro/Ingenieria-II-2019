@@ -101,7 +101,7 @@ class PropiedadLiviana (models.Model):
 class Reserva (models.Model):
     cliente = models.ForeignKey(User, null=True, on_delete=models.PROTECT)
     semana = models.DateField()
-    propiedad = models.ForeignKey(Propiedad, on_delete=models.PROTECT)
+    propiedad = models.ForeignKey(PropiedadLiviana, on_delete=models.PROTECT)
 
     def __str__(self):
         anio = self.semana.isocalendar()[0]
