@@ -4,12 +4,13 @@
         <article class="media content-section">
 			<div class="media-body">
 				<div class="article-metadata">
-					<a class="mr-2" href="#">{{ detalle.author }}</a>
-					<small class="text-muted">{{ post.date_posted | date:"d F Y" }}</small>
+					<a class="mr-2" href="#">{{ detalle.imagen }}</a>
+					<small class="text-muted">{{ detalle.date_posted | date:"d F Y" }}</small>
 				</div>
 				<img src="{{ detalle.img.url }}" alt="">
-				<h2><a class="article-title"  >{{ detalle.name }}</a></h2>
-				<p class="article-content">{{ detalle.ubication }}</p>
+				<h2><a class="article-title"  >{{ detalle.titulo }}</a></h2>
+				<p class="article-content">{{ detalle.direccion }}</p>
+                <p class="article-content">{{ detalle.descripcion }}</p>
 			</div>
 		</article>
 

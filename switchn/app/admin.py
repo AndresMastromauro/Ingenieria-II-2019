@@ -13,7 +13,7 @@ class ReservaInline(admin.StackedInline):
 @admin.register(Subasta)
 class SubastaAdmin (admin.ModelAdmin):
     inlines = [
-        ReservaInline
+
     ]
 
 @admin.register(Estado)
