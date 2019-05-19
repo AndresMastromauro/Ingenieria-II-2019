@@ -4,13 +4,26 @@
         <article class="media content-section">
 			<div class="media-body">
 				<div class="article-metadata">
-					<a class="mr-2" href="#">{{ detalle.imagen }}</a>
+					<img class="account-img" src="{{ detalle.imagen }}"> </img>
 					<small class="text-muted">{{ detalle.date_posted | date:"d F Y" }}</small>
 				</div>
 				<img src="{{ detalle.img.url }}" alt="">
 				<h2><a class="article-title"  >{{ detalle.titulo }}</a></h2>
 				<p class="article-content">{{ detalle.direccion }}</p>
                 <p class="article-content">{{ detalle.descripcion }}</p>
+                <hr>
+                {% for subasta in subastas %}
+
+                    <p class="article-content">{{ subasta.reserva.semana }}</p>
+                    <p class="article-content">{{ subasta.reserva.propiedad }}</p>
+                    <p class="article-content">{{ subasta.precioBase }}</p>
+                    <p class="article-content">{{ subasta.estado }}</p>
+                <hr>
+
+                {% endfor %}
+
+
+
 			</div>
 		</article>
 

@@ -1,13 +1,19 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
+
+def validate_monday(value):
+    if not value.isocalendar() [2] == 1 :
+        raise ValidationError("Debe elegir un Lunes")
 
 class Properties(models.Model):
     name = models.CharField(max_length=100)
     ubication = models.CharField(max_length=100)
     date_posted = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpg',upload_to='property_image') 
+    image = models.ImageField(default='default.jpg',upload_to='property_image')
 
     def __str__(self):
         return self.name
@@ -15,6 +21,9 @@ class Properties(models.Model):
 
 class Estado (models.Model):
     descripcion = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.descripcion
 
 class Pais(models.Model):
     nombre = models.CharField(max_length=100, blank=False)
@@ -58,12 +67,11 @@ class Propiedad (models.Model):
     titulo = models.CharField(max_length=30, default='Nueva Propiedad')
     descripcion = models.CharField(max_length=200)
     tipo = models.ForeignKey(TipoPropiedad, on_delete=models.PROTECT)
-    # foto ?
     calle = models.ForeignKey(Calle, default=0, on_delete=models.PROTECT)
     numero = models.PositiveIntegerField(default=0)
     piso = models.CharField(max_length=10, blank=True)
     dpto = models.CharField(max_length=10, blank=True)
-    # imagen = models.ImageField(default='default.jpg', upload_to='property_image')
+
 
     def string_direccion(self):
         localidad = self.calle.localidad
@@ -87,7 +95,7 @@ class PropiedadLiviana (models.Model):
     titulo = models.CharField(max_length=30, default='Nueva Propiedad')
     descripcion = models.CharField(max_length=200)
     tipo = models.ForeignKey(TipoPropiedad, on_delete=models.PROTECT)
-    direccion = models.CharField(max_length=200, unique=True)
+    direccion = models.CharField(max_length=200)
     imagen = models.ImageField(default='default.jpg', upload_to='property_image')
 
     def __str__(self):
@@ -99,14 +107,14 @@ class PropiedadLiviana (models.Model):
 
 
 class Reserva (models.Model):
-    cliente = models.ForeignKey(User, null=True, on_delete=models.PROTECT)
-    semana = models.DateField()
+    cliente = models.OneToOneField(User, blank=True,null=True, on_delete=models.PROTECT)
+    semana = models.DateField(validators=[validate_monday])
     propiedad = models.ForeignKey(PropiedadLiviana, on_delete=models.PROTECT)
 
     def __str__(self):
         anio = self.semana.isocalendar()[0]
         semana = self.semana.isocalendar()[1]
-        return "{0} => {1} ({2}, {3})".format(self.cliente.username, self.propiedad, anio, semana)
+        return "{0} ({1}, semana: {2})".format(self.propiedad, anio, semana)
 
     class Meta:
         unique_together = (('semana','propiedad'),)
@@ -114,7 +122,14 @@ class Reserva (models.Model):
 class Subasta (models.Model):
     precioBase = models.DecimalField(max_digits=15, decimal_places=2)
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
-    reserva = models.ForeignKey(Reserva, on_delete=models.PROTECT)
+    reserva = models.OneToOneField(Reserva, on_delete=models.PROTECT, primary_key=True)
+
+    def __str__(self):
+        anio = self.reserva.semana.isocalendar() [0]
+        semana = self.reserva.semana.isocalendar() [1]
+        return "{0} / base: ${1} ({2}, semana: {3})".format(self.reserva.propiedad.titulo, self.precioBase, anio, semana)
+
+
 
 
 class OfertaSubasta (models.Model):
@@ -122,5 +137,3 @@ class OfertaSubasta (models.Model):
     subasta = models.ForeignKey(Subasta, on_delete=models.PROTECT)
     fechaHora = models.DateTimeField(default=timezone.now)
     monto = models.DecimalField(max_digits=15, decimal_places=2)
-
-
