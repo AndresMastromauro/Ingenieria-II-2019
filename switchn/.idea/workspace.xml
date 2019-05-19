@@ -3,21 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3cf3b824-47d6-4880-994a-8644b1530bfc" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0002_properties_date_posted2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0003_remove_properties_date_posted2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0004_properties_image.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0005_auto_20190512_1726.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0006_remove_properties_img.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0007_auto_20190516_2024.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0008_properties_image.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0009_propiedadliviana.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/migrations/0010_auto_20190517_2115.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/app/detail_auction.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/app/detail_auction.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/switchn/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/switchn/settings.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,10 +14,11 @@
     <session id="-1192081778">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="1" />
+          <entry key="project.closed" value="2" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.33" value="1" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.open.time.92" value="1" />
+          <entry key="project.opened" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -71,7 +57,7 @@
         <entry file="file://$PROJECT_DIR$/switchn/settings.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="660">
-              <caret line="44" column="52" lean-forward="true" selection-start-line="44" selection-start-column="52" selection-end-line="44" selection-end-column="52" />
+              <caret line="44" column="52" selection-start-line="44" selection-start-column="52" selection-end-line="44" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -79,8 +65,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/urls.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="34" lean-forward="true" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
+            <state relative-caret-position="75">
+              <caret line="6" column="34" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
               </folding>
@@ -91,8 +77,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/app/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
-              <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
+            <state relative-caret-position="30">
+              <caret line="3" selection-start-line="3" selection-end-line="3" />
               <folding>
                 <element signature="e#0#35#0" expanded="true" />
                 <marker date="1558222634262" expanded="true" signature="335:555" ph="..." />
@@ -104,7 +90,7 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="45">
+            <state relative-caret-position="793">
               <caret line="111" column="33" selection-start-line="111" selection-start-column="33" selection-end-line="111" selection-end-column="33" />
               <folding>
                 <element signature="e#0#28#0" expanded="true" />
@@ -186,6 +172,28 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope">
+        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
+          <expand>
+            <path>
+              <item name="switchn" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+            </path>
+            <path>
+              <item name="switchn" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+            <path>
+              <item name="switchn" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
+              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
+              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+              <item name="migrations" type="9f88c78c:ScopeViewTreeModel$FileNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -239,28 +247,6 @@
               <item name="users" type="462c0819:PsiDirectoryNode" />
               <item name="templates" type="462c0819:PsiDirectoryNode" />
               <item name="users" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
-      <pane id="Scope">
-        <subPane subId="Scope 'Project Files'; set:Project Files; class com.intellij.psi.search.scope.ProjectFilesScope">
-          <expand>
-            <path>
-              <item name="switchn" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-            </path>
-            <path>
-              <item name="switchn" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-            </path>
-            <path>
-              <item name="switchn" type="3d21c010:ScopeViewTreeModel$ProjectNode" />
-              <item name="" type="442cc68d:ScopeViewTreeModel$RootNode" />
-              <item name="app" type="9f88c78c:ScopeViewTreeModel$FileNode" />
-              <item name="migrations" type="9f88c78c:ScopeViewTreeModel$FileNode" />
             </path>
           </expand>
           <select />
@@ -355,41 +341,52 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/users/admin.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#32#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/users/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="8" column="6" selection-start-line="8" selection-start-column="6" selection-end-line="8" selection-end-column="6" />
-          <folding>
-            <element signature="e#0#28#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/app/app.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="92" selection-start-line="11" selection-start-column="51" selection-end-line="11" selection-end-column="92" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/app/migrations/0010_auto_20190517_2115.py" />
+    <entry file="file://$PROJECT_DIR$/app/migrations/0009_propiedadliviana.py" />
+    <entry file="file://$PROJECT_DIR$/switchn/settings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="660">
+          <caret line="44" column="52" selection-start-line="44" selection-start-column="52" selection-end-line="44" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/app/urls.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="34" lean-forward="true" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
+        <state relative-caret-position="75">
+          <caret line="6" column="34" selection-start-line="6" selection-start-column="34" selection-end-line="6" selection-end-column="34" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/views.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+            <marker date="1558222634262" expanded="true" signature="335:555" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/templates/app/propiedades_base.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="12" column="10" selection-start-line="12" selection-start-column="10" selection-end-line="12" selection-end-column="10" />
         </state>
       </provider>
     </entry>
@@ -403,46 +400,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/switchn/settings.py">
+    <entry file="file://$PROJECT_DIR$/app/templates/app/app.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="660">
-          <caret line="44" column="52" lean-forward="true" selection-start-line="44" selection-start-column="52" selection-end-line="44" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/templates/app/propiedades_base.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="12" column="10" selection-start-line="12" selection-start-column="10" selection-end-line="12" selection-end-column="10" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/migrations/0010_auto_20190517_2115.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/migrations/0009_propiedadliviana.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#49#89#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/app/views.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
-          <folding>
-            <element signature="e#0#35#0" expanded="true" />
-            <marker date="1558222634262" expanded="true" signature="335:555" ph="..." />
-          </folding>
+        <state relative-caret-position="165">
+          <caret line="11" column="92" selection-start-line="11" selection-start-column="51" selection-end-line="11" selection-end-column="92" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/app/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
+        <state relative-caret-position="793">
           <caret line="111" column="33" selection-start-line="111" selection-start-column="33" selection-end-line="111" selection-end-column="33" />
           <folding>
             <element signature="e#0#28#0" expanded="true" />
