@@ -4,7 +4,7 @@
         <article class="media content-section">
 			<div class="media-body">
 				<div class="article-metadata">
-					<img class="account-img" src="{{ detalle.imagen }}"> </img>
+					<img class="account-img" src="{{ detalle.imagen.url }}"> </img>
 					<small class="text-muted">{{ detalle.date_posted | date:"d F Y" }}</small>
 				</div>
 				<img src="{{ detalle.img.url }}" alt="">
@@ -14,10 +14,23 @@
                 <hr>
                 {% for subasta in subastas %}
 
-                    <p class="article-content">{{ subasta.reserva.semana }}</p>
-                    <p class="article-content">{{ subasta.reserva.propiedad }}</p>
-                    <p class="article-content">{{ subasta.precioBase }}</p>
-                    <p class="article-content">{{ subasta.estado }}</p>
+                    <p class="article-content"> <strong>Subasta para la semana: {{ subasta.reserva.semana }} </strong></p>
+                    <p class="article-content">Precio: {{ subasta.precioBase }}</p>
+                    <p class="article-content">Tipo: {{ subasta.reserva.propiedad.tipo }}</p>
+                <a class="article-content" ><span class=" badge badge-info "> Estado: {{ subasta.estado }}</span></a>
+                {% if user.is_authenticated %}
+                <br>
+                <br>
+                <form>
+                  <div class="form-group">
+                    <label for="exampleNumber">Cantidad a ofertar</label>
+                    <input type="number" class="form-control" id="exampleNumber" placeholder="Ingrese su oferta">
+                    <small id="emailHelp" class="form-text text-muted">Debe ofertar un valor mayor al valor actual de la subasta.</small>
+                  </div>
+                    <button type="submit" class="btn btn-success">Pujar </button>
+                </form>
+
+        {% endif %}
                 <hr>
 
                 {% endfor %}

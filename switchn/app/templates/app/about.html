@@ -1,4 +1,14 @@
 {% extends "app/base.html" %}
 {% block content %}
-	<h1>about page!</h1>
+{% for subasta in subastas %}
+<article class="media content-section">
+	<div class="media-body">
+		<img class="account-img" src="{{ subasta.reserva.propiedad.imagen.url }}">
+		<h2><a class="article-title" href="{% url 'app-detail_auction' pk=subasta.reserva.propiedad.pk %}">{{ subasta.reserva.propiedad.titulo }}</a></h2>
+		<p><small>{{ subasta.reserva.propiedad.direccion }}</small></p>
+		<p class="article-content">{{ subasta.reserva.propiedad.descripcion }}</p>
+
+	</div>
+</article>
+{% endfor %}
 {% endblock content %}
