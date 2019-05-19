@@ -6,18 +6,19 @@
 			<div class="media-body">
 				<div class="article-metadata">
 					<img class="account-img" src="{{ detalle.imagen.url }}"> </img>
-					<small class="text-muted">{{ detalle.date_posted | date:"d F Y" }}</small>
+					<small class="text-muted">{{ subasta.reserva.propiedad.date_posted | date:"d F Y" }}</small>
 				</div>
 				<img src="{{ detalle.img.url }}" alt="">
-				<h2><a class="article-title"  >{{ detalle.titulo }}</a></h2>
-				<p class="article-content">{{ detalle.direccion }}</p>
-                <p class="article-content">{{ detalle.descripcion }}</p>
+				<h2><a class="article-title"  >{{ subasta.reserva.propiedad.titulo }}</a></h2>
+				<p class="article-content">{{ subasta.reserva.propiedad.direccion }}</p>
+                <p class="article-content">{{ subasta.reserva.propiedad.descripcion }}</p>
                 <hr>
-                {% for subasta in subastas %}
 
-                    <p class="article-content"> <strong>Subasta para la semana: {{ subasta.reserva.semana }} </strong></p>
+
+                <p class="article-content"> <strong>Subasta para la semana: {{ subasta.reserva.semana }} </strong></p>
                     <p class="article-content">Precio Base: {{ subasta.precioBase }}</p>
-                    <p class="article-content">Precio Actual: {{ofertaSubasta }}</p>
+                    <p class="article-content">Precio Actual: {{ ofertaSubasta }}</p>
+
                     <p class="article-content">Tipo: {{ subasta.reserva.propiedad.tipo }}</p>
                     <a class="article-content" ><span class=" badge badge-info "> Estado: {{ subasta.estado }}</span></a>
                 {% if user.is_authenticated %}
@@ -32,11 +33,7 @@
                   </div>
                     <button type="submit" class="btn btn-success">Pujar </button>
                 </form>
-
-        {% endif %}
-                <hr>
-
-                {% endfor %}
+                {% endif %}
 
 
 

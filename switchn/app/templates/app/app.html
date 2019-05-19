@@ -9,7 +9,7 @@
 					<small class="text-muted">{{ post.date_posted | date:"d F Y" }}</small>
 				</div>
 				<img src="{{ post.img.url }}" alt="">
-				<h2><a class="article-title" href="{% url 'app-detail_auction' pk=post.pk %}" >{{ post.name }}</a></h2>
+				<h2><a class="article-title" href="" >{{ post.name }}</a></h2> <!--{% url 'app-detail_auction' pk=post.pk %}-->
 				<p class="article-content">{{ post.ubication }}</p>
 =======
 {% for post in posts %}

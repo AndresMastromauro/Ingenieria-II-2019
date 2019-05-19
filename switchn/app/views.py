@@ -27,30 +27,33 @@ def detail_auction(request, pk):
         # Levanta error si monto esta vacio.
         montoA= max(monto, key= lambda p: p.monto).monto
     except ValueError:
-        montoA = 'Se el primero en pujar!!!'
+        montoA = 0
 
     contextReserva = {
         'reservas': Reserva.objects.filter(propiedad__pk=pk),
-        'subastas' : Subasta.objects.filter(reserva__propiedad__pk=pk),
+        'subasta' : Subasta.objects.get(pk=pk),
         'detalle' : PropiedadLiviana.objects.get(pk=pk),
-        'ofertaSubasta' : montoA ,
+        'ofertaSubasta' : montoA,
         'form' : '',
-        'mensaje' : 'Debe ofertar un valor mayor al valor actual de la subasta.'
+        'mensaje' : '',
 
     }
     if request.method=='POST':
         if request.user.profile.creditos > 0:
-             contextReserva['form'] = pujarForm(request.POST)
-             if contextReserva['form'].is_valid():
-                post = contextReserva['form'].save(commit=False)
-                post.cliente = request.user
-                post.fechaHora = timezone.now()
-                post.subasta = Subasta.objects.get(pk=pk)
-                post.save()
+            contextReserva['form'] = pujarForm(request.POST)
+            if contextReserva['form'].is_valid():
+                if (int(contextReserva['form'].__getitem__('monto').value()) > contextReserva['ofertaSubasta']):
 
-                redirect('app-about')
+                    post = contextReserva['form'].save(commit=False)
+                    post.cliente = request.user
+                    post.fechaHora = timezone.now()
+                    post.subasta = Subasta.objects.get(pk=pk)
+                    post.save()
+
+                else:
+                    contextReserva['mensaje'] = 'El monto debe superar el precio actual.'
         else:
-            contextReserva['mensaje'] = 'No posee creditos suficientes como para pujar.'
+            contextReserva['mensaje'] = 'No posee creditos suficientes para pujar.'
 
     else:
         contextReserva['form'] = pujarForm()
