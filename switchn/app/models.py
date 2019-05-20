@@ -122,7 +122,7 @@ class Reserva (models.Model):
 class Subasta (models.Model):
     precioBase = models.DecimalField(max_digits=15, decimal_places=2)
     estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
-    reserva = models.OneToOneField(Reserva, on_delete=models.PROTECT, primary_key=True)
+    reserva = models.OneToOneField(Reserva, on_delete=models.PROTECT)
 
     def __str__(self):
         anio = self.reserva.semana.isocalendar() [0]
@@ -137,3 +137,6 @@ class OfertaSubasta (models.Model):
     subasta = models.ForeignKey(Subasta, on_delete=models.PROTECT)
     fechaHora = models.DateTimeField(default=timezone.now)
     monto = models.DecimalField(max_digits=15, decimal_places=2)
+
+    class Meta:
+        unique_together = (('cliente','subasta'),)

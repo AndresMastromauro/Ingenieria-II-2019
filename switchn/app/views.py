@@ -32,7 +32,7 @@ def detail_auction(request, pk):
     contextReserva = {
         'reservas': Reserva.objects.filter(propiedad__pk=pk),
         'subasta' : Subasta.objects.get(pk=pk),
-        'detalle' : PropiedadLiviana.objects.get(pk=pk),
+        ###'detalle' : PropiedadLiviana.objects.get(pk=pk),
         'ofertaSubasta' : montoA,
         'form' : '',
         'mensaje' : '',
@@ -46,8 +46,8 @@ def detail_auction(request, pk):
 
                     post = contextReserva['form'].save(commit=False)
                     post.cliente = request.user
-                    post.fechaHora = timezone.now()
                     post.subasta = Subasta.objects.get(pk=pk)
+                    post.fechaHora = timezone.now()
                     post.save()
 
                 else:
