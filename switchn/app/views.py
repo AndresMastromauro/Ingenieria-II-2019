@@ -23,11 +23,12 @@ def about(request):
 
 def detail_auction(request, pk):
     monto = OfertaSubasta.objects.filter(subasta__pk=pk).iterator()
+    montoBase = Subasta.objects.get(pk=pk).precioBase
     try:
         # Levanta error si monto esta vacio.
         montoA= max(monto, key= lambda p: p.monto).monto
     except ValueError:
-        montoA = 0
+        montoA = montoBase
 
     contextReserva = {
         'reservas': Reserva.objects.filter(propiedad__pk=pk),
@@ -42,7 +43,7 @@ def detail_auction(request, pk):
         if request.user.profile.creditos > 0:
             contextReserva['form'] = pujarForm(request.POST)
             if contextReserva['form'].is_valid():
-                if (int(contextReserva['form'].__getitem__('monto').value()) > contextReserva['ofertaSubasta']):
+                if (int(contextReserva['form'].__getitem__('monto').value()) > montoA):
 
                     post = contextReserva['form'].save(commit=False)
                     post.cliente = request.user
