@@ -6,6 +6,8 @@ from .forms import *
 
 # admin.site.register(Properties)
 
+admin.site.site_header = 'Home Swith Home'
+
 @admin.register(Reserva)
 class ReservaAdmin (admin.ModelAdmin):
     pass
