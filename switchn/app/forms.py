@@ -18,3 +18,9 @@ class pujarForm(forms.ModelForm):
     class Meta:
         model = OfertaSubasta
         fields = ('monto',)
+
+class closeForm(forms.ModelForm):
+    class Meta:
+        model = Reserva
+        exclude = ( 'semana', 'propiedad')
+

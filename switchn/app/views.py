@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import *
-from .forms import pujarForm
+from .forms import pujarForm, closeForm
 
 
 
@@ -50,12 +50,10 @@ def detail_auction(request, pk):
                     post.subasta = Subasta.objects.get(pk=pk)
                     post.fechaHora = timezone.now()
                     post.save()
-
                 else:
                     contextReserva['mensaje'] = 'El monto debe superar el precio actual.'
         else:
             contextReserva['mensaje'] = 'No posee creditos suficientes para pujar.'
-
     else:
         contextReserva['form'] = pujarForm()
 
@@ -64,6 +62,42 @@ def detail_auction(request, pk):
 
     return render(request, 'app/detail_auction.html', contextReserva, {'title': 'Detalle Subasta'} )
 
+def close_auction(request, pk):
+    monto = OfertaSubasta.objects.filter(subasta__pk=pk).order_by('monto').last()
+    montoBase = Subasta.objects.get(pk=pk).precioBase
+    user = monto
+    try:
+        # Levanta error si monto esta vacio.
+        montoA = monto.monto
 
+    except ValueError:
+        montoA = montoBase
+
+    contextClose = {
+        'reservas': Reserva.objects.filter(propiedad__pk=pk),
+        'subasta' : Subasta.objects.get(pk=pk),
+        ###'detalle' : PropiedadLiviana.objects.get(pk=pk),
+        'ofertaSubasta' : montoA,
+        'form' : '',
+        'mensaje' : '',
+        'ganador' : user
+    }
+
+    if request.method == 'POST':
+        if request.user.profile.creditos > 0:
+            contextClose['form'] = closeForm(request.POST, instance=contextClose['subasta'].reserva)
+            contextClose['form'].save(commit=False)
+            contextClose['form'].cliente = contextClose['ganador']
+            contextClose['form'].save()
+            contextClose['mensaje'] = 'Capas que anda.'
+
+
+        else:
+            contextClose['mensaje'] = 'El usuario no tiene los creditos suficientes para adquirir la reserva.'
+    else:
+        contextClose['form'] = closeForm()
+
+
+    return render(request, 'admin/close_auction.html', contextClose,{'title': 'Cerrar subasta'})
 
 

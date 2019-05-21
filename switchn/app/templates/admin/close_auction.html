@@ -1,0 +1,47 @@
+{% extends "admin/base_site.html" %}
+
+{% load crispy_forms_tags %}
+{% block content %}
+
+        <article class="media content-section">
+			<div class="media-body">
+				<div class="article-metadata">
+					<img class="account-img" src="{{ detalle.imagen.url }}"> </img>
+					<small class="text-muted">{{ subasta.reserva.propiedad.date_posted | date:"d F Y" }}</small>
+				</div>
+				<img src="{{ detalle.img.url }}" alt="">
+				<h2><a class="article-title"  >{{ subasta.reserva.propiedad.titulo }}</a></h2>
+				<p class="article-content">{{ subasta.reserva.propiedad.direccion }}</p>
+                <p class="article-content">{{ subasta.reserva.propiedad.descripcion }}</p>
+                <hr>
+
+
+                <p class="article-content"> <strong>Subasta para la semana: {{ subasta.reserva.semana }} </strong></p>
+                    <p class="article-content">Precio Base: {{ subasta.precioBase }}</p>
+                    <p class="article-content">Precio Actual: {{ ofertaSubasta }}</p>
+
+                    <p class="article-content">Tipo: {{ subasta.reserva.propiedad.tipo }}</p>
+                    <a class="article-content" ><span class=" badge badge-info "> Estado: {{ subasta.estado }}</span></a>
+                <br>
+                    <a class="article-content" ><span class=" badge badge-info "> Ganador: {{ ganador.cliente.username }}</span></a>
+                {% if user.is_authenticated %}
+                <br>
+                <br>
+                <form method="post">
+                    {%csrf_token%}
+                  <div class="form-group">
+
+                      {{ form|crispy}}
+                    <small id="emailHelp" class="form-text text-muted">{{ mensaje }}</small>
+                  </div>
+                    <button type="submit" class="button" style="font-size: 1.5em">Cerrar Subasta </button>
+                </form>
+                {% endif %}
+
+
+
+			</div>
+		</article>
+
+
+{% endblock content %}

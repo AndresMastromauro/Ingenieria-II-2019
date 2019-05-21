@@ -6,4 +6,5 @@ urlpatterns = [
 
     path('about/', views.about, name='app-about'),
     path('detail_auction/<int:pk>/', views.detail_auction, name='app-detail_auction'),
+    path('close_auction/<int:pk>/', views.close_auction, name='admin-close_auction'),
 ]
