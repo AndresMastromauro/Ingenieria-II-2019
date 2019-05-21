@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import *
 from .forms import pujarForm, closeForm
+from users.models import Profile
 
 
 
@@ -66,6 +67,7 @@ def close_auction(request, pk):
     monto = OfertaSubasta.objects.filter(subasta__pk=pk).order_by('monto').last()
     montoBase = Subasta.objects.get(pk=pk).precioBase
     user = monto
+
     try:
         # Levanta error si monto esta vacio.
         montoA = monto.monto
@@ -89,7 +91,10 @@ def close_auction(request, pk):
             contextClose['form'].save(commit=False)
             contextClose['form'].cliente = contextClose['ganador']
             contextClose['form'].save()
-            contextClose['mensaje'] = 'Capas que anda.'
+            perfil = Profile.objects.get(user__username=user.subasta.reserva.cliente.username)
+            perfil.creditos = perfil.creditos - 1
+            perfil.save()
+            contextClose['mensaje'] = 'Reserva adjudicada.'
 
 
         else:
