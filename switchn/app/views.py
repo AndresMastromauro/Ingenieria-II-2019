@@ -64,3 +64,6 @@ def detail_auction(request, pk):
 
     return render(request, 'app/detail_auction.html', contextReserva, {'title': 'Detalle Subasta'} )
 
+
+
+

@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.admin import ModelAdmin
 from django.forms import inlineformset_factory
 from .models import *
 from .forms import *
@@ -15,6 +16,7 @@ class ReservaInline(admin.StackedInline):
 @admin.register(Subasta)
 class SubastaAdmin (admin.ModelAdmin):
     formset = inlineformset_factory(Reserva, Subasta, form=SubastaForm)
+    change_form_template = "admin/change_form_subasta.html"
 
 @admin.register(Estado)
 class EstadoAdmin (admin.ModelAdmin):
@@ -23,6 +25,11 @@ class EstadoAdmin (admin.ModelAdmin):
 @admin.register(OfertaSubasta)
 class OfertaSubastaAdmin (admin.ModelAdmin):
     pass
+
+class MyModelAdmin(admin.ModelAdmin):
+
+    #...
+    change_list_template = "path/to/change_list.html"
 
 '''
 @admin.register(Calle)
