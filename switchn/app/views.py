@@ -72,7 +72,7 @@ def close_auction(request, pk):
         # Levanta error si monto esta vacio.
         montoA = monto.monto
 
-    except ValueError:
+    except:
         montoA = montoBase
 
     contextClose = {

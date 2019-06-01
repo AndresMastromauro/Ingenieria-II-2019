@@ -1,15 +1,18 @@
 {% extends "app/base.html" %}
 {% block content %}
-{% for subasta in subastas %}
-<article class="media content-section">
-	<div class="media-body">
-		<img class="account-img" src="{{ subasta.reserva.propiedad.imagen.url }}">
-		<h2><a class="article-title" href="{% url 'app-detail_auction' pk=subasta.pk  %}">{{ subasta.reserva.propiedad.titulo }}</a></h2>
-		<p class="article-content"> <strong>Subasta para la semana: {{ subasta.reserva.semana }} </strong></p>
-		<p><small>{{ subasta.reserva.propiedad.direccion }}</small></p>
-		<p class="article-content">{{ subasta.reserva.propiedad.descripcion }}</p>
-
-	</div>
-</article>
-{% endfor %}
+	{% if subastas.count == 0 %}
+		<h1 style="position:fixed; top:50%">No hay subastas disponibles</h1>
+	{% else %}
+		{% for subasta in subastas %}
+			<article class="media content-section">
+				<div class="media-body">
+					<img class="account-img" src="{{ subasta.reserva.propiedad.imagen.url }}">
+					<h2><a class="article-title" href="{% url 'app-detail_auction' pk=subasta.pk  %}">{{ subasta.reserva.propiedad.titulo }}</a></h2>
+					<p class="article-content"> <strong>Subasta para la semana: {{ subasta.reserva.semana }} </strong></p>
+					<p><small>{{ subasta.reserva.propiedad.direccion }}</small></p>
+					<p class="article-content">{{ subasta.reserva.propiedad.descripcion }}</p>
+				</div>
+			</article>
+		{% endfor %}
+	{% endif %}
 {% endblock content %}

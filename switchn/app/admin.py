@@ -18,7 +18,7 @@ class ReservaInline(admin.StackedInline):
 @admin.register(Subasta)
 class SubastaAdmin (admin.ModelAdmin):
     formset = inlineformset_factory(Reserva, Subasta, form=SubastaForm)
-    change_form_template = "admin/change_form_subasta.html"
+    #change_form_template = "admin/change_form_subasta.html"
 
 @admin.register(Estado)
 class EstadoAdmin (admin.ModelAdmin):
