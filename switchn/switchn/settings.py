@@ -78,11 +78,13 @@ WSGI_APPLICATION = 'switchn.wsgi.application'
 import dj_database_url
 DATABASES = {
     'default': dj_database_url.config(
+        env="DATABASE_URL",
         default=subprocess.run(
-            "heroku config:get DATABASE_URL --app switchn",
-            shell=True,
+            ["heroku", "config:get", "DATABASE_URL", "--app", "switchn"],
             stdout=subprocess.PIPE
-        ).stdout,
+        ).stdout
+            .decode()
+            .strip(),
         conn_max_age=600,
         ssl_require=True
     )
