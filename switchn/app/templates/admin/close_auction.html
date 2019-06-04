@@ -2,7 +2,7 @@
 
 {% load crispy_forms_tags %}
 {% block content %}
-
+    {% if subasta %}
         <article class="media content-section">
 			<div class="media-body">
 				<div class="article-metadata">
@@ -37,11 +37,9 @@
                     <button type="submit" class="button" style="font-size: 1.5em">Cerrar Subasta </button>
                 </form>
                 {% endif %}
-
-
-
 			</div>
 		</article>
+    {% endif %}
 
 
 {% endblock content %}

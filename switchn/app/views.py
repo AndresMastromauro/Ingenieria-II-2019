@@ -105,4 +105,3 @@ def close_auction(request, pk):
 
     return render(request, 'admin/close_auction.html', contextClose,{'title': 'Cerrar subasta'})
 
-

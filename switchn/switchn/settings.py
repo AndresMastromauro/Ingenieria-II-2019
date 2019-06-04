@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['www.localhost', 'localhost',]
 INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
+    'ajax.apps.AjaxConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_superform'
 ]
 
 MIDDLEWARE = [
