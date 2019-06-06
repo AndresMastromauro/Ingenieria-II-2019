@@ -1,13 +1,17 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, permissions, views
+from rest_framework.response import Response
+from django.http import Http404, HttpResponseForbidden
 from app.models import *
 from .serializers import *
 
 class PaisesViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = PaisSerializer
     queryset = Pais.objects.all().order_by('nombre')
 
 
 class ProvinciasViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = ProvinciaSerializer
 
     def get_queryset(self):
@@ -22,6 +26,7 @@ class ProvinciasViewSet(viewsets.ModelViewSet):
 
 
 class LocalidadesViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = LocalidadSerializer
 
     def get_queryset(self):
@@ -37,6 +42,7 @@ class LocalidadesViewSet(viewsets.ModelViewSet):
 
 
 class CallesViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = CalleSerializer
 
     def get_queryset(self):
@@ -48,4 +54,23 @@ class CallesViewSet(viewsets.ModelViewSet):
         if localidad is not None:
             queryset = queryset.filter(localidad_id=localidad)
         return queryset
+
+class CalleDetailView(views.APIView):
+    def get_object(self, pk):
+        try:
+            return Calle.objects.get(pk=pk)
+        except:
+            raise Http404
+
+    def get(self, request, pk):
+        calle = self.get_object(pk)
+        serializer = CalleSerializer(calle)
+        return Response(serializer.data)
+
+
+
+class PropiedadesLivianasViewSet(viewsets.ModelViewSet):
+    serializer_class = PropiedadLivianaSerializer
+    queryset = PropiedadLiviana.objects.all()
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 

@@ -78,16 +78,18 @@ WSGI_APPLICATION = 'switchn.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-import dj_database_url
-DATABASES = {
-    'default': dj_database_url.config(
-        env="DATABASE_URL",
-        default=subprocess.run(
+'''
+default=subprocess.run(
             ["heroku", "config:get", "DATABASE_URL", "--app", "switchn"],
             stdout=subprocess.PIPE
         ).stdout
             .decode()
-            .strip(),
+            .strip()
+'''
+import dj_database_url
+DATABASES = {
+    'default': dj_database_url.config(
+        default=os.environ["DATABASE_URL"],
         conn_max_age=600,
         ssl_require=True
     )
