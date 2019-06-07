@@ -96,7 +96,7 @@ class SwitchnNavbarTabs extends React.Component {
 class SwitchnJumbotron extends React.Component {
     render() {
         return (
-            <div class="jumbotron">
+            <div className="jumbotron">
                 {this.props.children}
                  <h1>{this.props.title}</h1>
             </div>

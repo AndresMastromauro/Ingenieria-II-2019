@@ -1,4 +1,4 @@
-import React from "react";
+/* import React from "react";
 import $ from 'jquery';
 
 const SWITCHN_SERVICE_URL = "/ajax"
@@ -45,4 +45,4 @@ class SwitchnListadoPropiedades extends React.Component {
     }
 }
 
-export { SwitchnListadoPropiedades }
+export { SwitchnListadoPropiedades } */

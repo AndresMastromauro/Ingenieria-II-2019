@@ -1,5 +1,6 @@
 import React from "react";
 import $ from "jquery";
+import { AJAXDataProvider } from "../utils";
 
 class TextField extends React.Component {
     render() {
@@ -89,33 +90,9 @@ class ChoiceField extends React.Component {
     }
 }
 
-class DataSourcedChoiceField extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            choices: []
-        };
-    }
+class _DataSourcedChoiceField extends React.Component {
 
-    fetchData() {
-        $.ajax({
-            url: this.props.dataSourceURL,
-            data: this.props.dataSourceParams ? this.props.dataSourceParams : {},
-            dataType: 'json'
-        }).done(
-            function(data) {
-                this.setState({
-                    choices: data.length ? data : [data]
-                });
-            }.bind(this)
-        );
-    }
-
-    componentDidMount() {
-        this.fetchData();
-    }
-
-    componentDidUpdate(prevProps, prevState) {
+    /* componentDidUpdate(prevProps, prevState) {
         if (this.props.dataSourceParams) {
             var shouldFetch = Object.keys(this.props.dataSourceParams).some(
                 function(p) {
@@ -123,20 +100,30 @@ class DataSourcedChoiceField extends React.Component {
                 }.bind(this));
 
             if (shouldFetch)
-                this.fetchData();
+                this.props.DataProvider.refresh();
         }
-    }
+    } */
 
     render() {
         return (
-            <ChoiceField
-                className={this.props.className}
-                name={this.props.name}
-                value={this.props.value}
-                choices={this.state.choices}
-                adapter={this.props.adapter}
-                onChange={this.props.onChange} />
+                <ChoiceField
+                    className={this.props.className}
+                    name={this.props.name}
+                    value={this.props.value}
+                    choices={this.props.data}
+                    adapter={this.props.adapter}
+                    onChange={this.props.onChange} /> 
         );
+    }
+}
+
+class DataSourcedChoiceField extends React.Component {
+    render() {
+        return (
+            <AJAXDataProvider dontLoadOnMount={this.props.dontLoadOnMount} dataSourceURL={this.props.dataSourceURL} dataSourceParams={this.props.dataSourceParams}>
+                <_DataSourcedChoiceField adapter={this.props.adapter} onChange={this.props.onChange} />
+            </AJAXDataProvider>
+        )
     }
 }
 

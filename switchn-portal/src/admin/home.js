@@ -29,13 +29,14 @@ export class SwitchnAdminHome extends React.Component {
                             }}
                         />
                     <DataSourcedChoiceField
+                        dontLoadOnMount
                         dataSourceURL={'/ajax/provincias'}
-                        dataSourceParams={{
+                        dataSourceParams={this.state.pais ? {
                             pais: this.state.pais
-                        }}
+                        } : {}}
                         adapter={
-                            function(pais) {
-                                return {value: pais.id, caption: pais.nombre}
+                            function(provincia) {
+                                return {value: provincia.id, caption: provincia.nombre}
                             }} />
                 </form>
             </SwitchnAdminPage>
