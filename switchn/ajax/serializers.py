@@ -12,18 +12,20 @@ class ProvinciaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class LocalidadSerializer(serializers.ModelSerializer):
-    calles = serializers.HyperlinkedRelatedField(view_name="calles", many=True, read_only=True)
     class Meta:
         model = Localidad
         fields = '__all__'
 
-class CalleSerializer(serializers.HyperlinkedModelSerializer):
-    localidad = serializers.HyperlinkedIdentityField(view_name="localidades")
+class CalleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Calle
         fields = '__all__'
 
-class PropiedadLivianaSerializer(serializers.ModelSerializer):
+class DireccionSerializer(serializers.Serializer):
+    pass
+
+class PropiedadSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Propiedad
-        fields = '__all__'
+        fields = ('_all_')

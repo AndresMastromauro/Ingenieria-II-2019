@@ -68,9 +68,13 @@ class CalleDetailView(views.APIView):
         return Response(serializer.data)
 
 
+class PropiedadesViewSet(viewsets.ModelViewSet):
+    pass
 
+'''
 class PropiedadesLivianasViewSet(viewsets.ModelViewSet):
     serializer_class = PropiedadLivianaSerializer
     queryset = Propiedad.objects.all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+'''
 
