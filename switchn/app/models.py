@@ -8,16 +8,6 @@ def validate_monday(value):
     if not value.isocalendar() [2] == 1 :
         raise ValidationError("Debe elegir un Lunes")
 
-class Properties(models.Model):
-    name = models.CharField(max_length=100)
-    ubication = models.CharField(max_length=100)
-    date_posted = models.DateTimeField(default=timezone.now)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-    image = models.ImageField(default='default.jpg',upload_to='property_image')
-
-    def __str__(self):
-        return self.name
-
 
 class Estado (models.Model):
     descripcion = models.CharField(max_length=15)
@@ -71,7 +61,7 @@ class Propiedad (models.Model):
     numero = models.PositiveIntegerField(default=0)
     piso = models.CharField(max_length=10, blank=True)
     dpto = models.CharField(max_length=10, blank=True)
-
+    image = models.ImageField(default='default.jpg', upload_to='property_image')
 
     def string_direccion(self):
         localidad = self.calle.localidad
@@ -91,25 +81,11 @@ class Propiedad (models.Model):
         unique_together = (('calle', 'numero', 'piso', 'dpto'),)
 
 
-class PropiedadLiviana (models.Model):
-    titulo = models.CharField(max_length=30, default='Nueva Propiedad')
-    descripcion = models.CharField(max_length=200)
-    tipo = models.ForeignKey(TipoPropiedad, on_delete=models.PROTECT)
-    direccion = models.CharField(max_length=200)
-    imagen = models.ImageField(default='default.jpg', upload_to='property_image')
-
-    def __str__(self):
-        return "{0}: {1} ({2})".format(self.titulo, self.direccion, self.tipo)
-
-    class Meta:
-        verbose_name = 'propiedad'
-
-
 
 class Reserva (models.Model):
     cliente = models.OneToOneField(User, blank=True,null=True, on_delete=models.PROTECT)
     semana = models.DateField(validators=[validate_monday])
-    propiedad = models.ForeignKey(PropiedadLiviana, on_delete=models.PROTECT)
+    propiedad = models.ForeignKey(Propiedad, on_delete=models.PROTECT)
 
     def __str__(self):
         anio = self.semana.isocalendar()[0]

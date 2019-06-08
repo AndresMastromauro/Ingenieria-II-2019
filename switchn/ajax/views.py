@@ -71,6 +71,6 @@ class CalleDetailView(views.APIView):
 
 class PropiedadesLivianasViewSet(viewsets.ModelViewSet):
     serializer_class = PropiedadLivianaSerializer
-    queryset = PropiedadLiviana.objects.all()
+    queryset = Propiedad.objects.all()
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 

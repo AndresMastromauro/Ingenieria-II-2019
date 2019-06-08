@@ -93,7 +93,3 @@ class PropiedadAdmin (admin.ModelAdmin):
 @admin.register(TipoPropiedad)
 class TipoPropiedad(admin.ModelAdmin):
     pass
-
-@admin.register(PropiedadLiviana)
-class PropiedadLiviana(admin.ModelAdmin):
-    pass

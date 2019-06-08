@@ -25,5 +25,5 @@ class CalleSerializer(serializers.HyperlinkedModelSerializer):
 
 class PropiedadLivianaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PropiedadLiviana
+        model = Propiedad
         fields = '__all__'
