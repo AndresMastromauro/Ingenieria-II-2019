@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from django.http import Http404, HttpResponseForbidden
 from app.models import *
 from .serializers import *
+from users.models import *
 
 class PaisesViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -72,6 +73,72 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = PropiedadSerializer
     queryset = Propiedad.objects.all()
+
+class EstadoViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = EstadoSerializer
+
+    def get_queryset(self):
+        queryset = Estado.objects.all()
+        return queryset
+
+class ReservaViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = ReservaSerializer
+
+    def get_queryset(self):
+        queryset = Reserva.objects.all().order_by('semana')
+        return queryset
+
+class SubastaViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SubastaSerializer
+
+    def get_queryset(self):
+        queryset = Subasta.objects.all().order_by('precioBase')
+        return queryset
+
+class OfertaSubastaViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = OfertaSubastaSerializer
+
+    def get_queryset(self):
+        queryset = OfertaSubasta.objects.all().order_by('monto')
+        return queryset
+
+class CreditViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = Credit
+
+    def get_queryset(self):
+        queryset = Credit.objects.all()
+        return queryset
+
+class MembresiaViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = Membresia
+
+    def get_queryset(self):
+        queryset = Membresia.objects.all()
+        return queryset
+
+class ProfileViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = Profile
+
+    def get_queryset(self):
+        queryset = Profile.objects.all()
+        return queryset
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = User
+
+    def get_queryset(self):
+        queryset = Profile.objects.all()
+        return queryset
+
 
 
 '''

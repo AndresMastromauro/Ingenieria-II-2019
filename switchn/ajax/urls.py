@@ -8,6 +8,15 @@ router.register(r'provincias', views.ProvinciasViewSet, basename='provincias')
 router.register(r'localidades', views.LocalidadesViewSet, basename='localidades')
 router.register(r'calles', views.CallesViewSet, basename='calles')
 router.register(r'propiedades', views.PropiedadesViewSet, basename='propiedades')
+router.register(r'estado', views.EstadoViewSet, basename='estado')
+router.register(r'reserva', views.ReservaViewSet, basename='reserva')
+router.register(r'subasta', views.SubastaViewSet, basename='subasta')
+router.register(r'ofertasubasta', views.OfertaSubastaViewSet, basename='ofertasubasta')
+router.register(r'creditos', views.CreditViewSet, basename='creditos')
+router.register(r'membresia', views.MembresiaViewSet, basename='membresia')
+router.register(r'profile', views.ProfileViewSet, basename='profile')
+router.register(r'usuarios', views.UserViewSet, basename='usuarios')
+
 
 urlpatterns = [
     path('', include(router.urls)),
