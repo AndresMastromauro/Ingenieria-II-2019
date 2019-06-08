@@ -69,7 +69,10 @@ class CalleDetailView(views.APIView):
 
 
 class PropiedadesViewSet(viewsets.ModelViewSet):
-    pass
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = PropiedadSerializer
+    queryset = Propiedad.objects.all()
+
 
 '''
 class PropiedadesLivianasViewSet(viewsets.ModelViewSet):

@@ -52,15 +52,29 @@ class SwitchnPortalHeader extends React.Component {
 }
 
 export class SwitchnPortalPropiedad extends React.Component {
+    getDireccion() {
+        var oDireccion = this.props.propiedad.direccion;
+        var sDireccion = `${oDireccion.calle.nombre} #${oDireccion.numero}`;
+        if (oDireccion.piso) {
+            sDireccion += `, ${oDireccion.piso}`;
+            if (oDireccion.dpto) {
+                sDireccion += `${oDireccion.dpto}`;
+            }
+        }
+        sDireccion += `. ${oDireccion.localidad.nombre}, `;
+        sDireccion += `${oDireccion.provincia.nombre}, ${oDireccion.pais.nombre}`;
+        return sDireccion;
+    }
+
     render() {
         var propiedad = this.props.propiedad;
         return (
             <article className="media content-section">
                 <div className="media-body">
-                    <img className="account-img" src={propiedad.imagen} />
+                    <img className="account-img" src={propiedad.image} />
                     <h2><a className="article-title" >{propiedad.titulo}</a></h2>
                        {/*  <!-- {% url 'app-detail_auction' pk=post.pk %} --> */}
-                    <p><small>{propiedad.direccion}</small></p>
+                    <p><small>{this.getDireccion()}</small></p>
                     <p className="article-content">{propiedad.descripcion}</p>
                 </div>
             </article>

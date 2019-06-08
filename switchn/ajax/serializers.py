@@ -25,7 +25,35 @@ class DireccionSerializer(serializers.Serializer):
     pass
 
 class PropiedadSerializer(serializers.ModelSerializer):
+    direccion = serializers.SerializerMethodField()
+
+    def get_direccion(self, propiedad):
+        calle = propiedad.calle
+        localidad = calle.localidad
+        provincia = localidad.provincia
+        pais = provincia.pais
+        return {
+            "calle": {
+                "nombre": calle.nombre,
+                "id": calle.id
+            },
+            "numero": propiedad.numero,
+            "piso": propiedad.piso,
+            "dpto": propiedad.dpto,
+            "localidad": {
+                "nombre": localidad.nombre,
+                "id": localidad.id
+            },
+            "provincia": {
+                "nombre": provincia.nombre,
+                "id": provincia.id
+            },
+            "pais": {
+                "nombre": pais.nombre,
+                "id": pais.id
+            }
+        }
 
     class Meta:
         model = Propiedad
-        fields = ('_all_')
+        fields = '__all__'
