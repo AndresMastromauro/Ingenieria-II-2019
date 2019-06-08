@@ -80,7 +80,7 @@ class OfertaSubastaSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class CreditSerializer(serializers.ModelSerializer):
-    class Meta:
+     class Meta:
         model = Credit
         fields = '__all__'
 

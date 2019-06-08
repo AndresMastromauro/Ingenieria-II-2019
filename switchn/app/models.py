@@ -116,3 +116,5 @@ class OfertaSubasta (models.Model):
 
     class Meta:
         unique_together = (('cliente','subasta'),)
+
+
