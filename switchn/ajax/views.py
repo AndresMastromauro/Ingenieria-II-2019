@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from django.http import Http404, HttpResponseForbidden
 from app.models import *
 from .serializers import *
+from users.models import *
+from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
 
 class PaisesViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -73,11 +76,89 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
     serializer_class = PropiedadSerializer
     queryset = Propiedad.objects.all()
 
-
-'''
-class PropiedadesLivianasViewSet(viewsets.ModelViewSet):
-    serializer_class = PropiedadLivianaSerializer
-    queryset = Propiedad.objects.all()
+class EstadoViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-'''
+    serializer_class = EstadoSerializer
+
+    def get_queryset(self):
+        queryset = Estado.objects.all()
+        return queryset
+
+class ReservaViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = ReservaSerializer
+
+    def get_queryset(self):
+        queryset = Reserva.objects.all().order_by('semana')
+        return queryset
+
+class SubastaViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SubastaSerializer
+
+    def get_queryset(self):
+        queryset = Subasta.objects.all().order_by('precioBase')
+        return queryset
+
+class OfertaSubastaViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = OfertaSubastaSerializer
+
+    def get_queryset(self):
+        queryset = OfertaSubasta.objects.all().order_by('monto')
+        return queryset
+
+class CreditViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Credit.objects.all()
+        serializer = CreditSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Credit.objects.all()
+        credit = get_object_or_404(queryset, pk=pk)
+        serializer = CreditSerializer(credit)
+        return Response(serializer.data)
+
+class MembresiaViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Membresia.objects.all()
+        serializer = MembresiaSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Membresia.objects.all()
+        membresia = get_object_or_404(queryset, pk=pk)
+        serializer = MembresiaSerializer(membresia)
+        return Response(serializer.data)
+
+class ProfileViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Profile.objects.all()
+        serializer = ProfileSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Profile.objects.all()
+        profile = get_object_or_404(queryset, pk=pk)
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+        A viewset for viewing and editing user instances.
+        """
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+
+
+
+#class PropiedadesLivianasViewSet(viewsets.ModelViewSet):
+#    serializer_class = PropiedadLivianaSerializer
+#    queryset = Propiedad.objects.all()
+#    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
 

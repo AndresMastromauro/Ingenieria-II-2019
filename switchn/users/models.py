@@ -1,19 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 
 
 class Credit(models.Model):
     expirationDate = models.DateTimeField(default=timezone.now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    def _str_(self):
+    def __str__(self):
         return (self.user, self.expirationDate)
 
 class Membresia(models.Model):
     tipo = models.CharField(max_length=200,default='estandar')
 
-    def _str_(self):
+    def __str__(self):
         return self.tipo
 
 class Profile(models.Model):

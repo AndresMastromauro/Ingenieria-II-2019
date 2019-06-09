@@ -7,7 +7,7 @@ from users.models import Profile
 
 def home(request):
     context = {
-        'posts': PropiedadLiviana.objects.all().order_by('pk').reverse()
+        'posts': Propiedad.objects.all().order_by('pk').reverse()
     }
     return render(request, 'app/propiedades_base.html', context)
 
