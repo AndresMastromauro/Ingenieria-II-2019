@@ -2,15 +2,32 @@ import React from "react";
 import $ from "jquery";
 import { AJAXDataProvider } from "../utils";
 
-class TextField extends React.Component {
+
+class Input extends React.Component {
     render() {
         return (
-            <input type="text"
-                name={this.props.name}
-                value={this.props.value}
-                className={this.props.className}
-                onChange={this.props.onChange} />
+            <label for={this.props.name}>
+                {this.props.label}
+               <input
+                    type={this.props.type}
+                    name={this.props.name}
+                    value={this.props.value}
+                    className={this.props.className}
+                    onChange={this.props.onChange} />
+            </label>
         );
+    }
+}
+
+class TextField extends React.Component {
+    render() {
+        return <Input type="text" label={this.props.label} />
+    }
+}
+
+class PasswordField extends React.Component {
+    render() {
+        return <Input type="password" label={this.props.label} />
     }
 }
 
@@ -127,4 +144,4 @@ class DataSourcedChoiceField extends React.Component {
     }
 }
 
-export { TextField, NumberField, PositiveNumberField, ChoiceField, DataSourcedChoiceField };
+export { TextField, NumberField, PositiveNumberField, ChoiceField, DataSourcedChoiceField, PasswordField };
