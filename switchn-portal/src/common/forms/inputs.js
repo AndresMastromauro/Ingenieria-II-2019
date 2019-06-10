@@ -2,13 +2,21 @@ import React from "react";
 import $ from "jquery";
 import { AJAXDataProvider } from "../utils";
 
+class Label extends React.Component {
+    render() {
+        return (
+            <label className="text-muted" htmlFor={this.props.htmlFor}>
+                {this.props.children}
+            </label>
+        );
+    }
+}
 
 class Input extends React.Component {
     render() {
         return (
             <div className="form-group">
-            <label htmlFor={this.props.name} />
-                {this.props.label}
+            <Label htmlFor={this.props.name}>{this.props.label}</Label> 
                <input
                     type={this.props.type}
                     name={this.props.name}
@@ -119,34 +127,24 @@ class ChoiceField extends React.Component {
     render() {
         var sClass = "form-control "
         return (
-            <select className={this.props.className ? sClass + this.props.className : sClass } name={this.props.name} value={this.props.value} onChange={this.props.onChange}>
-                <option key={0} value={this.props.nullKey}>{this.props.nullCaption}</option>
-                { this.props.choices.map(
-                    function(choice) {
-                        if (this.props.adapter)
-                            choice = this.props.adapter(choice);
-                        return (<option key={choice.value} value={choice.value}>{choice.caption}</option>);
-                    }.bind(this)
-                )}
-            </select>
+            <div>
+                <Label htmlFor={this.props.name}>{this.props.label}</Label>
+                <select className={this.props.className ? sClass + this.props.className : sClass } name={this.props.name} value={this.props.value} onChange={this.props.onChange}>
+                    <option key={0} value={this.props.nullKey}>{this.props.nullCaption}</option>
+                    { this.props.choices.map(
+                        function(choice) {
+                            if (this.props.adapter)
+                                choice = this.props.adapter(choice);
+                            return (<option key={choice.value} value={choice.value}>{choice.caption}</option>);
+                        }.bind(this)
+                    )}
+                </select>
+            </div>
         );
     }
 }
 
 class _DataSourcedChoiceField extends React.Component {
-
-    /* componentDidUpdate(prevProps, prevState) {
-        if (this.props.dataSourceParams) {
-            var shouldFetch = Object.keys(this.props.dataSourceParams).some(
-                function(p) {
-                    return prevProps.dataSourceParams[p] !== this.props.dataSourceParams[p]
-                }.bind(this));
-
-            if (shouldFetch)
-                this.props.DataProvider.refresh();
-        }
-    } */
-
     render() {
         return (
                 <ChoiceField
@@ -155,7 +153,8 @@ class _DataSourcedChoiceField extends React.Component {
                     value={this.props.value}
                     choices={this.props.data}
                     adapter={this.props.adapter}
-                    onChange={this.props.onChange} /> 
+                    onChange={this.props.onChange}
+                    label={this.props.label} /> 
         );
     }
 }
@@ -164,7 +163,7 @@ class DataSourcedChoiceField extends React.Component {
     render() {
         return (
             <AJAXDataProvider dontLoadOnMount={this.props.dontLoadOnMount} dataSourceURL={this.props.dataSourceURL} dataSourceParams={this.props.dataSourceParams}>
-                <_DataSourcedChoiceField adapter={this.props.adapter} onChange={this.props.onChange} />
+                <_DataSourcedChoiceField adapter={this.props.adapter} onChange={this.props.onChange} label={this.props.label} />
             </AJAXDataProvider>
         )
     }

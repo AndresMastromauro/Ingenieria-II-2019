@@ -82,13 +82,17 @@ export class SwitchnPortalPropiedad extends React.Component {
     render() {
         var propiedad = this.props.propiedad;
         return (
-            <article className="media content-section">
-                <div className="media-body">
-                    <img className="account-img" src={propiedad.image} />
-                    <h2><a className="article-title" >{propiedad.titulo}</a></h2>
-                       {/*  <!-- {% url 'app-detail_auction' pk=post.pk %} --> */}
-                    <p><small>{this.getDireccion()}</small></p>
-                    <p className="article-content">{propiedad.descripcion}</p>
+            <article className="media content-section container-fluid">
+                <div className="media-body row">
+                    <div className="col-sm-4">
+                        <img className="account-img" src={propiedad.image} />
+                    </div>
+                    <div className="col-sm-8">
+                        <h2><a className="article-title" >{propiedad.titulo}</a></h2>
+                        {/*  <!-- {% url 'app-detail_auction' pk=post.pk %} --> */}
+                        <p><small>{this.getDireccion()}</small></p>
+                        <p className="article-content">{propiedad.descripcion}</p>
+                    </div>
                 </div>
             </article>
         );

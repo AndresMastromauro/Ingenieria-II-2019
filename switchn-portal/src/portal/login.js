@@ -12,7 +12,7 @@ class _SwitchnPortalLogin extends React.Component {
         return (
             <SwitchnPortalPage>
                 <div className="justify-content-center">
-                    <LoginForm />
+                    <div><LoginForm /></div>
                 </div>
             </SwitchnPortalPage>
         )

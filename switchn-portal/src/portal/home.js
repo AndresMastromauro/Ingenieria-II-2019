@@ -39,6 +39,56 @@ class _SwitchnPortalListadoPropiedades extends React.Component {
     }
 )(_SwitchnPortalListadoPropiedades); */
 
+class SwitchnPortalPropiedadesFiltros extends React.Component {
+    render() {
+        const choiceAdapter = (choice) => { return {value: choice.id, caption: choice.nombre} };
+        return (
+            <div className="col-sm-4">
+                <form>
+                    <div className='form-group'>
+                        <legend className="row">Filtros</legend>
+                    
+                        <div className="row">
+                            <DataSourcedChoiceField
+                                name={"pais"}
+                                dataSourceURL={"/ajax/paises"}
+                                adapter={choiceAdapter}
+                                onChange={this.props.callbacks.onSelectPais}
+                                label={"Pais"} />
+                        </div>
+                        <div className="row">
+                            <DataSourcedChoiceField
+                                dontLoadOnMount
+                                name={"provincia"}
+                                dataSourceURL={"/ajax/provincias"}
+                                dataSourceParams={
+                                    this.props.filtros.pais &&
+                                        { pais: this.props.filtros.pais }
+                                }
+                                adapter={choiceAdapter}
+                                onChange={this.props.callbacks.onSelectProvincia}
+                                label={"Provincia/Estado"} />
+                        </div>
+                        <div className="row">
+                            <DataSourcedChoiceField
+                                dontLoadOnMount
+                                name={"localidad"}
+                                dataSourceURL={"/ajax/localidades"}
+                                dataSourceParams={
+                                    this.props.filtros.provincia &&
+                                        { provincia: this.props.filtros.provincia }
+                                }
+                                adapter={choiceAdapter}
+                                onChange={this.props.callbacks.onSelectLocalidad}
+                                label={"Localidad"} />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        );
+    }
+}
+
 
 class SwitchnPortalListadoPropiedades extends React.Component {
     constructor(props) {
@@ -73,41 +123,22 @@ class SwitchnPortalListadoPropiedades extends React.Component {
     }
 
     render() {
-        const choiceAdapter = (choice) => { return {value: choice.id, caption: choice.nombre} };
         return (
-            <div>
-                <form>
-                    <legend>Filtros</legend>
-                    <span className='form-group'>
-                        <DataSourcedChoiceField
-                            dataSourceURL={"/ajax/paises"}
-                            adapter={choiceAdapter}
-                            onChange={this.onSelectPais} />
-                        <DataSourcedChoiceField
-                            dontLoadOnMount
-                            dataSourceURL={"/ajax/provincias"}
-                            dataSourceParams={
-                                this.state.filtros.pais &&
-                                    { pais: this.state.filtros.pais }
-                            }
-                            adapter={choiceAdapter}
-                            onChange={this.onSelectProvincia} />
-                        <DataSourcedChoiceField
-                            dontLoadOnMount
-                            dataSourceURL={"/ajax/localidades"}
-                            dataSourceParams={
-                                this.state.filtros.provincia &&
-                                    { provincia: this.state.filtros.provincia }
-                            }
-                            adapter={choiceAdapter}
-                            onChange={this.onSelectLocalidad} />
-                        </span>
-                </form>
-                <AJAXDataProvider
-                    dataSourceURL={"/ajax/propiedades"}
-                    dataSourceParams={this.state.filtros}>
-                    <_SwitchnPortalListadoPropiedades />
-                </AJAXDataProvider>
+            <div className="container-fluid">
+                <SwitchnPortalPropiedadesFiltros
+                    filtros={this.state.filtros}
+                    callbacks={{
+                        onSelectLocalidad: this.onSelectLocalidad,
+                        onSelectProvincia: this.onSelectProvincia,
+                        onSelectPais: this.onSelectPais
+                    }} />
+                <div className="col-sm-8">
+                    <AJAXDataProvider
+                        dataSourceURL={"/ajax/propiedades"}
+                        dataSourceParams={this.state.filtros}>
+                        <_SwitchnPortalListadoPropiedades />
+                    </AJAXDataProvider>
+                </div>
             </div>
         )
     }
