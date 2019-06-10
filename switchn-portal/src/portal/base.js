@@ -7,6 +7,7 @@ import {
     SwitchnNavbarTabs
 } from "../common/base";
 
+
 class SwitchnPortalNavbarTabs extends React.Component {
     render() {
         return (
@@ -31,7 +32,7 @@ class SwitchnPortalNavbarUserActions extends React.Component {
             return (
                 <div className="navbar-nav">
                     <SwitchnNavbarLink url={"/login"}>Login</SwitchnNavbarLink>
-                    <SwitchnNavbarLink url={"/signup"}>Register</SwitchnNavbarLink>
+                    <SwitchnNavbarLink url={"/register"}>Register</SwitchnNavbarLink>
                 </div>
             )
         }
