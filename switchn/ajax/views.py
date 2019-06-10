@@ -74,7 +74,22 @@ class CalleDetailView(views.APIView):
 class PropiedadesViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = PropiedadSerializer
-    queryset = Propiedad.objects.all()
+
+    def get_queryset(self):
+        queryset = Propiedad.objects.all()
+        localidad = self.request.query_params.get('localidad', None)
+        if localidad is not None:
+            return queryset.filter(calle__localidad_id=localidad)
+
+        provincia = self.request.query_params.get('provincia', None)
+        if provincia is not None:
+            return queryset.filter(calle__localidad__provincia_id=provincia)
+
+        pais = self.request.query_params.get('pais', None)
+        if pais is not None:
+            return queryset.filter(calle__localidad__provincia__pais_id=pais)
+
+        return queryset
 
 class EstadoViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)

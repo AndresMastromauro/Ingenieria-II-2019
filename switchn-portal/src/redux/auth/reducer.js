@@ -8,14 +8,14 @@ import {
 } from "./actions";
 
 const initialState = {
-    token: localStorage.getItem("token"),
-    isAuthenticated: null,
+    token: null,
+    isAuthenticated: false,
     isLoading: true,
     user: null,
     errors: {},
   };
 
-function auth(state = initialState, action ="") {
+function auth(state = initialState, action) {
     switch(action.type) {
         case USER_LOADING:
             return {
@@ -28,7 +28,8 @@ function auth(state = initialState, action ="") {
                 ...state,
                 isAuthenticated: true, 
                 isLoading: false, 
-                user: action.user
+                user: action.data.user,
+                token: action.data.token
             };
 
         case LOGIN_SUCCESSFUL:

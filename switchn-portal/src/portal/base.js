@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import {
     SwitchnHeader,
     SwitchnMainContainer,
@@ -18,12 +19,14 @@ class SwitchnPortalNavbarTabs extends React.Component {
     }
 }
 
-class SwitchnPortalNavbarUserActions extends React.Component {
+class _SwitchnPortalNavbarUserActions extends React.Component {
     render() {
         if (this.props.user) {
             return (
                 <div className="navbar-nav">
-                    <SwitchnNavbarLink url={this.props.user.url}>Profile</SwitchnNavbarLink>
+                    <SwitchnNavbarLink url={this.props.user.url ? this.props.user.url : ''}>
+                        Logueado como <u>{this.props.user.username}</u>
+                    </SwitchnNavbarLink>
                     <SwitchnNavbarLink url={"/logout"}>Logout</SwitchnNavbarLink>
                 </div>
             );
@@ -37,6 +40,16 @@ class SwitchnPortalNavbarUserActions extends React.Component {
         }
     }
 }
+
+let SwitchnPortalNavbarUserActions = connect(
+    (state) => {
+        return {
+            user: state.auth.user
+        }
+    },
+    (dispatch) => {return {}}
+)(_SwitchnPortalNavbarUserActions);
+
 
 class SwitchnPortalHeader extends React.Component {
     render() {
@@ -87,8 +100,8 @@ export class SwitchnPortalPage extends React.Component {
     render() {
         return (
             <div>
-                <SwitchnPortalHeader title={this.props.title} user={this.props.user}/>
-                <SwitchnMainContainer user={this.props.user}>
+                <SwitchnPortalHeader title={this.props.title} />
+                <SwitchnMainContainer>
                     {this.props.children}
                 </SwitchnMainContainer>
             </div>

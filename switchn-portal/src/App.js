@@ -7,10 +7,12 @@ import { SwitchnAdminHome } from './admin/home';
 import { SwitchnAdminPropiedades } from './admin/propiedades';
 import { SwitchnHome } from './portal/home';
 import { SwitchnPortalLogin } from './portal/login';
-import auth from "./redux/reducers";
+import { SwitchnPortalLogout } from './portal/logout';
+import { loadUser } from "./redux/auth/actions";
 import { store } from './redux/store';
 
 // import './App.css';
+
 
 
 class _App extends React.Component {
@@ -41,6 +43,7 @@ class _App extends React.Component {
               <Route exact path="/login" component={SwitchnPortalLogin} />
               <Route exact path="/admin" component={SwitchnAdminHome} />
               <Route exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
+              <PrivateRoute exact path="/logout" component={SwitchnPortalLogout} />
             </Router>
         </div>
     );
@@ -56,7 +59,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     loadUser: () => {
-      return dispatch(auth.loadUser());
+      return dispatch(loadUser());
     }
   }
 }

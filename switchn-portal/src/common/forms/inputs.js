@@ -6,28 +6,53 @@ import { AJAXDataProvider } from "../utils";
 class Input extends React.Component {
     render() {
         return (
-            <label for={this.props.name}>
+            <div className="form-group">
+            <label htmlFor={this.props.name} />
                 {this.props.label}
                <input
                     type={this.props.type}
                     name={this.props.name}
                     value={this.props.value}
-                    className={this.props.className}
+                    className={this.props.className ? 'form-control ' + this.props.className : 'form-control'}
                     onChange={this.props.onChange} />
-            </label>
+            </div>
+        );
+    }
+}
+
+class Button extends React.Component {
+    render() {
+        var sClass = "form-control button";
+        return (
+            <button 
+                type={this.props.type}
+                className={this.props.className ? sClass +' '+ this.props.className : sClass}
+                onClick={this.props.onClick}>
+                {this.props.children}
+            </button>
+        );
+    }
+}
+
+class SubmitButton extends React.Component {
+    render() {
+        return (
+            <Button type="submit" className="btn-primary" onClick={this.props.onClick}>
+                {this.props.children}
+            </Button>
         );
     }
 }
 
 class TextField extends React.Component {
     render() {
-        return <Input type="text" label={this.props.label} />
+        return <Input type="text" label={this.props.label} onChange={this.props.onChange} />
     }
 }
 
 class PasswordField extends React.Component {
     render() {
-        return <Input type="password" label={this.props.label} />
+        return <Input type="password" label={this.props.label} onChange={this.props.onChange} />
     }
 }
 
@@ -92,8 +117,9 @@ class PositiveNumberField extends React.Component {
 class ChoiceField extends React.Component {
     
     render() {
+        var sClass = "form-control "
         return (
-            <select className={this.props.className} name={this.props.name} value={this.props.value} onChange={this.props.onChange}>
+            <select className={this.props.className ? sClass + this.props.className : sClass } name={this.props.name} value={this.props.value} onChange={this.props.onChange}>
                 <option key={0} value={this.props.nullKey}>{this.props.nullCaption}</option>
                 { this.props.choices.map(
                     function(choice) {
@@ -144,4 +170,4 @@ class DataSourcedChoiceField extends React.Component {
     }
 }
 
-export { TextField, NumberField, PositiveNumberField, ChoiceField, DataSourcedChoiceField, PasswordField };
+export { TextField, NumberField, PositiveNumberField, ChoiceField, DataSourcedChoiceField, PasswordField, SubmitButton };
