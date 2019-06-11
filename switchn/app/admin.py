@@ -39,7 +39,7 @@ class PropiedadAdmin (admin.ModelAdmin):
     class Media:
         js = ('jquery-3.4.1.js', 'utils.js','admin/change_form_propiedad.js')
 
-@admin.register(Estado)
+@admin.register(EstadoSubasta)
 class EstadoAdmin (admin.ModelAdmin):
     pass
 

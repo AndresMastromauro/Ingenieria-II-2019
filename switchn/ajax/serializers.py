@@ -22,12 +22,16 @@ class CalleSerializer(serializers.ModelSerializer):
         model = Calle
         fields = '__all__'
 
-class DireccionSerializer(serializers.Serializer):
-    pass
+
+class TipoPropiedadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoPropiedad
+        fields = ('id', 'descripcion')
+
 
 class PropiedadSerializer(serializers.ModelSerializer):
     direccion = serializers.SerializerMethodField()
-    tipo = serializers.SerializerMethodField()
+    tipo = TipoPropiedadSerializer()
 
     def get_direccion(self, propiedad):
         calle = propiedad.calle
@@ -56,26 +60,15 @@ class PropiedadSerializer(serializers.ModelSerializer):
             }
         }
 
-    def get_tipo(self, propiedad):
-        return {
-            "id": propiedad.tipo.id,
-            "descripcion": propiedad.tipo.descripcion
-        }
 
     class Meta:
         model = Propiedad
         fields = ('id', 'titulo', 'descripcion', 'direccion', 'image', 'tipo')
 
 
-class TipoPropiedadSerializer(serializers.ModelSerializer):
+class EstadoSubastaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TipoPropiedad
-        fields = ('id', 'descripcion')
-
-
-class EstadoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Estado
+        model = EstadoSubasta
         fields = '__all__'
 
 class ReservaSerializer(serializers.ModelSerializer):
@@ -83,15 +76,18 @@ class ReservaSerializer(serializers.ModelSerializer):
         model = Reserva
         fields = '__all__'
 
-class SubastaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subasta
-        fields = '__all__'
 
 class OfertaSubastaSerializer(serializers.ModelSerializer):
     class Meta:
         model = OfertaSubasta
         fields = '__all__'
+
+
+class SubastaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subasta
+        fields = '__all__'
+
 
 class CreditSerializer(serializers.ModelSerializer):
      class Meta:
@@ -103,12 +99,16 @@ class MembresiaSerializer(serializers.ModelSerializer):
         model = Membresia
         fields = '__all__'
 
-class ProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Profile
-        fields = '__all__'
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email') # ademas si ponemos __all__ viaja la contraseña!
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+
+    class Meta:
+        model = Profile
         fields = '__all__'

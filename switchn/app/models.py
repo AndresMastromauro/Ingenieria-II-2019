@@ -9,11 +9,12 @@ def validate_monday(value):
         raise ValidationError("Debe elegir un Lunes")
 
 
-class Estado (models.Model):
+class EstadoSubasta (models.Model):
     descripcion = models.CharField(max_length=15)
 
     def __str__(self):
         return self.descripcion
+
 
 class Pais(models.Model):
     nombre = models.CharField(max_length=100, blank=False)
@@ -97,7 +98,7 @@ class Reserva (models.Model):
 
 class Subasta (models.Model):
     precioBase = models.DecimalField(max_digits=15, decimal_places=2)
-    estado = models.ForeignKey(Estado, on_delete=models.PROTECT)
+    estado = models.ForeignKey(EstadoSubasta, on_delete=models.PROTECT)
     reserva = models.OneToOneField(Reserva, on_delete=models.PROTECT)
 
     def __str__(self):

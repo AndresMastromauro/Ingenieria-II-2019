@@ -1,4 +1,5 @@
 from rest_framework import viewsets, permissions, views
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import Http404, HttpResponseForbidden
 from app.models import *
@@ -91,20 +92,35 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+    @action(detail=True)
+    def reservas(self, request, *args, **kwargs):
+        ''' Trae las reservas adjudicadas '''
+        propiedad = self.get_object()
+        reservas = Reserva.objects.filter(propiedad_id=propiedad.id).exclude(cliente__isnull=True)
+        return Response(ReservaSerializer(reservas, many=True).data)
+
+    @action(detail=True)
+    def subastas(self, request, *args, **kwargs):
+        propiedad = self.get_object()
+        subastas = Subasta.objects.filter(reserva__propiedad_id=propiedad.id)
+        return Response(SubastaSerializer(subastas, many=True).data)
+
+
 class TiposPropiedadViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = TipoPropiedadSerializer
     queryset = TipoPropiedad.objects.all()
 
 
-class EstadoViewSet(viewsets.ModelViewSet):
+class EstadoSubastaViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = EstadoSerializer
+    serializer_class = EstadoSubastaSerializer
 
     def get_queryset(self):
-        queryset = Estado.objects.all()
+        queryset = EstadoSubasta.objects.all()
         return queryset
 
+'''
 class ReservaViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = ReservaSerializer
@@ -112,6 +128,8 @@ class ReservaViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Reserva.objects.all().order_by('semana')
         return queryset
+'''
+
 
 class SubastaViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -121,6 +139,14 @@ class SubastaViewSet(viewsets.ModelViewSet):
         queryset = Subasta.objects.all().order_by('precioBase')
         return queryset
 
+    @action(detail=True, methods=["get"])
+    def ofertas(self, request, *args, **kwargs):
+        subasta = self.get_object()
+        ofertas = OfertaSubasta.objects.filter(subasta_id=subasta.id)
+        serializer = OfertaSubastaSerializer(ofertas, many=True)
+        return Response(serializer.data)
+
+
 class OfertaSubastaViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = OfertaSubastaSerializer
@@ -128,6 +154,7 @@ class OfertaSubastaViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = OfertaSubasta.objects.all().order_by('monto')
         return queryset
+
 
 class CreditViewSet(viewsets.ViewSet):
     def list(self, request):
@@ -164,6 +191,9 @@ class ProfileViewSet(viewsets.ViewSet):
         profile = get_object_or_404(queryset, pk=pk)
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
+
+    def create(self, request):
+        user = User.objects.create()
 
 
 class UserViewSet(viewsets.ModelViewSet):
