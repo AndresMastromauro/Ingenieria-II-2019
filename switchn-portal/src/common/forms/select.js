@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import {Field} from "redux-form";
 
 import { Label } from "./misc";
 import { loadData, cleanData } from "../../redux/dataprovider/actions";
@@ -11,7 +12,7 @@ class ChoiceField extends React.Component {
         return (
             <div>
                 <Label htmlFor={this.props.name}>{this.props.label}</Label>
-                <select disabled={!this.props.choices || this.props.choices.length == 0} className={this.props.className ? sClass + this.props.className : sClass } name={this.props.name} value={this.props.value} onChange={this.props.onChange}>
+                <Field component={"select"} disabled={!this.props.choices || this.props.choices.length == 0} className={this.props.className ? sClass + this.props.className : sClass } name={this.props.name} value={this.props.value} /* onChange={this.props.onChange} */>
                     <option key={0} value={this.props.nullKey}>{this.props.nullCaption}</option>
                     { this.props.choices && this.props.choices.map(
                         function(choice) {
@@ -20,7 +21,7 @@ class ChoiceField extends React.Component {
                             return (<option key={choice.value} value={choice.value}>{choice.caption}</option>);
                         }.bind(this)
                     )}
-                </select>
+                </Field>
             </div>
         );
     }
@@ -208,12 +209,13 @@ class _TipoPropiedadChoiceField extends React.Component {
     render() {
         return (
             <ChoiceField
-                label="Tipo"
-                name="tipo-propiedad"
-                value={this.props.value}
+                /* label="Tipo"
+                name={this.props.name}
+                value={this.props.value} */
+                {...this.props}
                 choices={this.props.tipos}
                 adapter={(tipo) => { return {value: tipo.id, caption: tipo.descripcion} }}
-                onChange={this.props.onChange}
+                /* onChange={this.props.input.onChange} */
                 nullCaption={"Elija un tipo..."} />
         );
     }

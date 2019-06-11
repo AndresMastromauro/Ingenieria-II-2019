@@ -40,11 +40,11 @@ class SwitchnAdminDetallePropiedad extends React.Component {
     handleEditTitulo(e) {}
 
     render() {
-        var propiedad = this.state.propiedad;
-        if (!propiedad) return null;
+        // var propiedad = this.state.propiedad;
+        // if (!propiedad) return null;
         return (
             <div className="container">
-                <SwitchnAdminPropiedadForm propiedad={propiedad}/>
+                <SwitchnAdminPropiedadForm /* propiedad={propiedad} *//>
                 {/* <div className="row">
                     <div className="col-md-4">
                         <img src={propiedad.image} style={{width: "100%"}} />
