@@ -75,7 +75,7 @@ export class SwitchnPortalPropiedad extends React.Component {
             }
         }
         sDireccion += `. ${oDireccion.localidad.nombre}, `;
-        sDireccion += `${oDireccion.provincia.nombre}, ${oDireccion.pais.nombre}`;
+        sDireccion += `${oDireccion.provincia.nombre}, ${oDireccion.pais.nombre}.`;
         return sDireccion;
     }
 

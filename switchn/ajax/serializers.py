@@ -27,6 +27,7 @@ class DireccionSerializer(serializers.Serializer):
 
 class PropiedadSerializer(serializers.ModelSerializer):
     direccion = serializers.SerializerMethodField()
+    tipo = serializers.SerializerMethodField()
 
     def get_direccion(self, propiedad):
         calle = propiedad.calle
@@ -55,9 +56,22 @@ class PropiedadSerializer(serializers.ModelSerializer):
             }
         }
 
+    def get_tipo(self, propiedad):
+        return {
+            "id": propiedad.tipo.id,
+            "descripcion": propiedad.tipo.descripcion
+        }
+
     class Meta:
         model = Propiedad
-        fields = '__all__'
+        fields = ('id', 'titulo', 'descripcion', 'direccion', 'image', 'tipo')
+
+
+class TipoPropiedadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoPropiedad
+        fields = ('id', 'descripcion')
+
 
 class EstadoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -1,33 +1,60 @@
+import { omit } from 'lodash';
+
 import {
     DATA_LOADING,
     DATA_LOADED,
-    DATA_FAILED
+    DATA_FAILED,
+    DATA_CLEANED
 } from './actions'
 
 const initialState = {
-    data: {},
-    isLoading: false,
-    errors: {}
+    datamap: {}
 }
 
 function dataprovider(state = initialState, action) {
     switch (action.type) {
         case DATA_LOADING:
-            return {
+            var newstate = {
                 ...state,
-                isLoading: true
-            }
+                datamap: {
+                    ...state.datamap,
+                    [action.key]: {
+                        ...state.datamap[action.key],
+                        isLoading: true
+                    }
+                }
+            };
+            return newstate;
         case DATA_LOADED:
             return {
                 ...state,
-                data: action.data,
-                isLoading: false
+                datamap: {
+                    ...state.datamap,
+                    [action.key]: {
+                        ...state.datamap[action.key],
+                        isLoading: false,
+                        data: action.data
+                    }
+                }
             }
         case DATA_FAILED:
             return {
                 ...state,
-                isLoading: false,
-                errors: action.data
+                datamap: {
+                    ...state.datamap,
+                    [action.key]: {
+                        ...state.datamap[action.key],
+                        isLoading: false,
+                        errors: action.data
+                    }
+                }
+            }
+        case DATA_CLEANED:
+            var newDatamap = Object.assign(state.datamap);
+            delete newDatamap[action.key];
+            return {
+                ...state,
+                datamap: newDatamap
             }
         default:
             return state;

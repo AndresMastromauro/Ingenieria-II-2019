@@ -91,6 +91,12 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
 
         return queryset
 
+class TiposPropiedadViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = TipoPropiedadSerializer
+    queryset = TipoPropiedad.objects.all()
+
+
 class EstadoViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = EstadoSerializer

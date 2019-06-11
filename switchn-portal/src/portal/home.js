@@ -1,87 +1,48 @@
 import React from 'react';
 import $ from 'jquery';
-import { SwitchnPortalPage, SwitchnPortalPropiedad } from '../portal/base';
-import { AJAXDataProvider } from '../common/utils';
-import { DataSourcedChoiceField } from '../common/forms/inputs';
 import { connect } from 'react-redux';
+
+import { SwitchnPortalPage, SwitchnPortalPropiedad } from '../portal/base';
+import { PaisChoiceField, ProvinciaChoiceField, LocalidadChoiceField } from '../common/forms/select';
 import { loadData } from '../redux/dataprovider/actions';
-// import { SwitchnListadoPropiedades } from '../common/listados';
 
 
-class _SwitchnPortalListadoPropiedades extends React.Component {
+class SwitchnPortalListadoPropiedadesVista extends React.Component {
     render() {
-        if (!this.props.data.length) {
-            return <div><p>No hay propiedades para mostrar</p></div>
+        var content;
+        if (this.props.isLoading) {
+            content = <h2>Cargando</h2>;
+        } else if (!this.props.propiedades || this.props.propiedades.length == 0) {
+            content = <h2>No hay propiedades para mostrar</h2>;
+        } else {
+            content = this.props.propiedades.map(
+                function(propiedad) {
+                    return <SwitchnPortalPropiedad key={propiedad.id} propiedad={propiedad} />
+                }
+            );
         }
-        var propiedades = this.props.data.map(
-            function(propiedad) {
-                return <SwitchnPortalPropiedad key={propiedad.id} propiedad={propiedad} />
-            }
-        );
         return (
-            <div>
-                {propiedades}
+            <div className="col-sm-8">
+                {content}
             </div>
         )
     }
 }
 
-/* let SwitchnPortalListadoPropiedades = connect(
-    state => {
-        return {
-            data: state.dataprovider.data
-        }
-    },
-    dispatch => {
-        return {
-            loadData: (sUrl, oParams) => dispatch(loadData(sUrl, oParams))
-        }
-    }
-)(_SwitchnPortalListadoPropiedades); */
-
 class SwitchnPortalPropiedadesFiltros extends React.Component {
     render() {
-        const choiceAdapter = (choice) => { return {value: choice.id, caption: choice.nombre} };
         return (
             <div className="col-sm-4">
                 <form>
                     <div className='form-group'>
-                        <legend className="row">Filtros</legend>
-                    
-                        <div className="row">
-                            <DataSourcedChoiceField
-                                name={"pais"}
-                                dataSourceURL={"/ajax/paises"}
-                                adapter={choiceAdapter}
-                                onChange={this.props.callbacks.onSelectPais}
-                                label={"Pais"} />
-                        </div>
-                        <div className="row">
-                            <DataSourcedChoiceField
-                                dontLoadOnMount
-                                name={"provincia"}
-                                dataSourceURL={"/ajax/provincias"}
-                                dataSourceParams={
-                                    this.props.filtros.pais &&
-                                        { pais: this.props.filtros.pais }
-                                }
-                                adapter={choiceAdapter}
-                                onChange={this.props.callbacks.onSelectProvincia}
-                                label={"Provincia/Estado"} />
-                        </div>
-                        <div className="row">
-                            <DataSourcedChoiceField
-                                dontLoadOnMount
-                                name={"localidad"}
-                                dataSourceURL={"/ajax/localidades"}
-                                dataSourceParams={
-                                    this.props.filtros.provincia &&
-                                        { provincia: this.props.filtros.provincia }
-                                }
-                                adapter={choiceAdapter}
-                                onChange={this.props.callbacks.onSelectLocalidad}
-                                label={"Localidad"} />
-                        </div>
+                        <legend>Filtros</legend>
+                        <PaisChoiceField onChange={this.props.callbacks.onSelectPais} />
+                        <ProvinciaChoiceField
+                            onChange={this.props.callbacks.onSelectProvincia}
+                            pais={this.props.filtros.pais} />
+                        <LocalidadChoiceField
+                            onChange={this.props.callbacks.onSelectLocalidad}
+                            provincia={this.props.filtros.provincia} />
                     </div>
                 </form>
             </div>
@@ -90,7 +51,7 @@ class SwitchnPortalPropiedadesFiltros extends React.Component {
 }
 
 
-class SwitchnPortalListadoPropiedades extends React.Component {
+class _SwitchnPortalListadoPropiedades extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -99,6 +60,18 @@ class SwitchnPortalListadoPropiedades extends React.Component {
         this.onSelectLocalidad = this.onSelectLocalidad.bind(this);
         this.onSelectProvincia = this.onSelectProvincia.bind(this);
         this.onSelectPais = this.onSelectPais.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.loadPropiedades();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        var shouldUpdate = Object.keys(this.state.filtros)
+            .some(key => this.state.filtros[key] !== prevState.filtros[key]);
+        if (shouldUpdate) {
+            this.props.loadPropiedades(this.state.filtros);
+        }
     }
 
     onSelectLocalidad(e) {
@@ -125,26 +98,35 @@ class SwitchnPortalListadoPropiedades extends React.Component {
     render() {
         return (
             <div className="container-fluid">
-                <SwitchnPortalPropiedadesFiltros
-                    filtros={this.state.filtros}
-                    callbacks={{
-                        onSelectLocalidad: this.onSelectLocalidad,
-                        onSelectProvincia: this.onSelectProvincia,
-                        onSelectPais: this.onSelectPais
-                    }} />
-                <div className="col-sm-8">
-                    <AJAXDataProvider
-                        dataSourceURL={"/ajax/propiedades"}
-                        dataSourceParams={this.state.filtros}>
-                        <_SwitchnPortalListadoPropiedades />
-                    </AJAXDataProvider>
+                <div className="row">
+                    <SwitchnPortalPropiedadesFiltros
+                        filtros={this.state.filtros}
+                        callbacks={{
+                            onSelectLocalidad: this.onSelectLocalidad,
+                            onSelectProvincia: this.onSelectProvincia,
+                            onSelectPais: this.onSelectPais
+                        }} />
+                    <SwitchnPortalListadoPropiedadesVista propiedades={this.props.propiedades} />
                 </div>
             </div>
         )
     }
 }
 
-
+let SwitchnPortalListadoPropiedades = connect(
+    state => {
+        var propiedades = state.dataprovider.datamap.propiedades
+        return {
+            propiedades: propiedades && propiedades.data,
+            isLoading: propiedades && propiedades.isLoading
+        }
+    },
+    dispatch => {
+        return {
+            loadPropiedades: (oParams) => dispatch(loadData("propiedades", "/ajax/propiedades", oParams)),
+        }
+    }
+)(_SwitchnPortalListadoPropiedades)
 
 export class SwitchnHome extends React.Component {
     render() {

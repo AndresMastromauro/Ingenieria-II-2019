@@ -17,8 +17,6 @@ class AJAXDataProvider extends React.Component {
             data: []
         };
         this.fetchData = this.fetchData.bind(this);
-        /* this.getData = this.getData.bind(this);
-        this.setParams = this.setParams.bind(this); */
     }
 
     fetchData() {
@@ -38,22 +36,11 @@ class AJAXDataProvider extends React.Component {
             }
         );
     }
-
-    /* getData() {
-        return this.state.data;
-    } */
-
-    /* setParams(oParams) {
-        var newParams = Object.assign(this.state.params);
-        newParams = $.extend(newParams, oParams);
-        this.setState({
-            params: newParams
-        });
-        this.fetchData();
-    } */
     
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.dataSourceParams !== this.props.dataSourceParams) {
+        var propsChanged = Object.keys(prevProps)
+            .some((prop) => prevProps[prop] !== this.props[prop]);
+        if (propsChanged) {
             this.fetchData();
         }
     } 

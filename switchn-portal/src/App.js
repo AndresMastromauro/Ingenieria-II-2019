@@ -5,6 +5,7 @@ import { Provider, connect } from 'react-redux';
 /* import { SwitchnLanding } from './main'; */
 import { SwitchnAdminHome } from './admin/home';
 import { SwitchnAdminPropiedades } from './admin/propiedades';
+import { SwitchnAdminPropiedadPage } from './admin/propiedad_detalle';
 import { SwitchnHome } from './portal/home';
 import { SwitchnPortalLogin } from './portal/login';
 import { SwitchnPortalLogout } from './portal/logout';
@@ -41,8 +42,9 @@ class _App extends React.Component {
             <Router>
               <PrivateRoute exact path="/" component={SwitchnHome} />
               <Route exact path="/login" component={SwitchnPortalLogin} />
-              <Route exact path="/admin" component={SwitchnAdminHome} />
-              <Route exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
+              <PrivateRoute exact path="/admin" component={SwitchnAdminHome} />
+              <PrivateRoute exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
+              <PrivateRoute exact path="/admin/propiedad/:idPropiedad" component={SwitchnAdminPropiedadPage} />
               <PrivateRoute exact path="/logout" component={SwitchnPortalLogout} />
             </Router>
         </div>
