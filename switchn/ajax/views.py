@@ -192,8 +192,6 @@ class ProfileViewSet(viewsets.ViewSet):
         serializer = ProfileSerializer(profile)
         return Response(serializer.data)
 
-    def create(self, request):
-        user = User.objects.create()
 
 
 class UserViewSet(viewsets.ModelViewSet):
