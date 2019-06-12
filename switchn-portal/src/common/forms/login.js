@@ -19,7 +19,6 @@ class _LoginForm extends React.Component {
                     </div> */}
                     <TextField label={"E-mail"} name={"username"} /* onChange={this.handleUserChange} */ />
                     <PasswordField label={"Contraseña"} name={"password"} /* onChange={this.handlePasswordChange} */ />
-                    <NumberField label={"PIN"} name={"pin"} />
                     {/* <div className="form-group">
                         <label htmlFor="username" className="form-label text-muted">Nombre de Usuario</label>
                         <Field name="username" className="form-control" type="text" component={"input"} />

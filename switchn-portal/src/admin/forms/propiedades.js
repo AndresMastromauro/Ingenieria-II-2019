@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Field, reduxForm } from "redux-form";
-import { TipoPropiedadChoiceField } from "../../common/forms/select";
+import { TipoPropiedadChoiceField, WeekField } from "../../common/forms/select";
 import { TextField, TextAreaField } from "../../common/forms/inputs";
 
 class _SwitchnAdminPropiedadForm extends React.Component {
@@ -19,6 +19,7 @@ class _SwitchnAdminPropiedadForm extends React.Component {
                     <TextField label={"Titulo"} name={"titulo"} />
                     <TextAreaField label={"Descripción"} name={"descripcion"} />
                     <TipoPropiedadChoiceField name={"tipo"} />
+                    <WeekField name={"semana"} />
                     { /* TODO: Direccion */}
                 </div>
             </form>

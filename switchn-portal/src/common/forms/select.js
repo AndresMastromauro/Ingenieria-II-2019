@@ -2,8 +2,17 @@ import React from "react";
 import { connect } from "react-redux";
 import {Field} from "redux-form";
 
+/* WeekPicker */
+import DayPicker from "react-day-picker";
+import 'react-day-picker/lib/style.css';
+import moment from "moment";
+import MomentLocaleUtils from "react-day-picker/moment";
+import './weekpicker.css';
+import "moment/locale/es";
+
 import { Label } from "./misc";
 import { loadData, cleanData } from "../../redux/dataprovider/actions";
+
 // import { AJAXDataProvider } from "../utils";
 
 class ChoiceField extends React.Component { 
@@ -236,4 +245,116 @@ let TipoPropiedadChoiceField = connect(
     }
 )(_TipoPropiedadChoiceField);
 
-export { ChoiceField, CalleChoiceField, LocalidadChoiceField, PaisChoiceField, ProvinciaChoiceField, TipoPropiedadChoiceField };
+
+class _WeekField extends React.Component {
+    state = {
+        hoverRange: undefined,
+        selectedDays: [],
+    };
+
+    getWeekDays(weekStart) {
+        const days = [weekStart];
+        for (let i = 1; i < 7; i += 1) {
+            days.push(
+                moment(weekStart)
+                .add(i, 'days')
+                .toDate()
+            );
+        }
+        return days;
+      }
+      
+    getWeekRange(date) {
+        return {
+            from: moment(date)
+                .startOf('week')
+                .toDate(),
+            to: moment(date)
+                .endOf('week')
+                .toDate(),
+        };
+    }
+    
+    handleDayChange = date => {
+        var selectedDays = this.getWeekDays(this.getWeekRange(date).from);
+        this.props.input.onChange(selectedDays[0]);
+        console.log((selectedDays[0]));
+        this.setState({
+            selectedDays: selectedDays,
+        });
+    };
+
+    handleDayEnter = date => {
+        this.setState({
+            hoverRange: this.getWeekRange(date),
+        });
+    };
+
+    handleDayLeave = () => {
+        this.setState({
+            hoverRange: undefined,
+        });
+    };
+
+    handleWeekClick = (weekNumber, days, e) => {
+        this.props.input.onChange(days[0]);
+        this.setState({
+            selectedDays: days,
+        });
+    };
+
+    componentDidMount() {
+        let {value} = this.props.input;
+        this.handleDayChange(value);
+    }
+
+    componentDidUpdate() {
+        /* console.log(this.state.selectedDays);
+        let {onChange} = this.props.input;
+        onChange(this.state.selectedDays[0]); */
+    }
+    
+    render() {
+        const { hoverRange, selectedDays } = this.state;
+    
+        const daysAreSelected = selectedDays.length > 0;
+    
+        const modifiers = {
+            hoverRange,
+            selectedRange: daysAreSelected && {
+                from: selectedDays[0],
+                to: selectedDays[6],
+            },
+            hoverRangeStart: hoverRange && hoverRange.from,
+            hoverRangeEnd: hoverRange && hoverRange.to,
+            selectedRangeStart: daysAreSelected && selectedDays[0],
+            selectedRangeEnd: daysAreSelected && selectedDays[6],
+        };
+        return (
+            <div className="WeekPicker">
+                <DayPicker
+                    selectedDays={selectedDays}
+                    showWeekNumbers
+                    showOutsideDays
+                    modifiers={modifiers}
+                    onDayClick={this.handleDayChange}
+                    onDayMouseEnter={this.handleDayEnter}
+                    onDayMouseLeave={this.handleDayLeave}
+                    onWeekClick={this.handleWeekClick}
+                    localeUtils={MomentLocaleUtils}
+                    locale={'es'}
+                />
+            </div>
+        );
+    }
+}
+
+class WeekField extends React.Component {
+    render() {
+        return (
+            <Field name={this.props.name} component={_WeekField} />
+        )
+    }
+}
+
+export { ChoiceField, CalleChoiceField, LocalidadChoiceField, PaisChoiceField, ProvinciaChoiceField, TipoPropiedadChoiceField, WeekField };
