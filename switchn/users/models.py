@@ -12,7 +12,8 @@ class Credit(models.Model):
         return (self.user, self.expirationDate)
 
 class Membresia(models.Model):
-    tipo = models.CharField(max_length=200,default='estandar')
+    tipo = models.CharField(max_length=200, null=False)
+    arancel = models.DecimalField(max_digits=15, decimal_places=2)
 
     def __str__(self):
         return self.tipo
@@ -25,4 +26,7 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} Profile'
+
+    def get_credit_count(self):
+        return self.user.credit_set.exclude(expirationDate__le=timezone.now).count()
 

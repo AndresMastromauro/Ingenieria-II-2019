@@ -96,14 +96,14 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
     def reservas(self, request, *args, **kwargs):
         ''' Trae las reservas adjudicadas '''
         propiedad = self.get_object()
-        reservas = Reserva.objects.filter(propiedad_id=propiedad.id).exclude(cliente__isnull=True)
+        reservas = propiedad.reserva_set.exclude(cliente__isnull=True)
         return Response(ReservaSerializer(reservas, many=True).data)
 
     @action(detail=True)
     def subastas(self, request, *args, **kwargs):
-        propiedad = self.get_object()
-        subastas = Subasta.objects.filter(reserva__propiedad_id=propiedad.id)
-        return Response(SubastaSerializer(subastas, many=True).data)
+        subastas = self.get_object().get_subastas()
+        serializer = SubastaSerializer(subastas, many=True)
+        return Response(serializer.data)
 
 
 class TiposPropiedadViewSet(viewsets.ModelViewSet):

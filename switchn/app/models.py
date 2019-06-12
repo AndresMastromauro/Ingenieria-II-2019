@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from datetime import date, timedelta
 
 
 def validate_monday(value):
@@ -78,6 +79,19 @@ class Propiedad (models.Model):
     def __str__(self):
         return "{0}: {1} ({2})".format(self.titulo, self.string_direccion(), self.tipo)
 
+    def is_available_on_week(self, semana):
+        # NOTA: se asume que date.weekday() y reserva.semana.weekday() = 0 (lunes)
+        if self.reserva_set.filter(semana=semana).exclude(cliente__isnull=True).exists():
+            # esta reservada
+            return False
+        hoy = semana.today()
+        seis_meses = timedelta(weeks=25)
+        un_anio = timedelta(weeks=52)
+        return (hoy + seis_meses) < semana < (hoy + un_anio)
+
+    def get_subastas(self):
+        return Subasta.objects.filter(reserva__propiedad=self).filter(estado=1)
+
     class Meta:
         unique_together = (('calle', 'numero', 'piso', 'dpto'),)
 
@@ -93,8 +107,16 @@ class Reserva (models.Model):
         semana = self.semana.isocalendar()[1]
         return "{0} ({1}, semana: {2})".format(self.propiedad, anio, semana)
 
+    def is_open(self):
+        return self.cliente is None
+
+    def is_hotsale_ready(self):
+        semanas_restantes = self.semana - date.today()
+        return self.is_open() and (timedelta(weeks=1) < semanas_restantes < timedelta(weeks=25))
+
     class Meta:
         unique_together = (('semana','propiedad'),)
+
 
 class Subasta (models.Model):
     precioBase = models.DecimalField(max_digits=15, decimal_places=2)
@@ -106,6 +128,24 @@ class Subasta (models.Model):
         semana = self.reserva.semana.isocalendar() [1]
         return "{0} / base: ${1} ({2}, semana: {3})".format(self.reserva.propiedad.titulo, self.precioBase, anio, semana)
 
+    def is_open(self):
+        return self.estado.id == 1 and self.reserva.is_open()
+
+    def get_best_offer(self):
+        # siempre es la ultima si controlamos el monto en la creacion
+        return self.ofertasubasta_set.last()
+
+    def make_offer(self, cliente, monto):
+        if monto <= self.precioBase:
+            raise ValidationError("El monto ingresado debe ser mayor al precio base")
+
+        if self.get_best_offer() is not None and monto <= self.get_best_offer().monto:
+            raise ValidationError("El monto ingresado debe ser mayor al de la última oferta")
+
+        return self.ofertasubasta_set.create(cliente=cliente, monto=monto)
+
+    def close(self):
+        pass
 
 
 
@@ -115,7 +155,9 @@ class OfertaSubasta (models.Model):
     fechaHora = models.DateTimeField(default=timezone.now)
     monto = models.DecimalField(max_digits=15, decimal_places=2)
 
-    class Meta:
-        unique_together = (('cliente','subasta'),)
+    def __str__(self):
+        return f'[{self.subasta}] {self.cliente} => ${self.monto} ({date.strftime(self.fechaHora, "%d/%m/%Y - %H:%M:%S")})'
+    # class Meta:
+        # unique_together = (('cliente','subasta'),) <- por que?
 
 
