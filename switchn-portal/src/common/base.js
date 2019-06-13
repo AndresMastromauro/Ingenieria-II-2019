@@ -72,11 +72,7 @@ class SwitchnMainContainer extends React.Component {
         var children = React.Children.map(this.props.children, child => React.cloneElement(child, this.props));
         return (
             <main role="main" className="container">
-                <div className="row">
-                    <div className="col-md-10">
-                        {children}
-                    </div>
-                </div>
+                {children}
             </main>
         );
     }

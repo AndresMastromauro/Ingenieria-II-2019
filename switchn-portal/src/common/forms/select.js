@@ -67,8 +67,8 @@ class _CalleChoiceField extends React.Component {
     render() {
         return (
             <ChoiceField
-                label="Calle"
-                name="calle"
+                label={"Calle"}
+                name={"calle"}
                 value={this.props.value}
                 choices={this.props.calles}
                 adapter={(calle) => { return {value: calle.id, caption: calle.nombre} }}
@@ -90,7 +90,7 @@ let CalleChoiceField = connect(
             cleanUp: () => dispatch(cleanData("calles"))
         }
     }
-);
+)(_CalleChoiceField);
 
 
 
