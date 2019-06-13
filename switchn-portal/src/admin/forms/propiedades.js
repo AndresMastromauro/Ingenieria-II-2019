@@ -43,7 +43,7 @@ class __SwitchnAdminPropiedadForm extends React.Component {
                         </div>
                     </div>
                     <div className="row form-group">
-                        <div className="col-4">
+                        <div className="col-6">
                             <CalleChoiceField name={"calle"} localidad={values && values.localidad} />
                         </div>
                         <div className="col-2">
