@@ -7,6 +7,8 @@ from .serializers import *
 from users.models import *
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+import random
+
 
 class PaisesViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -216,5 +218,49 @@ class UserViewSet(viewsets.ModelViewSet):
 #    serializer_class = PropiedadLivianaSerializer
 #    queryset = Propiedad.objects.all()
 #    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+class PropiedadesRandomViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = PropiedadSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = PropiedadCreacionSerializer(data=request.data)
+        if serializer.is_valid():
+            Propiedad.objects.create(**serializer.validated_data)
+            return Response("Ok")
+        return Response("bad")
+
+    def get_queryset(self):
+        queryset = Propiedad.objects.all()
+        localidad = self.request.query_params.get('localidad', None)
+        if localidad is not None:
+            return queryset.filter(calle__localidad_id=localidad).order_by('?')
+
+        provincia = self.request.query_params.get('provincia', None)
+        if provincia is not None:
+            return queryset.filter(calle__localidad__provincia_id=provincia).order_by('?')
+
+        pais = self.request.query_params.get('pais', None)
+        if pais is not None:
+            return queryset.filter(calle__localidad__provincia__pais_id=pais).order_by('?')
+
+        return queryset.order_by('?')[:1]
+
+
+class SubastaRandomViewSet(viewsets.ModelViewSet):
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    serializer_class = SubastaSerializer
+
+    def get_queryset(self):
+        queryset = Subasta.objects.all().order_by('?')[:1]
+        return queryset
+
+    @action(detail=True, methods=["get"])
+    def ofertas(self, request, *args, **kwargs):
+        subasta = self.get_object()
+        ofertas = OfertaSubasta.objects.filter(subasta_id=subasta.id)
+        serializer = OfertaSubastaSerializer(ofertas, many=True)
+        return Response(serializer.data)
+
 
 

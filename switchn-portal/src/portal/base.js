@@ -7,6 +7,7 @@ import {
     SwitchnNavbarLink,
     SwitchnNavbarTabs
 } from "../common/base";
+import { Button, Card} from 'react-bootstrap';
 
 class SwitchnPortalNavbarTabs extends React.Component {
     render() {
@@ -112,3 +113,4 @@ export class SwitchnPortalPage extends React.Component {
         )
     }
 }
+
