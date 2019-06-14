@@ -2,6 +2,8 @@ import React from "react";
 import { TextField, PasswordField, SubmitButton, NumberField } from './inputs';
 // import { SubmitButton } from './inputs';
 import { Field, reduxForm } from 'redux-form';
+import { link } from "fs";
+import { Link } from "../base";
 
 class _LoginForm extends React.Component {
     render() {
@@ -22,6 +24,7 @@ class _LoginForm extends React.Component {
                     <div className="form-group">
                         <SubmitButton>Acceder</SubmitButton>
                     </div>
+                    <Link url={'/registrar'}> <small>No tenes cuenta? registrate</small> </Link>
                 </fieldset>
             </form>
         )
