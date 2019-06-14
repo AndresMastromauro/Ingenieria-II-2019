@@ -37,49 +37,28 @@ function loginFailed(oData) {
     }
 }
 
-function getCookie(name) {
-    var cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        var cookies = document.cookie.split(';');
-        for (var i = 0; i < cookies.length; i++) {
-            var cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
-function getCSRFToken() {
-    var csrftoken = getCookie('csrftoken');
-    return csrftoken;
-}
 
 export const loadUser = () => {
     return (dispatch, getState) => {
         dispatch({type: USER_LOADING});
         var token = getState().auth.token
-        if (token === null) {
+        if (token == null) {
             token = localStorage.getItem("token");
         }
-        if (token === null) {
-            dispatch(authError(null))
+        if (token == null) {
+            return dispatch(authError(null));  
         }
         $.ajax({
             url: '/auth/user',
             dataType: 'json',
             beforeSend: (xhr) => {
-                xhr.setRequestHeader("Authorization",`Token ${token}`)
-                xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
+                xhr.setRequestHeader("Authorization",`Token ${token}`);
             }
         }).done(
             (data) => {
                 $.ajaxSetup({
                     beforeSend: (xhr) => {
                         xhr.setRequestHeader("Authorization", `Token ${token}`);
-                        xhr.setRequestHeader("X-CSRFToken", getCSRFToken());
                     }
                 });
                 dispatch(userLoaded({

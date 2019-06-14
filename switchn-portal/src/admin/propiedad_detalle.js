@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Route } from "react-router-dom";
+import $ from "jquery";
 
 import { loadData, cleanData } from "../redux/dataprovider/actions";
 import { SwitchnAdminPage } from "./base";
@@ -37,25 +38,22 @@ class SwitchnAdminDetallePropiedad extends React.Component {
         }
     }
 
-    handleEditTitulo(e) {}
-
     render() {
-        // var propiedad = this.state.propiedad;
-        // if (!propiedad) return null;
+        var propiedad = this.state.propiedad;
+        if (!propiedad) return null;
         return (
             <div className="container">
-                <SwitchnAdminPropiedadForm /* propiedad={propiedad} *//>
-                {/* <div className="row">
+                <div className="row">
                     <div className="col-md-4">
                         <img src={propiedad.image} style={{width: "100%"}} />
-                        <Link to={""}>Cambiar Imagen</Link>
                     </div>
                     <div className="col-md-8">
                         <form>
                             <table>
                                 <tbody>
                                     <tr>
-                                        <td><TextField label="Titulo" name="titulo" value={propiedad.titulo} onChange={this.handleEditTitulo} /></td>
+                                        <th scope="row">Titulo:</th>
+                                        <td>{propiedad.titulo}</td>
                                     </tr>
                                     <tr>
                                         <th scope="row">Descripción:</th>
@@ -73,7 +71,7 @@ class SwitchnAdminDetallePropiedad extends React.Component {
                             </table>
                         </form>
                     </div>
-                </div> */}
+                </div>
             </div>
         );
     }
@@ -88,6 +86,7 @@ class _SwitchnAdminPropiedadPage extends React.Component {
     componentWillUnmount() {
         this.props.cleanUp();
     }
+
     render() {
         return (
             <SwitchnAdminPage>

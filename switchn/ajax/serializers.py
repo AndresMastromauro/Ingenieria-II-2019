@@ -65,6 +65,10 @@ class PropiedadSerializer(serializers.ModelSerializer):
         model = Propiedad
         fields = ('id', 'titulo', 'descripcion', 'direccion', 'image', 'tipo')
 
+class PropiedadCreacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Propiedad
+        fields = '__all__'
 
 class EstadoSubastaSerializer(serializers.ModelSerializer):
     class Meta:

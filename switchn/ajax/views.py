@@ -76,6 +76,13 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = PropiedadSerializer
 
+    def create(self, request, *args, **kwargs):
+        serializer = PropiedadCreacionSerializer(data=request.data)
+        if serializer.is_valid():
+            Propiedad.objects.create(**serializer.validated_data)
+            return Response("Ok")
+        return Response("bad")
+
     def get_queryset(self):
         queryset = Propiedad.objects.all()
         localidad = self.request.query_params.get('localidad', None)

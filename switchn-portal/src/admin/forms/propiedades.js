@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Field, reduxForm, getFormValues } from "redux-form";
 import { TipoPropiedadChoiceField, WeekField, PaisChoiceField, ProvinciaChoiceField, LocalidadChoiceField, CalleChoiceField } from "../../common/forms/select";
-import { TextField, TextAreaField, NumberField } from "../../common/forms/inputs";
+import { TextField, TextAreaField, NumberField, SubmitButton } from "../../common/forms/inputs";
 import { ImagePicker } from "../../common/forms/imagepicker";
 
 const PROPIEDAD_FORM_NAME = "crear-propiedad";
@@ -60,6 +60,9 @@ class __SwitchnAdminPropiedadForm extends React.Component {
                 <div className="col-4">
                     <legend>Foto</legend>
                     <ImagePicker name="image" />
+                </div>
+                <div className="col">
+                    <SubmitButton>Guardar Propiedad</SubmitButton>
                 </div>
             </form>
         );

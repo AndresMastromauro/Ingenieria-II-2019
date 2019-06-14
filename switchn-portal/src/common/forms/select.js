@@ -56,9 +56,18 @@ class DataSourcedChoiceField extends React.Component {
 
 
 class _CalleChoiceField extends React.Component {
+    componentDidMout() {
+        if (this.props.localidad != undefined) {
+            this.props.loadCalles(this.props.localidad);
+        }
+    }
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.localidad !== this.props.localidad) {
-            this.props.loadCalles(this.props.provincia);
+        if (this.props.localidad != undefined) {
+            if (prevProps.localidad !== this.props.localidad) {
+                this.props.loadCalles(this.props.localidad);
+            }
+        } else {
+            this.props.cleanUp();
         }
     }
     componentWillUnmount() {
@@ -95,9 +104,18 @@ let CalleChoiceField = connect(
 
 
 class _LocalidadChoiceField extends React.Component {
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.provincia !== this.props.provincia) {
+    componentDidMout() {
+        if (this.props.provincia != undefined) {
             this.props.loadLocalidades(this.props.provincia);
+        }
+    }
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.provincia != undefined) {
+            if (prevProps.provincia !== this.props.provincia) {
+                this.props.loadLocalidades(this.props.provincia);
+            }
+        } else {
+            this.props.cleanUp();
         }
     }
     componentWillUnmount() {
@@ -134,14 +152,26 @@ let LocalidadChoiceField = connect(
 
 
 class _ProvinciaChoiceField extends React.Component {
-    componentDidUpdate(prevProps, prevState) {
-        if (prevProps.pais !== this.props.pais) {
+    componentDidMout() {
+        if (this.props.pais != undefined) {
             this.props.loadProvincias(this.props.pais);
         }
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.props.pais != undefined) {
+            if (prevProps.pais !== this.props.pais) {
+                this.props.loadProvincias(this.props.pais);
+            }
+        } else {
+            this.props.cleanUp();
+        }
+    }
+
     componentWillUnmount() {
         this.props.cleanUp();
     }
+
     render() {
         return (
             <ChoiceField
@@ -187,7 +217,8 @@ class _PaisChoiceField extends React.Component {
                 choices={this.props.paises}
                 adapter={(pais) => { return {value: pais.id, caption: pais.nombre} }}
                 onChange={this.props.onChange}
-                nullCaption={"Elija un pais..."} />
+                nullCaption={"Elija un pais..."}
+            />
         )
     }
 }

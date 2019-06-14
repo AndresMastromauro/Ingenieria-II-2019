@@ -1,6 +1,8 @@
 import React from 'react';
 import $ from 'jquery';
 import { connect } from 'react-redux';
+import { reduxForm, getFormValues } from "redux-form";
+import FlexView from "react-flexview";
 
 import { SwitchnPortalPage, SwitchnPortalPropiedad } from '../portal/base';
 import { PaisChoiceField, ProvinciaChoiceField, LocalidadChoiceField } from '../common/forms/select';
@@ -29,84 +31,68 @@ class SwitchnPortalListadoPropiedadesVista extends React.Component {
     }
 }
 
-class SwitchnPortalPropiedadesFiltros extends React.Component {
+class __SwitchnPortalPropiedadesFiltros extends React.Component {
     render() {
-        return (
-            <div className="col-sm-4">
-                <form>
-                    <div className='form-group'>
-                        <legend>Filtros</legend>
-                        <PaisChoiceField onChange={this.props.callbacks.onSelectPais} />
-                        <ProvinciaChoiceField
-                            onChange={this.props.callbacks.onSelectProvincia}
-                            pais={this.props.filtros.pais} />
-                        <LocalidadChoiceField
-                            onChange={this.props.callbacks.onSelectLocalidad}
-                            provincia={this.props.filtros.provincia} />
-                    </div>
-                </form>
-            </div>
+        var pais;
+        var provincia;
+        if (this.props.filtros) {
+            pais = this.props.filtros.pais;
+            provincia = this.props.filtros.provincia;
+        }
+        return ( 
+            <form>
+                <div className='form-group'>
+                    <legend>Filtros</legend>
+                    <PaisChoiceField />
+                    <ProvinciaChoiceField pais={pais} />
+                    <LocalidadChoiceField provincia={provincia} />
+                </div>
+            </form>
         );
     }
 }
 
+let _SwitchnPortalPropiedadesFiltros = connect(
+    state => {
+        return {
+            filtros: getFormValues("propiedades-filtros")(state)
+        }
+    }
+)(__SwitchnPortalPropiedadesFiltros);
+
+let SwitchnPortalPropiedadesFiltros = reduxForm({
+    form: "propiedades-filtros"
+})(_SwitchnPortalPropiedadesFiltros);
+
 
 class _SwitchnPortalListadoPropiedades extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            filtros: {}
-        }
-        this.onSelectLocalidad = this.onSelectLocalidad.bind(this);
-        this.onSelectProvincia = this.onSelectProvincia.bind(this);
-        this.onSelectPais = this.onSelectPais.bind(this);
-    }
 
     componentDidMount() {
         this.props.loadPropiedades();
     }
 
     componentDidUpdate(prevProps, prevState) {
-        var shouldUpdate = Object.keys(this.state.filtros)
-            .some(key => this.state.filtros[key] !== prevState.filtros[key]);
-        if (shouldUpdate) {
-            this.props.loadPropiedades(this.state.filtros);
+        if (this.props.filtros !== undefined && prevProps.filtros !== undefined) {
+            var shouldUpdate = Object.keys(this.props.filtros)
+                .some(key => this.props.filtros[key] !== prevProps.filtros[key]);
+            if (shouldUpdate) {
+                this.props.loadPropiedades(this.props.filtros);
+            }
+        } else if (this.props.filtros !== undefined) {
+            this.props.loadPropiedades(this.props.filtros);
         }
-    }
-
-    onSelectLocalidad(e) {
-        var filtros = $.extend({}, this.state.filtros);
-        filtros.localidad = e.target.value;
-        this.setState({filtros: filtros});
-    }
-
-    onSelectProvincia(e) {
-        var filtros = {
-            pais: this.state.filtros.pais,
-            provincia: e.target.value
-        };
-        this.setState({filtros: filtros});
-    }
-
-    onSelectPais(e) {
-        var filtros = {
-            pais: e.target.value
-        };
-        this.setState({filtros: filtros});
     }
 
     render() {
         return (
             <div className="container-fluid">
                 <div className="row">
-                    <SwitchnPortalPropiedadesFiltros
-                        filtros={this.state.filtros}
-                        callbacks={{
-                            onSelectLocalidad: this.onSelectLocalidad,
-                            onSelectProvincia: this.onSelectProvincia,
-                            onSelectPais: this.onSelectPais
-                        }} />
-                    <SwitchnPortalListadoPropiedadesVista propiedades={this.props.propiedades} />
+                    <div className="col-4">
+                        <SwitchnPortalPropiedadesFiltros />
+                    </div>
+                    <div className="col-8">
+                        <SwitchnPortalListadoPropiedadesVista propiedades={this.props.propiedades} />
+                    </div>
                 </div>
             </div>
         )
@@ -115,8 +101,9 @@ class _SwitchnPortalListadoPropiedades extends React.Component {
 
 let SwitchnPortalListadoPropiedades = connect(
     state => {
-        var propiedades = state.dataprovider.datamap.propiedades
+        var propiedades = state.dataprovider.datamap.propiedades;
         return {
+            filtros: getFormValues("propiedades-filtros")(state),
             propiedades: propiedades && propiedades.data,
             isLoading: propiedades && propiedades.isLoading
         }
@@ -126,7 +113,7 @@ let SwitchnPortalListadoPropiedades = connect(
             loadPropiedades: (oParams) => dispatch(loadData("propiedades", "/ajax/propiedades", oParams)),
         }
     }
-)(_SwitchnPortalListadoPropiedades)
+)(_SwitchnPortalListadoPropiedades);
 
 export class SwitchnHome extends React.Component {
     render() {
