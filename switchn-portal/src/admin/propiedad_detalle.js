@@ -44,12 +44,12 @@ class SwitchnAdminDetallePropiedad extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-md-4">
+                    <div className="col-4">
                         <img src={propiedad.image} style={{width: "100%"}} />
                     </div>
-                    <div className="col-md-8">
+                    <div className="col-8">
                         <form>
-                            <table>
+                            <table className="table table-stripped">
                                 <tbody>
                                     <tr>
                                         <th scope="row">Titulo:</th>
@@ -89,7 +89,7 @@ class _SwitchnAdminPropiedadPage extends React.Component {
 
     render() {
         return (
-            <SwitchnAdminPage>
+            <SwitchnAdminPage title={this.props.propiedad && this.props.propiedad.titulo}>
                 <SwitchnAdminDetallePropiedad propiedad={this.props.propiedad} />
             </SwitchnAdminPage>
         )

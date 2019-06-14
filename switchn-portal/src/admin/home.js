@@ -5,7 +5,7 @@ export class SwitchnAdminHome extends React.Component {
     render() {
         return (
             <SwitchnAdminPage title={"Home Administración"} user={this.props.usuario}>
-                Hola
+                <p>Hola</p>
             </SwitchnAdminPage>
         )
     }
