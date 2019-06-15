@@ -249,17 +249,22 @@ class PropiedadesRandomViewSet(viewsets.ModelViewSet):
 
 class SubastaRandomViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = SubastaSerializer
+    serializer_class = subastaRandonSerializer
 
     def get_queryset(self):
         queryset = Subasta.objects.all().order_by('?')[:1]
         return queryset
 
     @action(detail=True, methods=["get"])
-    def ofertas(self, request, *args, **kwargs):
-        subasta = self.get_object()
-        ofertas = OfertaSubasta.objects.filter(subasta_id=subasta.id)
-        serializer = OfertaSubastaSerializer(ofertas, many=True)
+    def reservaSubRan(self, request, pk=None):
+        reserva = Reserva.objects.filter(subasta__id=pk)
+        serializer = ReservaSerializer(reserva, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=["get"])
+    def propiedadSubRan(self, request, pk=None):
+        prop = Propiedad.objects.filter(id=pk)
+        serializer = PropiedadSerializer(prop, many=True)
         return Response(serializer.data)
 
 

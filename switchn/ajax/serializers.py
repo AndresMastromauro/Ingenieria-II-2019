@@ -116,3 +116,19 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = '__all__'
+
+class reservaRandomSerializer(serializers.ModelSerializer):
+    propiedad = PropiedadSerializer(many=False, read_only=True)
+
+    class Meta:
+        model=Reserva
+        fields=('semana', 'propiedad')
+
+
+
+class subastaRandonSerializer(serializers.ModelSerializer):
+    reserva = reservaRandomSerializer(many=False, read_only=True)
+
+    class Meta:
+        model=Subasta
+        fields=('precioBase', 'estado', 'reserva')
