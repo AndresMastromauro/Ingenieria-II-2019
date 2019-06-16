@@ -4,6 +4,9 @@ import { Redirect } from "react-router-dom";
 import { LoginForm } from "../common/forms/login";
 import { SwitchnPortalPage } from "./base";
 import { login } from "../redux/auth/actions";
+import { PropiedadCard } from './homeSinRegistrarPropiedad';
+import { PropiedadCardSubasta } from './homeSinRegistrarSubasta';
+import { Row, Col } from "react-bootstrap";
 
 class _SwitchnPortalLogin extends React.Component {
 
@@ -18,7 +21,18 @@ class _SwitchnPortalLogin extends React.Component {
         return (
             <SwitchnPortalPage>
                 <div className="justify-content-center">
+                <Row>
+                    <Col>
                     <LoginForm onSubmit={this.onSubmit}/>
+                    </Col>
+                    <Col>
+                    <PropiedadCard/>
+                    </Col>
+                    <Col>
+                    <PropiedadCardSubasta/>
+                    </Col>
+
+                </Row>   
                 </div>
             </SwitchnPortalPage>
         )

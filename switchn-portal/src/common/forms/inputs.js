@@ -2,6 +2,7 @@ import React from "react";
 import { Field } from "redux-form";
 import { Label } from "./misc";
 
+
 class Input extends React.Component {
     render() {
         return (
@@ -24,6 +25,8 @@ class Input extends React.Component {
         );
     }
 }
+
+
 
 class Button extends React.Component {
     render() {
@@ -52,6 +55,11 @@ class SubmitButton extends React.Component {
 class TextField extends React.Component {
     render() {
         return <Input {...this.props} type="text" />
+    }
+}
+class EmailField extends React.Component {
+    render() {
+        return <Input {...this.props} type="email" />
     }
 }
 
@@ -139,4 +147,4 @@ class NumberField extends React.Component {
 
 
 
-export { TextField, TextAreaField, NumberField, PasswordField, Button, SubmitButton };
+export { TextField, TextAreaField, NumberField, PasswordField, Button, SubmitButton, EmailField  };

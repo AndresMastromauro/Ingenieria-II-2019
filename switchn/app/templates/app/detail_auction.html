@@ -5,7 +5,7 @@
         <article class="media content-section">
 			<div class="media-body">
 				<div class="article-metadata">
-					<img class="account-img" src="{{ detalle.imagen.url }}"> </img>
+					<img class="img" style="max-width: 100%; display:block; height: auto; margin-bottom: 2vh" src="{{ detalle.imagen.url }}">
 					<small class="text-muted">{{ subasta.reserva.propiedad.date_posted | date:"d F Y" }}</small>
 				</div>
 				<img src="{{ detalle.img.url }}" alt="">
@@ -24,6 +24,7 @@
                 {% if user.is_authenticated %}
                 <br>
                 <br>
+
                 <form method="post">
                     {%csrf_token%}
                   <div class="form-group">
@@ -32,7 +33,12 @@
                     <small id="emailHelp" class="form-text text-muted">{{ mensaje }}</small>
                   </div>
                     <button type="submit" class="btn btn-success">Pujar </button>
+
                 </form>
+
+                {% if user.is_superuser%}
+                <a href="{% url 'admin-close_auction' pk=subasta.pk %}"><button class="btn btn-danger">Cerrar Subasta</button></a>
+                {% endif %}
                 {% endif %}
 
 

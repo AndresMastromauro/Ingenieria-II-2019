@@ -6,6 +6,8 @@ export const LOGIN_SUCCESSFUL = "LOGIN_SUCCESSFUL";
 export const AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR";
 export const LOGIN_FAILED = "LOGIN_FAILED";
 export const LOGOUT_SUCCESSFUL = "LOGOUT_SUCCESSFUL";
+export const REGISTER_SUCCESS = "REGISTER_SUCCESS";
+export const REGISTER_FAIL = "REGISTER_FAIL";
 
 function userLoaded(oData) {
     return {
@@ -20,6 +22,20 @@ function authError(err) {
         data: {
             errors: err
         }
+    }
+}
+
+function singUpSuccessful(oData) {
+    return {
+        type: REGISTER_SUCCESS,
+        data: oData
+    }
+}
+
+function singUpFailed(oData) {
+    return {
+        type: REGISTER_FAIL,
+        data: oData
     }
 }
 
@@ -114,3 +130,32 @@ export const logout = () => {
         }
     }
 }
+
+export const singUp = (username, first_name, last_name, email, password) => {
+    return (dispatch, getState) => {
+        return $.ajax({
+            url: "/auth/register/",
+            method: "POST",
+            data: {
+                username: username,
+                first_name: first_name,
+                last_name: last_name,
+                email: email,
+                password: password,
+               
+            },
+            dataType: "json"
+        }).done(
+            (data) => dispatch(singUpSuccessful(data))
+        ).fail(
+            function (xhr, status, err) {
+                if (xhr.status === 403 || xhr.status === 401) {
+                    dispatch(authError(xhr.responseJSON && xhr.responseJSON.detail));
+                } else {
+                    dispatch(singUpFailed(xhr.responseJSON && xhr.responseJSON.non_field_errors));
+                }
+            }
+        )
+    }
+}
+

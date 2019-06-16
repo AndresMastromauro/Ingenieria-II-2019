@@ -2,7 +2,6 @@ import React from 'react';
 import $ from 'jquery';
 import { connect } from 'react-redux';
 import { reduxForm, getFormValues } from "redux-form";
-import FlexView from "react-flexview";
 
 import { SwitchnPortalPage, SwitchnPortalPropiedad } from '../portal/base';
 import { PaisChoiceField, ProvinciaChoiceField, LocalidadChoiceField } from '../common/forms/select';

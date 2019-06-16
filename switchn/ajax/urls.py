@@ -26,6 +26,11 @@ router.register(r'profile', views.ProfileViewSet, basename='profile')
 router.register(r'usuarios', views.UserViewSet, basename='usuarios')
 
 
+# Accesos random a propiedad y subasta
+router.register(r'propiedadRandom', views.PropiedadesRandomViewSet, basename='propiedadRandom')
+router.register(r'subastaRandom', views.SubastaRandomViewSet, basename='subastaRandom')
+
+
 urlpatterns = [
     path('', include(router.urls)),
     path('calle/<int:pk>', views.CalleDetailView, name="calle-detail"),

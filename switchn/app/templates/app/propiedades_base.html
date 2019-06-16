@@ -3,7 +3,7 @@
 {% for post in posts %}
 <article class="media content-section">
 	<div class="media-body">
-		<img class="account-img" src="{{ post.imagen.url }}">
+		<img class="img" style="max-width: 100%; display:block; height: auto; margin-bottom: 2vh" src="{{ post.imagen.url }}">
 		<h2><a class="article-title" >{{ post.titulo }}</a></h2> <!-- {% url 'app-detail_auction' pk=post.pk %} -->
 		<p><small>{{ post.direccion }}</small></p>
 		<p class="article-content">{{ post.descripcion }}</p>
