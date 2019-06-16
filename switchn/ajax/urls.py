@@ -25,6 +25,7 @@ router.register(r'membresia', views.MembresiaViewSet, basename='membresia')
 router.register(r'profile', views.ProfileViewSet, basename='profile')
 router.register(r'usuarios', views.UserViewSet, basename='usuarios')
 
+
 # Accesos random a propiedad y subasta
 router.register(r'propiedadRandom', views.PropiedadesRandomViewSet, basename='propiedadRandom')
 router.register(r'subastaRandom', views.SubastaRandomViewSet, basename='subastaRandom')
