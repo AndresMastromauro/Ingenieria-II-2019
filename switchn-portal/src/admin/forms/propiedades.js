@@ -61,26 +61,27 @@ class __SwitchnAdminPropiedadForm extends React.Component {
                     <legend>Foto</legend>
                     <ImagePicker name="image" />
                 </div>
-                <div className="col">
-                    <SubmitButton>Guardar Propiedad</SubmitButton>
-                </div>
+                    <div className="col">
+                        <SubmitButton>Guardar Propiedad</SubmitButton>
+                    </div>
             </form>
         );
     }
 }
 
 
+const _SwitchnAdminPropiedadForm = reduxForm({
+    form: PROPIEDAD_FORM_NAME
+})(__SwitchnAdminPropiedadForm);
 
-let _SwitchnAdminPropiedadForm = connect(
+let SwitchnAdminPropiedadForm = connect(
     state => {
         return {
+            initialValues: state.dataprovider.datamap.propiedad && state.dataprovider.datamap.propiedad.data,
             values: getFormValues(PROPIEDAD_FORM_NAME)(state)
         }
     }
-)(__SwitchnAdminPropiedadForm);
+)(_SwitchnAdminPropiedadForm);
 
-const SwitchnAdminPropiedadForm = reduxForm({
-    form: PROPIEDAD_FORM_NAME
-})(_SwitchnAdminPropiedadForm);
 
 export { SwitchnAdminPropiedadForm };

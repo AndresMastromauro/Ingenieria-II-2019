@@ -28,10 +28,18 @@ class TipoPropiedadSerializer(serializers.ModelSerializer):
         model = TipoPropiedad
         fields = ('id', 'descripcion')
 
+class ImagenPropiedadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImagenPropiedad
+        fields = ["data"]
 
 class PropiedadSerializer(serializers.ModelSerializer):
     direccion = serializers.SerializerMethodField()
     tipo = TipoPropiedadSerializer()
+    image = serializers.SerializerMethodField()
+
+    def get_image(self, propiedad):
+        return propiedad.image.data
 
     def get_direccion(self, propiedad):
         calle = propiedad.calle
@@ -59,7 +67,6 @@ class PropiedadSerializer(serializers.ModelSerializer):
                 "id": pais.id
             }
         }
-
 
     class Meta:
         model = Propiedad

@@ -5,14 +5,14 @@ import $ from "jquery";
 import { SwitchnAdminPage } from "./base";
 import { SwitchnAdminPropiedadForm } from "./forms/propiedades";
 
-class _SwitchnAdminCrearPropiedadPage extends React.Component {
+class _SwitchnAdminModificarPropiedadPage extends React.Component {
 
-    crearPropiedad = (values) => {
+    modificarPropiedad = (values) => {
         $.ajax({
             url: "/ajax/propiedades/",
             data: values,
             dataType: "json",
-            method: "POST",
+            method: "PUT",
             beforeSend: xhr => { xhr.setRequestHeader("Authorization", `Token ${this.props.token}`)}
         }).done(
             data => alert(data)
@@ -24,18 +24,18 @@ class _SwitchnAdminCrearPropiedadPage extends React.Component {
     render() {
         return (
             <SwitchnAdminPage>
-                    <SwitchnAdminPropiedadForm onSubmit={this.crearPropiedad} />
+                    <SwitchnAdminPropiedadForm onSubmit={this.modificarPropiedad} />
             </SwitchnAdminPage>
         )
     }
 }
     
-let SwitchnAdminCrearPropiedadPage = connect(
+let SwitchnAdminModificarPropiedadPage = connect(
     state => {
         return {
-            authtoken: state.auth.token
+            authtoken: state.auth.token,
         }
     }
-)(_SwitchnAdminCrearPropiedadPage);
+)(_SwitchnAdminModificarPropiedadPage);
 
-export { SwitchnAdminCrearPropiedadPage };
+export { SwitchnAdminModificarPropiedadPage };

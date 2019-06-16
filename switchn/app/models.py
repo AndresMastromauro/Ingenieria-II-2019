@@ -54,6 +54,8 @@ class TipoPropiedad (models.Model):
     def __str__(self):
         return self.descripcion
 
+class ImagenPropiedad(models.Model):
+    data = models.TextField()
 
 class Propiedad (models.Model):
     titulo = models.CharField(max_length=30, default='Nueva Propiedad')
@@ -63,7 +65,8 @@ class Propiedad (models.Model):
     numero = models.PositiveIntegerField(default=0)
     piso = models.CharField(max_length=10, blank=True)
     dpto = models.CharField(max_length=10, blank=True)
-    image = models.ImageField(default='default.jpg', upload_to='property_image')
+    # image = models.ImageField(default='default.jpg', upload_to='property_image')
+    image = models.ForeignKey(ImagenPropiedad, on_delete=models.DO_NOTHING)
 
     def string_direccion(self):
         localidad = self.calle.localidad

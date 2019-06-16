@@ -93,3 +93,7 @@ class PropiedadAdmin (admin.ModelAdmin):
 @admin.register(TipoPropiedad)
 class TipoPropiedad(admin.ModelAdmin):
     pass
+
+@admin.register(ImagenPropiedad)
+class ImagenPropiedadAdmin(admin.ModelAdmin):
+    pass

@@ -6,6 +6,7 @@ import { SwitchnAdminHome } from './admin/home';
 import { SwitchnAdminPropiedades } from './admin/propiedades';
 import { SwitchnAdminPropiedadPage } from './admin/propiedad_detalle';
 import { SwitchnAdminCrearPropiedadPage } from './admin/propiedad_creacion';
+import { SwitchnAdminModificarPropiedadPage } from './admin/propiedad_modificacion';
 import { SwitchnHome } from './portal/home';
 import { SwitchnPortalLogin } from './portal/login';
 import { SwitchnPortalLogout } from './portal/logout';
@@ -45,6 +46,7 @@ class _App extends React.Component {
               <PrivateRoute exact path="/admin" component={SwitchnAdminHome} />
               <PrivateRoute exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
               <PrivateRoute exact path="/admin/propiedad/:idPropiedad" component={SwitchnAdminPropiedadPage} />
+              <PrivateRoute exact path="/admin/propiedad/:idPropiedad/editar" component={SwitchnAdminModificarPropiedadPage} />
               <PrivateRoute exact path="/admin/propiedades/crear" component={SwitchnAdminCrearPropiedadPage} />
               <PrivateRoute exact path="/logout" component={SwitchnPortalLogout} />
             </Router>

@@ -14,7 +14,7 @@ class SwitchnAdminDetallePropiedad extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            propiedad: null
+            editing: false
         }
     }
 
@@ -31,15 +31,9 @@ class SwitchnAdminDetallePropiedad extends React.Component {
         sDireccion += `${oDireccion.provincia.nombre}, ${oDireccion.pais.nombre}.`;
         return sDireccion;
     }
-
-    componentDidUpdate(prevProps) {
-        if (this.props.propiedad !== prevProps.propiedad) {
-            this.setState({propiedad: this.props.propiedad});
-        }
-    }
-
+    
     render() {
-        var propiedad = this.state.propiedad;
+        var propiedad = this.props.propiedad;
         if (!propiedad) return null;
         return (
             <div className="container">
@@ -67,6 +61,9 @@ class SwitchnAdminDetallePropiedad extends React.Component {
                                         <th scope="row">Direccion:</th>
                                         <td>{this.getDireccion()}</td>
                                     </tr>
+                                    <tr>
+                                        <td><Link url={`${propiedad.id}/editar`}>Editar Información</Link></td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </form>
@@ -83,6 +80,7 @@ class _SwitchnAdminPropiedadPage extends React.Component {
         if (idPropiedad)
             this.props.loadPropiedad(idPropiedad);
     }
+    
     componentWillUnmount() {
         this.props.cleanUp();
     }
