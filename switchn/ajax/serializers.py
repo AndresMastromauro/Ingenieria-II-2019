@@ -213,3 +213,10 @@ class subastaRandonSerializer(serializers.ModelSerializer):
     class Meta:
         model=Subasta
         fields=('precioBase', 'estado', 'reserva')
+
+
+class ProfileSerializerPost(serializers.ModelSerializer):
+
+    class Meta:
+        model = Profile
+        fields = ('image', 'membresia', 'tarjeta_credito', 'fecha_nacimiento')
