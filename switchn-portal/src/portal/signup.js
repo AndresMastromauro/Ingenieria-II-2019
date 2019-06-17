@@ -10,7 +10,7 @@ class _SwitchnPortalSingUp extends React.Component {
 
     onSubmit = (values) => {
         this.props.singUp(values.username, values.first_name, values.last_name, 
-            values.email, values.password);
+            values.email, values.password, values.profile);
     }
 
     render() {
@@ -33,8 +33,8 @@ class _SwitchnPortalSingUp extends React.Component {
                             Regitrate hoy mismo y accede a las mejores subastas, o haste miembro
                             premium y elije fonde alojarte sin ningun tipo de restricciones.
                             <br></br>
-                            precio usuario standar: $2000 por mes.
-                            precio usuario premiun: $5000 por mes.
+                            <span>precio usuario premiun: $5000 por mes.</span>
+                            <span>precio usuario standar: $2000 por mes.</span>
 
                         </p>
 
@@ -65,8 +65,11 @@ const mapStateToProps = state => {
   
 const mapDispatchToProps = dispatch => {
     return {
-        singUp: (username, first_name, last_name, email, password) => {
-            return dispatch(singUp(username, first_name, last_name, email, password));
+        singUp: (username, first_name, last_name, email, password, 
+            profile ) => {
+                
+            return dispatch(singUp(username, first_name, last_name, email, password,
+                 profile));
         }
     };
 }

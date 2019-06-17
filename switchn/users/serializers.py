@@ -26,9 +26,10 @@ class LoginSerializer (serializers.Serializer):
 class RegisterSerializer(serializers.ModelSerializer):
     profile = ProfileSerializerPost()
 
+
     class Meta:
         model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password','profile',)
+        fields = ('username', 'first_name', 'last_name', 'email', 'password','profile')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -36,7 +37,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                                     last_name= validated_data['last_name'], email=validated_data['email'],
                                     password= validated_data['password'])
         profile_data = validated_data.pop('profile')
-        profile = Profile.objects.create(user = user, membresia=profile_data['membresia'], tarjeta_credito=profile_data['tarjeta_credito'],
+        profile = Profile.objects.create(user = user, tarjeta_credito=profile_data['tarjeta_credito'],
                                      fecha_nacimiento=profile_data['fecha_nacimiento']
     )
         return user

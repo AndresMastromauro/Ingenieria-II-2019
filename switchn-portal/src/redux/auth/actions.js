@@ -131,7 +131,7 @@ export const logout = () => {
     }
 }
 
-export const singUp = (username, first_name, last_name, email, password) => {
+export const singUp = (username, first_name, last_name, email, password, profile) => {
     return (dispatch, getState) => {
         return $.ajax({
             url: "/auth/register/",
@@ -142,7 +142,7 @@ export const singUp = (username, first_name, last_name, email, password) => {
                 last_name: last_name,
                 email: email,
                 password: password,
-               
+                profile:profile,
             },
             dataType: "json"
         }).done(

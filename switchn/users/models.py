@@ -23,7 +23,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     image = models.ImageField(default='default.jpg',upload_to='profile_pics')
     creationDate = models.DateTimeField(default=timezone.now)
-    membresia =  models.OneToOneField(Membresia, on_delete=models.CASCADE)
+    membresia =  models.ForeignKey(Membresia, on_delete=models.CASCADE, default=1)
     tarjeta_credito = models.CharField(max_length=20, null=False, default=000000000000000)
     fecha_nacimiento = models.DateField(default=timezone.now)
 

@@ -219,4 +219,4 @@ class ProfileSerializerPost(serializers.ModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ('image', 'membresia', 'tarjeta_credito', 'fecha_nacimiento')
+        fields = ('tarjeta_credito', 'fecha_nacimiento')

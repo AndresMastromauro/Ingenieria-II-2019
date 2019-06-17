@@ -1,5 +1,5 @@
 import React from "react";
-import { TextField, PasswordField, SubmitButton, NumberField, EmailField } from './inputs';
+import { TextField, PasswordField, SubmitButton, NumberField, EmailField, DateField } from './inputs';
 // import { SubmitButton } from './inputs';
 import { Field, reduxForm } from 'redux-form';
 import { link } from "fs";
@@ -27,7 +27,8 @@ class _SingUpForm extends React.Component {
                     <TextField label={"Nombre"} name={"last_name"} /* onChange={this.handleUserChange} */ />
                     <EmailField label={"Repetir email"} name={"email"} /* onChange={this.handleUserChange} */ />
                     <PasswordField label={"Contraseña"} name={"password"} /* onChange={this.handlePasswordChange} */ />
-                    <PasswordField label={"Confirmar Contraseña"} name={"password2"} /* onChange={this.handlePasswordChange} */ />
+                    <NumberField label={"Nro de tarjeta de credito"} name={"profile.tarjeta_credito"}/>
+                    <DateField label={"Fecha de nacimiento"} name={"profile.fecha_nacimiento"}/>
                     <div className="form-group">
                         <SubmitButton>Registrar</SubmitButton>
                     </div>

@@ -87,6 +87,12 @@ class NumberField extends React.Component {
     }
 }
 
+class DateField extends React.Component {
+    render() {
+        return <Input {...this.props} type="date" />
+    }
+}
+
 /* class NumberField extends React.Component {
     constructor(props) {
         super(props);
@@ -147,4 +153,4 @@ class NumberField extends React.Component {
 
 
 
-export { TextField, TextAreaField, NumberField, PasswordField, Button, SubmitButton, EmailField  };
+export { TextField, TextAreaField, NumberField, PasswordField, Button, SubmitButton, EmailField, DateField  };
