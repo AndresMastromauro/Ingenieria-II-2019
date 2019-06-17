@@ -189,17 +189,7 @@ class MembresiaViewSet(viewsets.ViewSet):
         serializer = MembresiaSerializer(membresia)
         return Response(serializer.data)
 
-class ProfileViewSet(viewsets.ViewSet):
-    def list(self, request):
-        queryset = Profile.objects.all()
-        serializer = ProfileSerializer(queryset, many=True)
-        return Response(serializer.data)
 
-    def retrieve(self, request, pk=None):
-        queryset = Profile.objects.all()
-        profile = get_object_or_404(queryset, pk=pk)
-        serializer = ProfileSerializer(profile)
-        return Response(serializer.data)
 
 
 
@@ -267,5 +257,17 @@ class SubastaRandomViewSet(viewsets.ModelViewSet):
         serializer = PropiedadSerializer(prop, many=True)
         return Response(serializer.data)
 
+
+class ProfileViewSet(viewsets.ViewSet):
+    def list(self, request):
+        queryset = Profile.objects.all()
+        serializer = ProfileSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        queryset = Profile.objects.all()
+        profile = get_object_or_404(queryset, pk=pk)
+        serializer = ProfileSerializer(profile)
+        return Response(serializer.data)
 
 
