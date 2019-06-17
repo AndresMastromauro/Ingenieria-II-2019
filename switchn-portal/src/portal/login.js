@@ -23,13 +23,13 @@ class _SwitchnPortalLogin extends React.Component {
                 <div className="justify-content-center">
                 <Row>
                     <Col>
-                    <LoginForm onSubmit={this.onSubmit}/>
+                        <LoginForm onSubmit={this.onSubmit}/>
                     </Col>
                     <Col>
-                    <PropiedadCard/>
+                        <PropiedadCard/>
                     </Col>
                     <Col>
-                    <PropiedadCardSubasta/>
+                        <PropiedadCardSubasta/>
                     </Col>
 
                 </Row>   

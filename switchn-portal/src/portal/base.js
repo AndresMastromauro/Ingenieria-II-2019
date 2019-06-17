@@ -86,7 +86,7 @@ export class SwitchnPortalPropiedad extends React.Component {
             <article className="media content-section container-fluid">
                 <div className="media-body row">
                     <div className="col-sm-4">
-                        <img className="account-img" src={propiedad.image} />
+                        <img className="account-img" src={propiedad.image.data} />
                     </div>
                     <div className="col-sm-8">
                         <h2><a className="article-title" >{propiedad.titulo}</a></h2>

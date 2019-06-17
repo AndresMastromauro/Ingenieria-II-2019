@@ -77,7 +77,7 @@ class _CalleChoiceField extends React.Component {
         return (
             <ChoiceField
                 label={"Calle"}
-                name={"calle"}
+                name={this.props.name}
                 value={this.props.value}
                 choices={this.props.calles}
                 adapter={(calle) => { return {value: calle.id, caption: calle.nombre} }}
@@ -125,7 +125,7 @@ class _LocalidadChoiceField extends React.Component {
         return (
             <ChoiceField
                 label="Localidad"
-                name="localidad"
+                name={this.props.name}
                 value={this.props.value}
                 choices={this.props.localidades}
                 adapter={(localidad) => { return {value: localidad.id, caption: localidad.nombre} }}
@@ -176,7 +176,7 @@ class _ProvinciaChoiceField extends React.Component {
         return (
             <ChoiceField
                 label="Provincia"
-                name="provincia"
+                name={this.props.name}
                 value={this.props.value}
                 choices={this.props.provincias}
                 adapter={(provincia) => { return {value: provincia.id, caption: provincia.nombre} }}
@@ -212,7 +212,7 @@ class _PaisChoiceField extends React.Component {
         return (
             <ChoiceField
                 label="Pais"
-                name="pais"
+                name={this.props.name}
                 value={this.props.value}
                 choices={this.props.paises}
                 adapter={(pais) => { return {value: pais.id, caption: pais.nombre} }}

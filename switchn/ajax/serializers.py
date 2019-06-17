@@ -5,22 +5,26 @@ from users.models import *
 class PaisSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pais
-        fields = '__all__'
+        fields = ('id', 'nombre')
+        read_only_fields = ('nombre',)
 
 class ProvinciaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Provincia
-        fields = '__all__'
+        fields = ('id', 'nombre')
+        read_only_fields = ('nombre',)
 
 class LocalidadSerializer(serializers.ModelSerializer):
     class Meta:
         model = Localidad
-        fields = '__all__'
+        fields = ('id', 'nombre')
+        read_only_fields = ('nombre',)
 
 class CalleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Calle
-        fields = '__all__'
+        fields = ('id', 'nombre')
+        read_only_fields = ('nombre',)
 
 
 class TipoPropiedadSerializer(serializers.ModelSerializer):
@@ -33,13 +37,68 @@ class ImagenPropiedadSerializer(serializers.ModelSerializer):
         model = ImagenPropiedad
         fields = ["data"]
 
-class PropiedadSerializer(serializers.ModelSerializer):
-    direccion = serializers.SerializerMethodField()
-    tipo = TipoPropiedadSerializer()
-    image = serializers.SerializerMethodField()
+class DireccionSerializer(serializers.Serializer):
+    calle = CalleSerializer()
+    localidad = LocalidadSerializer()
+    provincia = ProvinciaSerializer()
+    pais = PaisSerializer()
+    numero = serializers.IntegerField(required=True)
+    piso = serializers.CharField(required=False, max_length=10)
+    dpto = serializers.CharField(required=False, max_length=10)
 
+    '''
+    def validate_pais(self, value):
+        if value.get("id") is None:
+            raise serializers.ValidationError("No se eligió país")
+        if not Pais.objects.filter(id=value.id).exists():
+            raise serializers.ValidationError("El pais elegido no está registrado")
+        return value
+
+    def validate_provincia(self, value):
+        if value.id is None:
+            raise serializers.ValidationError("No se eligió provincia")
+        if not Provincia.objects.filter(id=value.id).exists():
+            raise serializers.ValidationError("La provincia elegida no está registrada")
+        if not Provincia.objects.filter(pais_id=self.validate_pais()).exists():
+            raise serializers.ValidationError("La provincia y país elegidos no coinciden")
+        return value
+
+    def validate_localidad(self, value):
+        if value.id is None:
+            raise serializers.ValidationError("No se eligió localidad")
+        if not Localidad.objects.filter(id=value.id).exists():
+            raise serializers.ValidationError("La localidad elegida no está registrada")
+        if not Localidad.objects.filter(provincia_id=self.validate_provincia()).exists():
+            raise serializers.ValidationError("La localidad y provincia elegidas no coinciden")
+        return value
+
+    def validate_calle(self, value):
+        if value.id is None:
+            raise serializers.ValidationError("No se eligió calle")
+        if not Calle.objects.filter(id=value.id).exists():
+            raise serializers.ValidationError("La calle elegida no está registrada")
+        if not Calle.objects.filter(localidad_id=self.validate_localidad()).exists():
+            raise serializers.ValidationError("La calle y localidad elegidas no coinciden")
+    '''
+
+    def create(self, validated_data):
+        return {
+            "calle": Calle.objects.get(id=validated_data["calle"]["id"]),
+            "numero": validated_data.numero,
+            "piso": validated_data.piso,
+            "dpto": validated_data.dpto
+        }
+
+
+
+class PropiedadDetalleSerializer(serializers.ModelSerializer):
+    direccion = serializers.SerializerMethodField()
+    # tipo = TipoPropiedadSerializer()
+
+    '''
     def get_image(self, propiedad):
         return propiedad.image.data
+    '''
 
     def get_direccion(self, propiedad):
         calle = propiedad.calle
@@ -70,12 +129,27 @@ class PropiedadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Propiedad
-        fields = ('id', 'titulo', 'descripcion', 'direccion', 'image', 'tipo')
+        fields = ('id', 'titulo', 'descripcion', 'direccion', 'image')
 
-class PropiedadCreacionSerializer(serializers.ModelSerializer):
+
+class PropiedadSerializer(serializers.ModelSerializer):
+    piso = serializers.CharField(max_length=10, required=False, default='')
+    dpto = serializers.CharField(max_length=10, required=False, default='')
     class Meta:
         model = Propiedad
-        fields = '__all__'
+        fields = ('titulo', 'descripcion', 'calle', 'numero', 'piso', 'dpto', 'image')
+        extra_kwargs = {
+            'titulo': {
+                'required': True
+            },
+            'calle': {
+                'required': True
+            },
+            'numero': {
+                'required': True
+            },
+        }
+
 
 class EstadoSubastaSerializer(serializers.ModelSerializer):
     class Meta:

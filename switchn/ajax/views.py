@@ -2,6 +2,7 @@ from rest_framework import viewsets, permissions, views
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.http import Http404, HttpResponseForbidden
+from django.core.exceptions import ValidationError
 from app.models import *
 from .serializers import *
 from users.models import *
@@ -78,12 +79,13 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = PropiedadSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = PropiedadCreacionSerializer(data=request.data)
-        if serializer.is_valid():
-            Propiedad.objects.create(**serializer.validated_data)
-            return Response("Ok")
-        return Response("bad")
+    def retrieve(self, request, *args, **kwargs):
+        serializer = PropiedadDetalleSerializer(self.get_object())
+        return Response(serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        serializer = PropiedadDetalleSerializer(Propiedad.objects.all(), many=True)
+        return Response(serializer.data)
 
     def get_queryset(self):
         queryset = Propiedad.objects.all()
@@ -222,13 +224,6 @@ class UserViewSet(viewsets.ModelViewSet):
 class PropiedadesRandomViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     serializer_class = PropiedadSerializer
-
-    def create(self, request, *args, **kwargs):
-        serializer = PropiedadCreacionSerializer(data=request.data)
-        if serializer.is_valid():
-            Propiedad.objects.create(**serializer.validated_data)
-            return Response("Ok")
-        return Response("bad")
 
     def get_queryset(self):
         queryset = Propiedad.objects.all()

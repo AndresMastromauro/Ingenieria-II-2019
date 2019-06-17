@@ -5,12 +5,23 @@ import { TipoPropiedadChoiceField, WeekField, PaisChoiceField, ProvinciaChoiceFi
 import { TextField, TextAreaField, NumberField, SubmitButton } from "../../common/forms/inputs";
 import { ImagePicker } from "../../common/forms/imagepicker";
 
-const PROPIEDAD_FORM_NAME = "crear-propiedad";
+const PROPIEDAD_CREATE_FORM_NAME = "crear-propiedad";
+const PROPIEDAD_UPDATE_FORM_NAME = "modificar-propiedad";
 
-class __SwitchnAdminPropiedadForm extends React.Component {
+class SwitchnAdminPropiedadForm extends React.Component {
+
     render() {
+        var direccion;
+
         let {handleSubmit} = this.props;
         let {values} = this.props;
+        let {initialValues} = this.props;
+        
+        if (values) {
+            direccion = values.direccion;
+        } else if (initialValues) {
+            direccion = initialValues.direccion;
+        }
         /* var propiedad = this.props.propiedad;
         if (!propiedad) return null; */
         return (
@@ -18,12 +29,12 @@ class __SwitchnAdminPropiedadForm extends React.Component {
                 <div className="col-8">
                     <div className="row">
                         <legend>Información General</legend>
-                        <div className="col-8">
+                        <div className="col">
                             <TextField label={"Titulo"} name={"titulo"} />
                         </div>
-                        <div className="col-4">
-                            <TipoPropiedadChoiceField label={"Tipo de Propiedad"} name={"tipo"} />
-                        </div>
+                       {/*  <div className="col-4">
+                            <TipoPropiedadChoiceField label={"Tipo de Propiedad"} name={"tipo.id"} />
+                        </div> */}
                     </div>
                     <div className="row">
                         <div className="col-md">
@@ -33,27 +44,27 @@ class __SwitchnAdminPropiedadForm extends React.Component {
                     <div className="row">
                         <legend>Direccion</legend>
                         <div className="col-md">
-                            <PaisChoiceField name={"pais"} />
+                            <PaisChoiceField name={"direccion.pais.id"} />
                         </div>
                         <div className="col-md">
-                            <ProvinciaChoiceField name={"provincia"} pais={values && values.pais} />
+                            <ProvinciaChoiceField name={"direccion.provincia.id"} pais={direccion && direccion.pais && direccion.pais.id} />
                         </div>
                         <div className="col-md">
-                            <LocalidadChoiceField name={"localidad"} provincia={values && values.provincia} />
+                            <LocalidadChoiceField name={"direccion.localidad.id"} provincia={direccion && direccion.provincia && direccion.provincia.id} />
                         </div>
                     </div>
                     <div className="row form-group">
                         <div className="col-6">
-                            <CalleChoiceField name={"calle"} localidad={values && values.localidad} />
+                            <CalleChoiceField name={"direccion.calle.id"} localidad={direccion && direccion.localidad && direccion.localidad.id} />
                         </div>
                         <div className="col-2">
-                            <NumberField label={"Nº"} name={"numero"} />
+                            <NumberField label={"Nº"} name={"direccion.numero"} />
                         </div>
                         <div className="col-2">
-                            <NumberField label={"Piso"} name={"piso"} />
+                            <NumberField label={"Piso"} name={"direccion.piso"} />
                         </div>
                         <div className="col-2">
-                            <TextField label={"Dpto."} name={"dpto"} />
+                            <TextField label={"Dpto."} name={"direccion.dpto"} />
                         </div>
                     </div>
                 </div>
@@ -70,18 +81,40 @@ class __SwitchnAdminPropiedadForm extends React.Component {
 }
 
 
-const _SwitchnAdminPropiedadForm = reduxForm({
-    form: PROPIEDAD_FORM_NAME
-})(__SwitchnAdminPropiedadForm);
 
-let SwitchnAdminPropiedadForm = connect(
+
+let SwitchnAdminCrearPropiedadForm = connect(
     state => {
         return {
-            initialValues: state.dataprovider.datamap.propiedad && state.dataprovider.datamap.propiedad.data,
-            values: getFormValues(PROPIEDAD_FORM_NAME)(state)
+            /* initialValues: state.propiedad.data || {}, */
+            /* propiedad: state.propiedad.data, */
+            values: getFormValues(PROPIEDAD_CREATE_FORM_NAME)(state)
         }
     }
-)(_SwitchnAdminPropiedadForm);
+)(SwitchnAdminPropiedadForm);
 
+let SwitchnAdminModificarPropiedadForm = connect(
+    state => {
+        return {
+            values: getFormValues(PROPIEDAD_UPDATE_FORM_NAME)(state)
+        }
+    }
+)(SwitchnAdminPropiedadForm);
 
-export { SwitchnAdminPropiedadForm };
+SwitchnAdminCrearPropiedadForm = reduxForm({
+    form: PROPIEDAD_CREATE_FORM_NAME
+})(SwitchnAdminCrearPropiedadForm);
+
+SwitchnAdminModificarPropiedadForm = reduxForm({
+    form: PROPIEDAD_UPDATE_FORM_NAME
+})(SwitchnAdminModificarPropiedadForm);
+
+SwitchnAdminModificarPropiedadForm = connect(
+    state => {
+        return {
+            initialValues: state.propiedad.data || {},
+        }
+    }
+)(SwitchnAdminModificarPropiedadForm);
+
+export { SwitchnAdminCrearPropiedadForm, SwitchnAdminModificarPropiedadForm };

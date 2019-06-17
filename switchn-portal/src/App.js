@@ -47,7 +47,7 @@ class _App extends React.Component {
               <Route exact path="/registrar" component={SwitchnPortalSingUp} />
               <PrivateRoute exact path="/admin" component={SwitchnAdminHome} />
               <PrivateRoute exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
-              <PrivateRoute exact path="/admin/propiedad/:idPropiedad" component={SwitchnAdminPropiedadPage} />
+              <PrivateRoute exact strict path="/admin/propiedad/:idPropiedad" component={SwitchnAdminPropiedadPage} />
               <PrivateRoute exact path="/admin/propiedad/:idPropiedad/editar" component={SwitchnAdminModificarPropiedadPage} />
               <PrivateRoute exact path="/admin/propiedades/crear" component={SwitchnAdminCrearPropiedadPage} />
               <PrivateRoute exact path="/logout" component={SwitchnPortalLogout} />

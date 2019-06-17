@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import { Route } from "react-router-dom";
 import $ from "jquery";
 
-import { loadData, cleanData } from "../redux/dataprovider/actions";
+// import { loadData, cleanData } from "../redux/dataprovider/actions";
+import { loadPropiedad } from "../redux/propiedad/actions";
 import { SwitchnAdminPage } from "./base";
 import { SwitchnAdminPropiedadForm } from "./forms/propiedades";
 
@@ -33,8 +34,10 @@ class SwitchnAdminDetallePropiedad extends React.Component {
     }
     
     render() {
-        var propiedad = this.props.propiedad;
-        if (!propiedad) return null;
+        var {propiedad} = this.props;
+        if (!propiedad) {
+            return null;
+        }
         return (
             <div className="container">
                 <div className="row">
@@ -42,37 +45,45 @@ class SwitchnAdminDetallePropiedad extends React.Component {
                         <img src={propiedad.image} style={{width: "100%"}} />
                     </div>
                     <div className="col-8">
-                        <form>
-                            <table className="table table-stripped">
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">Titulo:</th>
-                                        <td>{propiedad.titulo}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">Descripción:</th>
-                                        <td>{propiedad.descripcion}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">Tipo:</th>
-                                        <td>{propiedad.tipo.descripcion}</td>
-                                    </tr>
-                                    <tr>
-                                        <th scope="row">Direccion:</th>
-                                        <td>{this.getDireccion()}</td>
-                                    </tr>
-                                    <tr>
-                                        <td><Link url={`${propiedad.id}/editar`}>Editar Información</Link></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </form>
+                        <table className="table table-stripped">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">Titulo:</th>
+                                    <td>{propiedad.titulo}</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Descripción:</th>
+                                    <td>{propiedad.descripcion}</td>
+                                </tr>
+                                {/* <tr>
+                                    <th scope="row">Tipo:</th>
+                                    <td>{propiedad.tipo.descripcion}</td>
+                                </tr> */}
+                                <tr>
+                                    <th scope="row">Direccion:</th>
+                                    <td>{this.getDireccion()}</td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td><Link url={`${propiedad.id}/editar`}>Editar Información</Link></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 </div>
             </div>
         );
     }
 }
+
+SwitchnAdminDetallePropiedad = connect(
+    state => {
+        return {
+            propiedad: state.propiedad.data
+        }
+    }
+)(SwitchnAdminDetallePropiedad);
 
 class _SwitchnAdminPropiedadPage extends React.Component {
     componentDidMount() {
@@ -82,13 +93,13 @@ class _SwitchnAdminPropiedadPage extends React.Component {
     }
     
     componentWillUnmount() {
-        this.props.cleanUp();
+        // this.props.cleanUp();
     }
 
     render() {
         return (
             <SwitchnAdminPage title={this.props.propiedad && this.props.propiedad.titulo}>
-                <SwitchnAdminDetallePropiedad propiedad={this.props.propiedad} />
+                <SwitchnAdminDetallePropiedad />
             </SwitchnAdminPage>
         )
     }
@@ -96,16 +107,16 @@ class _SwitchnAdminPropiedadPage extends React.Component {
 
 let SwitchnAdminPropiedadPage = connect(
     state => {
-        var propiedad = state.dataprovider.datamap.propiedad;
+        var propiedad = state.propiedad;
         return {
-            propiedad: propiedad && propiedad.data,
-            isLoading: propiedad && propiedad.isLoading
+            propiedad: propiedad.data,
+            isLoading: propiedad.busy
         }
     },
     dispatch => {
         return {
-            loadPropiedad: (id) => dispatch(loadData("propiedad", `/ajax/propiedades/${id}`)),
-            cleanUp: () => dispatch(cleanData("propiedad"))
+            loadPropiedad: (id) => dispatch(loadPropiedad(id)),
+            /* cleanUp: () => dispatch(cleanData("propiedad")) */
         }
     }
 )(_SwitchnAdminPropiedadPage);

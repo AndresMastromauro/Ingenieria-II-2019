@@ -1,30 +1,28 @@
 import React from "react";
 import { connect } from "react-redux";
-import $ from "jquery";
 
 import { SwitchnAdminPage } from "./base";
-import { SwitchnAdminPropiedadForm } from "./forms/propiedades";
+import { SwitchnAdminModificarPropiedadForm } from "./forms/propiedades";
+import { modificarPropiedad } from "../redux/propiedad/actions";
+
+/* let SwitchnAdminModificarPropiedadForm = connect(
+    state => {
+        return {
+            initialValues: state.propiedad.data
+        }
+    }
+)(SwitchnAdminPropiedadForm); */
 
 class _SwitchnAdminModificarPropiedadPage extends React.Component {
 
     modificarPropiedad = (values) => {
-        $.ajax({
-            url: "/ajax/propiedades/",
-            data: values,
-            dataType: "json",
-            method: "PUT",
-            beforeSend: xhr => { xhr.setRequestHeader("Authorization", `Token ${this.props.token}`)}
-        }).done(
-            data => alert(data)
-        ).fail(
-            (xhr, text, err) => alert(err.toString())
-        );
+        this.props.modificarPropiedad(values);
     }
 
     render() {
         return (
             <SwitchnAdminPage>
-                    <SwitchnAdminPropiedadForm onSubmit={this.modificarPropiedad} />
+                    <SwitchnAdminModificarPropiedadForm onSubmit={this.modificarPropiedad} />
             </SwitchnAdminPage>
         )
     }
@@ -32,8 +30,13 @@ class _SwitchnAdminModificarPropiedadPage extends React.Component {
     
 let SwitchnAdminModificarPropiedadPage = connect(
     state => {
+        return {}
+    },
+    dispatch => {
         return {
-            authtoken: state.auth.token,
+            modificarPropiedad: (values) => {
+                dispatch(modificarPropiedad(values))
+            }
         }
     }
 )(_SwitchnAdminModificarPropiedadPage);

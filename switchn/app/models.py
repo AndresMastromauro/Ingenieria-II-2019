@@ -54,19 +54,29 @@ class TipoPropiedad (models.Model):
     def __str__(self):
         return self.descripcion
 
+
 class ImagenPropiedad(models.Model):
     data = models.TextField()
 
+    @staticmethod
+    def get_default_id():
+        return 1
+
+    @staticmethod
+    def get_default():
+        return ImagenPropiedad.objects.get(id=ImagenPropiedad.get_default_id())
+
+
 class Propiedad (models.Model):
-    titulo = models.CharField(max_length=30, default='Nueva Propiedad')
+    titulo = models.CharField(max_length=30)
     descripcion = models.CharField(max_length=200)
-    tipo = models.ForeignKey(TipoPropiedad, on_delete=models.PROTECT)
-    calle = models.ForeignKey(Calle, default=0, on_delete=models.PROTECT)
-    numero = models.PositiveIntegerField(default=0)
+    # tipo = models.ForeignKey(TipoPropiedad, on_delete=models.PROTECT)
+    calle = models.ForeignKey(Calle, on_delete=models.PROTECT)
+    numero = models.PositiveIntegerField()
     piso = models.CharField(max_length=10, blank=True)
     dpto = models.CharField(max_length=10, blank=True)
     # image = models.ImageField(default='default.jpg', upload_to='property_image')
-    image = models.ForeignKey(ImagenPropiedad, on_delete=models.DO_NOTHING)
+    image = models.TextField(blank=True)
 
     def string_direccion(self):
         localidad = self.calle.localidad

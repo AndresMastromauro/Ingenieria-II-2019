@@ -3,28 +3,19 @@ import { connect } from "react-redux";
 import $ from "jquery";
 
 import { SwitchnAdminPage } from "./base";
-import { SwitchnAdminPropiedadForm } from "./forms/propiedades";
+import { SwitchnAdminCrearPropiedadForm } from "./forms/propiedades";
+import { crearPropiedad } from "../redux/propiedad/actions";
 
 class _SwitchnAdminCrearPropiedadPage extends React.Component {
 
     crearPropiedad = (values) => {
-        $.ajax({
-            url: "/ajax/propiedades/",
-            data: values,
-            dataType: "json",
-            method: "POST",
-            beforeSend: xhr => { xhr.setRequestHeader("Authorization", `Token ${this.props.token}`)}
-        }).done(
-            data => alert(data)
-        ).fail(
-            (xhr, text, err) => alert(err.toString())
-        );
+        this.props.crearPropiedad(values);
     }
 
     render() {
         return (
             <SwitchnAdminPage>
-                    <SwitchnAdminPropiedadForm onSubmit={this.crearPropiedad} />
+                    <SwitchnAdminCrearPropiedadForm onSubmit={this.crearPropiedad} />
             </SwitchnAdminPage>
         )
     }
@@ -32,8 +23,11 @@ class _SwitchnAdminCrearPropiedadPage extends React.Component {
     
 let SwitchnAdminCrearPropiedadPage = connect(
     state => {
+        return {}
+    },
+    dispatch => {
         return {
-            authtoken: state.auth.token
+            crearPropiedad: (values) => dispatch(crearPropiedad(values))
         }
     }
 )(_SwitchnAdminCrearPropiedadPage);
