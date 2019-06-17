@@ -6,6 +6,8 @@ import { loadData, cleanData } from '../redux/dataprovider/actions';
 import { Button, Card} from 'react-bootstrap';
 import FlexView from 'react-flexview';
 
+import defaultPic from "../img/default-no-picture.png";
+
 
 class HomeSinRegCardSubasta extends React.Component {
 
@@ -18,7 +20,6 @@ class HomeSinRegCardSubasta extends React.Component {
     }
 
     render(){
-        debugger;
         if (!this.props.subasta){
             return null
         }
@@ -28,7 +29,7 @@ class HomeSinRegCardSubasta extends React.Component {
             <div className= 'col'> 
             <Card border='success' style={{ width: '18rem' } }>
             <Card.Header>EN SUBASTA!!!</Card.Header>
-            <Card.Img variant="top" src= {this.props.subasta[0].reserva.propiedad.image.data} />
+            <Card.Img variant="top" src= {this.props.subasta[0].reserva.propiedad.image || defaultPic } />
             <Card.Body>
                 
                 <Card.Title>{this.props.subasta[0].reserva.propiedad.titulo} </Card.Title>

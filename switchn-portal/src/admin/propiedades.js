@@ -5,6 +5,7 @@ import { Link } from "../common/base";
 import { SwitchnAdminPage } from './base';
 import { TextField } from "../common/forms/inputs";
 import { loadData, cleanData } from "../redux/dataprovider/actions";
+import { Button, ButtonGroup, Badge } from "react-bootstrap";
 
 class SwitchnAdminPropiedad extends React.Component {
     getDireccion() {
@@ -21,34 +22,35 @@ class SwitchnAdminPropiedad extends React.Component {
         return sDireccion;
     }
 
+    handleView = () => {
+        this.props.history.push(`/admin/propiedad/${this.props.propiedad.id}`);
+    }
+
     render() {
         var propiedad = this.props.propiedad;
         return (
             <tr>
-                <td>{propiedad.titulo}</td>
+                <th scope="row">{propiedad.titulo}</th>
                 <td>{this.getDireccion()}</td>
-                <td><Link url={`/admin/propiedad/${propiedad.id}`}>Ver/Editar</Link></td>
+                <td>
+                    <Badge>
+                    {
+                    propiedad.es_activa ? 
+                        "Activa"
+                        : "Inactiva"
+                    }
+                    </Badge>
+                </td>
+                <td>
+                    <ButtonGroup>
+                        <Button onClick={this.handleView}>Ver</Button>
+                    </ButtonGroup>
+                </td>
             </tr>
         );
     }
 }
 
-class SwitchnAdminCrearPropiedad extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-
-        }
-    }
-    render() {
-        return (
-            <SwitchnAdminPage>
-               
-            </SwitchnAdminPage>
-        )
-    }
-
-}
 
 class _SwitchnAdminListadoPropiedades extends React.Component {
 
@@ -69,23 +71,37 @@ class _SwitchnAdminListadoPropiedades extends React.Component {
         } else {
             content = this.props.propiedades.map(
                 function(propiedad) {
-                    return <SwitchnAdminPropiedad key={propiedad.id} propiedad={propiedad} />
-                }
+                    return <SwitchnAdminPropiedad key={propiedad.id} propiedad={propiedad} history={this.props.history} />;
+                }.bind(this)
             );
         }
         return (
-            <table className="table">
-                <thead>
-                    <tr>
-                        <th scope="col">{"Nombre"}</th>
-                        <th scope="col">{"Dirección"}</th>
-                        <th scope="col">{"Acciones"}</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {content}
-                </tbody>
-            </table>
+            <div>
+                <div className="row justify-content-right">
+                    <div className="col-4">
+                        <Link url={
+                            window.location.pathname.endsWith('/') ?
+                            "crear"
+                            : "propiedades/crear"
+                        }>Agregar Propiedad</Link>
+                    </div>
+                </div>
+                <div className="row">
+                    <table className="table">
+                        <thead className="thead-dark">
+                            <tr>
+                                <th scope="col">{"Nombre"}</th>
+                                <th scope="col">{"Dirección"}</th>
+                                <th scope="col">{"Estado"}</th>
+                                <th scope="col">{"Acciones"}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {content}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         )
     }
 }
@@ -112,7 +128,7 @@ export class SwitchnAdminPropiedades extends React.Component {
     render() {
         return (
             <SwitchnAdminPage title={"Propiedades"}>
-                <SwitchnAdminListadoPropiedades />
+                <SwitchnAdminListadoPropiedades history={this.props.history} />
             </SwitchnAdminPage>
         )
     }

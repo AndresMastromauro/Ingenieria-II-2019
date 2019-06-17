@@ -16,13 +16,26 @@ import { modificarPropiedad } from "../redux/propiedad/actions";
 class _SwitchnAdminModificarPropiedadPage extends React.Component {
 
     modificarPropiedad = (values) => {
-        this.props.modificarPropiedad(values);
+        this.props.modificarPropiedad(values, this.handleModificarOk, this.handleModificarFail);
+    }
+
+    handleModificarOk = () => {
+        alert("Se realizó correctamente la modificación");
+        this.handleBack();
+    }
+
+    handleModificarFail = () => {
+        alert("Ha ocurrido un error al modificar la propiedad");
+    }
+
+    handleBack = () => {
+        this.props.history.go(-1);
     }
 
     render() {
         return (
             <SwitchnAdminPage>
-                    <SwitchnAdminModificarPropiedadForm onSubmit={this.modificarPropiedad} />
+                <SwitchnAdminModificarPropiedadForm onBackPress={this.handleBack} onSubmit={this.modificarPropiedad} />
             </SwitchnAdminPage>
         )
     }
@@ -34,8 +47,8 @@ let SwitchnAdminModificarPropiedadPage = connect(
     },
     dispatch => {
         return {
-            modificarPropiedad: (values) => {
-                dispatch(modificarPropiedad(values))
+            modificarPropiedad: (values, fnSucc, fnErr) => {
+                dispatch(modificarPropiedad(values, fnSucc, fnErr))
             }
         }
     }

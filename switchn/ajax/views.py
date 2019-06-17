@@ -87,6 +87,16 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
         serializer = PropiedadDetalleSerializer(Propiedad.objects.all(), many=True)
         return Response(serializer.data)
 
+    def destroy(self, request, *args, **kwargs):
+        propiedad = self.get_object()
+        if propiedad.has_reservas():
+            propiedad.es_activa = False
+            propiedad.save()
+            return Response("Se cambió el estado de la propiedad a inactiva") # no sabia que responder
+        propiedad.delete()
+        return Response("Se eliminó la propiedad") # tampoco
+
+
     def get_queryset(self):
         queryset = Propiedad.objects.all()
         localidad = self.request.query_params.get('localidad', None)
@@ -102,6 +112,9 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
             return queryset.filter(calle__localidad__provincia__pais_id=pais)
 
         return queryset
+
+    @action(detail=False)
+    def all(self, request, *args, **kwargs): pass
 
     @action(detail=True)
     def reservas(self, request, *args, **kwargs):

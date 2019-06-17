@@ -129,7 +129,7 @@ class PropiedadDetalleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Propiedad
-        fields = ('id', 'titulo', 'descripcion', 'direccion', 'image')
+        fields = ('id', 'titulo', 'descripcion', 'direccion', 'image', 'es_activa')
 
 
 class PropiedadSerializer(serializers.ModelSerializer):

@@ -11,11 +11,17 @@ import {
     PROPIEDAD_DELETING,
     PROPIEDAD_DELETE_FAIL,
     PROPIEDAD_DELETE_OK,
+    PROPIEDAD_LISTADO_LOADING,
+    PROPIEDAD_LISTADO_LOAD_OK,
+    PROPIEDAD_LISTADO_LOAD_FAIL,
+    PROPIEDAD_SELECTED,
+    PROPIEDAD_UNSELECTED
 
 } from './actions';
 
 const initialState = {
     busy: false,
+    listadoPropiedades: [],
     data: null,
     error: null
 }
@@ -26,6 +32,7 @@ export default function propiedad(state = initialState, action) {
         case PROPIEDAD_CREATING:
         case PROPIEDAD_UPDATING:
         case PROPIEDAD_DELETING:
+        case PROPIEDAD_LISTADO_LOADING:
             return {
                 ...state,
                 busy: true,
@@ -40,6 +47,20 @@ export default function propiedad(state = initialState, action) {
                 busy: false,
                 error: action.error
             };
+        case PROPIEDAD_LISTADO_LOAD_OK:
+            return {
+                ...state,
+                busy: false,
+                listadoPropiedades: action.data
+            }
+        case PROPIEDAD_LISTADO_LOAD_FAIL:
+            return {
+                ...state,
+                busy: false,
+                listadoPropiedades: [],
+                error: action.error
+            }
+        case PROPIEDAD_SELECTED:
         case PROPIEDAD_LOAD_OK:
         case PROPIEDAD_CREATE_OK:
         case PROPIEDAD_UPDATE_OK:
@@ -48,6 +69,7 @@ export default function propiedad(state = initialState, action) {
                 busy: false,
                 data: action.data
             };
+        case PROPIEDAD_UNSELECTED:
         case PROPIEDAD_DELETE_OK:
             return {
                 ...state,

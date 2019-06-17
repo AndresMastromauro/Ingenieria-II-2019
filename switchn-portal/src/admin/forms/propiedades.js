@@ -4,6 +4,7 @@ import { Field, reduxForm, getFormValues } from "redux-form";
 import { TipoPropiedadChoiceField, WeekField, PaisChoiceField, ProvinciaChoiceField, LocalidadChoiceField, CalleChoiceField } from "../../common/forms/select";
 import { TextField, TextAreaField, NumberField, SubmitButton } from "../../common/forms/inputs";
 import { ImagePicker } from "../../common/forms/imagepicker";
+import { Button, ButtonGroup } from "react-bootstrap";
 
 const PROPIEDAD_CREATE_FORM_NAME = "crear-propiedad";
 const PROPIEDAD_UPDATE_FORM_NAME = "modificar-propiedad";
@@ -72,9 +73,12 @@ class SwitchnAdminPropiedadForm extends React.Component {
                     <legend>Foto</legend>
                     <ImagePicker name="image" />
                 </div>
-                    <div className="col">
+                <div className="row">
+                    <ButtonGroup>
+                        <Button onClick={this.props.onBackPress}>Volver</Button>
                         <SubmitButton>Guardar Propiedad</SubmitButton>
-                    </div>
+                    </ButtonGroup>
+                </div>
             </form>
         );
     }

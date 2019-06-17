@@ -8,6 +8,7 @@ import {
     SwitchnNavbarTabs
 } from "../common/base";
 import { Button, Card} from 'react-bootstrap';
+import defaultPic from "../img/default-no-picture.png";
 
 class SwitchnPortalNavbarTabs extends React.Component {
     render() {
@@ -86,7 +87,7 @@ export class SwitchnPortalPropiedad extends React.Component {
             <article className="media content-section container-fluid">
                 <div className="media-body row">
                     <div className="col-sm-4">
-                        <img className="account-img" src={propiedad.image.data} />
+                        <img className="account-img" src={propiedad.image || defaultPic } />
                     </div>
                     <div className="col-sm-8">
                         <h2><a className="article-title" >{propiedad.titulo}</a></h2>

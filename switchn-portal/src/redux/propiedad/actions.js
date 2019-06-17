@@ -5,6 +5,14 @@ import $ from "jquery";
 const PROPIEDADES_URL = "/ajax/propiedades/"
 
 /* Carga */
+export const PROPIEDAD_LISTADO_LOADING = "PROPIEDAD_LISTADO_LOADING";
+export const PROPIEDAD_LISTADO_LOAD_OK = "PROPIEDAD_LISTADO_LOAD_OK";
+export const PROPIEDAD_LISTADO_LOAD_FAIL = "PROPIEDAD_LISTADO_LOAD_FAIL";
+
+export const PROPIEDAD_SELECTED = "PROPIEDAD_SELECTED";
+export const PROPIEDAD_UNSELECTED = "PROPIEDAD_UNSELECTED";
+
+
 export const PROPIEDAD_LOADING = "PROPIEDAD_LOADING";
 export const PROPIEDAD_LOAD_OK = "PROPIEDAD_LOAD_OK";
 export const PROPIEDAD_LOAD_FAIL = "PROPIEDAD_LOAD_FAIL";
@@ -24,6 +32,39 @@ export const PROPIEDAD_DELETE_FAIL = "PROPIEDAD_REMOVE_FAIL";
 
 
 /* Action generators Lectura */
+function propiedadListadoLoading() {
+    return {
+        type: PROPIEDAD_LISTADO_LOADING
+    }
+}
+
+function propiedadListadoLoadOk(listado) {
+    return {
+        type: PROPIEDAD_LISTADO_LOAD_OK,
+        data: listado
+    }
+}
+
+function propiedadListadoLoadFail(err) {
+    return {
+        type: PROPIEDAD_LISTADO_LOAD_FAIL,
+        error: err
+    }
+}
+
+function propiedadSelected(propiedad) {
+    return {
+        type: PROPIEDAD_SELECTED,
+        data: propiedad
+    }
+}
+
+function propiedadUnselected() {
+    return {
+        type: PROPIEDAD_UNSELECTED
+    }
+}
+
 function propiedadLoading() {
     return {
         type: PROPIEDAD_LOADING
@@ -144,7 +185,7 @@ export function loadPropiedad(idPropiedad) {
     }
 }
 
-export function crearPropiedad(oData) {
+export function crearPropiedad(oData, fnSuccess, fnError) {
     // TODO: Verificar si hay necesidad de transformar los datos de alguna forma
     return (dispatch, getState) => {
         dispatch(propiedadCreating());
@@ -158,17 +199,19 @@ export function crearPropiedad(oData) {
             }
         }).done(
             data => {
-                dispatch(propiedadCreateOk(data));
+                dispatch(propiedadCreateOk(oData));
+                fnSuccess();
             }
         ).fail(
             (xhr, text, err) => { 
                 dispatch(propiedadCreateFail(err));
+                fnError();
             }
         )
     }
 }
 
-export function modificarPropiedad(oData) {
+export function modificarPropiedad(oData, fnSuccess, fnError) {
     return (dispatch, getState) => {
         dispatch(propiedadUpdating());
         $.ajax({
@@ -181,17 +224,19 @@ export function modificarPropiedad(oData) {
             }
         }).done(
             data => {
-                dispatch(propiedadUpdateOk(data));
+                dispatch(propiedadUpdateOk(oData));
+                fnSuccess();
             }
         ).fail(
             (xhr, text, err) => {
                 dispatch(propiedadUpdateFail(err));
+                fnError();
             }
         )
     }
 }
 
-export function eliminarPropiedad(idPropiedad) {
+export function eliminarPropiedad(idPropiedad, fnSuccess, fnError) {
     return (dispatch, getState) => {
         dispatch(propiedadDeleting());
         $.ajax({
@@ -204,10 +249,12 @@ export function eliminarPropiedad(idPropiedad) {
         }).done(
             data => {
                 dispatch(propiedadDeleteOk(data));
+                fnSuccess();
             }
         ).fail(
             (xhr, text, err) => {
-                dispatch(propiedadUpdateFail(err));
+                dispatch(propiedadDeleteFail(err));
+                fnError();
             }
         )
     }

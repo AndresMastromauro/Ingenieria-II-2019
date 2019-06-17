@@ -77,6 +77,7 @@ class Propiedad (models.Model):
     dpto = models.CharField(max_length=10, blank=True)
     # image = models.ImageField(default='default.jpg', upload_to='property_image')
     image = models.TextField(blank=True)
+    es_activa = models.BooleanField(null=False, default=True)
 
     def string_direccion(self):
         localidad = self.calle.localidad
@@ -90,20 +91,28 @@ class Propiedad (models.Model):
         return "{0}. {1}, {2}, {3}.".format(direccion, localidad, provincia, pais)
 
     def __str__(self):
-        return "{0}: {1} ({2})".format(self.titulo, self.string_direccion(), self.tipo)
+        return "{0}: {1}".format(self.titulo, self.string_direccion())
 
     def is_available_on_week(self, semana):
         # NOTA: se asume que date.weekday() y reserva.semana.weekday() = 0 (lunes)
         if self.reserva_set.filter(semana=semana).exclude(cliente__isnull=True).exists():
             # esta reservada
             return False
-        hoy = semana.today()
+        hoy = date.today()
         seis_meses = timedelta(weeks=25)
         un_anio = timedelta(weeks=52)
         return (hoy + seis_meses) < semana < (hoy + un_anio)
 
+    def has_reservas(self):
+        ultimo_lunes = date.today() - timedelta(days=date.today().weekday()) # el lunes es el weekday 0
+        return self.reserva_set.filter(semana__gte=ultimo_lunes).exclude(cliente__isnull=True).exists()
+
     def get_subastas(self):
         return Subasta.objects.filter(reserva__propiedad=self).filter(estado=1)
+
+    @staticmethod
+    def get_propiedades_activas():
+        return Propiedad.objects.filter(es_activa=True)
 
     class Meta:
         unique_together = (('calle', 'numero', 'piso', 'dpto'),)
@@ -135,6 +144,8 @@ class Subasta (models.Model):
     precioBase = models.DecimalField(max_digits=15, decimal_places=2)
     estado = models.ForeignKey(EstadoSubasta, on_delete=models.PROTECT)
     reserva = models.OneToOneField(Reserva, on_delete=models.PROTECT)
+    fecha_inicio = models.DateField(default=timezone.now)
+    fecha_fin = models.DateField(null=True)
 
     def __str__(self):
         anio = self.reserva.semana.isocalendar() [0]
