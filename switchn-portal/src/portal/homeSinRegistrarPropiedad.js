@@ -18,7 +18,7 @@ class HomeSinRegCard extends React.Component {
     }
 
     render(){
-        if (this.props.propiedad === undefined){
+        if (!this.props.propiedad){
             return null
         }
 

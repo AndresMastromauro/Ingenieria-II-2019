@@ -199,7 +199,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class reservaRandomSerializer(serializers.ModelSerializer):
-    propiedad = PropiedadSerializer(many=False, read_only=True)
+    propiedad = PropiedadDetalleSerializer(many=False, read_only=True)
 
     class Meta:
         model=Reserva

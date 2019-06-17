@@ -213,7 +213,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 class PropiedadesRandomViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-    serializer_class = PropiedadSerializer
+    serializer_class = PropiedadDetalleSerializer
 
     def get_queryset(self):
         queryset = Propiedad.objects.all()

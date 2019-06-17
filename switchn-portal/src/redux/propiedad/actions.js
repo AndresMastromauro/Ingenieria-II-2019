@@ -170,7 +170,6 @@ export function crearPropiedad(oData) {
 
 export function modificarPropiedad(oData) {
     return (dispatch, getState) => {
-        debugger;
         dispatch(propiedadUpdating());
         $.ajax({
             url: `${PROPIEDADES_URL}${oData.id}/`,

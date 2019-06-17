@@ -18,7 +18,8 @@ class HomeSinRegCardSubasta extends React.Component {
     }
 
     render(){
-        if (this.props.subasta === undefined){
+        debugger;
+        if (!this.props.subasta){
             return null
         }
 
@@ -54,7 +55,9 @@ class HomeSinRegCardSubasta extends React.Component {
 
 let PropiedadCardSubasta = connect(
     state => {
-        return { subasta: state.dataprovider.datamap.subasta && state.dataprovider.datamap.subasta.data }
+        return {
+            subasta: state.dataprovider.datamap.subasta && state.dataprovider.datamap.subasta.data
+        }
     },
     dispatch => {
         return {

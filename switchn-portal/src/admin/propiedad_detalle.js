@@ -42,7 +42,7 @@ class SwitchnAdminDetallePropiedad extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col-4">
-                        <img src={propiedad.image} style={{width: "100%"}} />
+                        <img src={propiedad.image || `${process.env.REACT_APP_PUBLIC_URL}/default-no-picture.png` } style={{width: "100%"}} />
                     </div>
                     <div className="col-8">
                         <table className="table table-stripped">
