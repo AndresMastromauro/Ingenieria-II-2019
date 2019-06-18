@@ -86,7 +86,7 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
     def list(self, request, *args, **kwargs):
-        serializer = PropiedadDetalleSerializer(Propiedad.objects.all(), many=True)
+        serializer = PropiedadDetalleSerializer(self.get_queryset(), many=True)
         return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):

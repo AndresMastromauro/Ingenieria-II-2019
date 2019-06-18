@@ -42,9 +42,9 @@ class __SwitchnPortalPropiedadesFiltros extends React.Component {
             <form>
                 <div className='form-group'>
                     <legend>Filtros</legend>
-                    <PaisChoiceField />
-                    <ProvinciaChoiceField pais={pais} />
-                    <LocalidadChoiceField provincia={provincia} />
+                    <PaisChoiceField name={"pais"} />
+                    <ProvinciaChoiceField name={"provincia"} pais={pais} />
+                    <LocalidadChoiceField name={"localidad"} provincia={provincia} />
                 </div>
             </form>
         );
