@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Route } from "react-router-dom";
 import $ from "jquery";
+import moment from "moment";
 
 // import { loadData, cleanData } from "../redux/dataprovider/actions";
 import { loadPropiedad } from "../redux/propiedad/actions";
@@ -12,7 +13,7 @@ import { SwitchnAdminPropiedadForm } from "./forms/propiedades";
 import { Link } from '../common/base';
 import { TextField } from "../common/forms/inputs";
 import defaultPic from "../img/default-no-picture.png";
-import { Button, ButtonGroup } from "react-bootstrap";
+import { Button, ButtonGroup, Badge } from "react-bootstrap";
 
 import { eliminarPropiedad } from "../redux/propiedad/actions";
 
@@ -119,25 +120,47 @@ SwitchnAdminDetallePropiedad = connect(
 
 class SwitchnAdminSubasta extends React.Component {
     handleClose = () => {
-        alert("No hago nada, jeje");
+        var cerrar = window.confirm("¿Está seguro de cerrar la subasta?");
+        if (cerrar) {
+            $.ajax({
+                url: `/ajax/subastas/${this.props.subasta.id}/`,
+                method: "DELETE",
+                dataType: "json"
+            })
+            .done(this.handleCloseOk)
+            .fail(this.handleCloseFail);
+        }
+    }
+
+    handleCloseOk = () => {
+        alert("Subasta cerrada con éxito");
+        this.props.refreshSubastas();
+    }
+
+    handleCloseFail = () => {
+        alert("Hubo un error al cerrar la subasta");
     }
 
     render() {
+        function formatFecha(fecha) {
+            return moment(fecha).format("L");
+        }
         var subasta = this.props.subasta;
+        if (!subasta) return null;
         return (
             <tr>
-                <td>{subasta.fecha_inicio}</td>
-                <td>{subasta.fecha_fin || "-"}</td>
-                <td>{`Semana del ${subasta.reserva.semana}`}</td>
-                {/* <td>
+                <td>{formatFecha(subasta.fecha_inicio)}</td>
+                <td>{ (subasta.fecha_fin && formatFecha(subasta.fecha_fin)) || "-"}</td>
+                <td>{`Semana del ${formatFecha(subasta.reserva.semana)}`}</td>
+                <td>
                     <Badge>
                     {
                     subasta.es_activa ? 
-                        "Activa"
-                        : "Inactiva"
+                        "Abierta"
+                        : "Cerrada"
                     }
                     </Badge>
-                </td> */}
+                </td>
                 <td>{`$${subasta.precioBase}`}</td>
                 <td>
                 {
@@ -147,8 +170,18 @@ class SwitchnAdminSubasta extends React.Component {
                 }
                 </td>
                 <td>
+                {
+                    subasta.ganador ? 
+                        `${subasta.ganador.username}`
+                        : "-"
+                }
+                </td>
+                <td>
                     <ButtonGroup>
-                        <Button onClick={this.handleClose}>Cerrar</Button>
+                        { subasta.es_activa ? 
+                            <Button onClick={this.handleClose}>Cerrar</Button>
+                            : null
+                        }
                     </ButtonGroup>
                 </td>
             </tr>
@@ -173,6 +206,10 @@ class SwitchnAdminPropiedadSubastas extends React.Component {
         this.props.cleanUp();
     }
 
+    refreshSubastas = () => {
+        this.props.loadSubastas(this.props.propiedad.id);
+    }
+
     render() {
         if (!this.props.propiedad) {
             return null;
@@ -185,7 +222,7 @@ class SwitchnAdminPropiedadSubastas extends React.Component {
         } else {
             content = this.props.subastas.map(
                 function(subasta) {
-                    return <SwitchnAdminSubasta key={subasta.id} propiedad={subasta} history={this.props.history} />;
+                    return <SwitchnAdminSubasta key={subasta.id} subasta={subasta} refreshSubastas={this.refreshSubastas} history={this.props.history} />;
                 }.bind(this)
             );
         }
@@ -195,13 +232,17 @@ class SwitchnAdminPropiedadSubastas extends React.Component {
                     <h2>Subastas</h2>
                 </div>
                 <div className="row">
+                    <Link url={`/admin/propiedad/${this.props.propiedad.id}/subastas/crear`}>Crear Subasta</Link>
                     <table className="table">
                         <thead className="thead-dark">
                             <tr>
                                 <th scope="col">{"Fecha de Inicio"}</th>
                                 <th scope="col">{"Fecha de Fin"}</th>
+                                <th scope="col">{"Semana"}</th>
+                                <th scope="col">{"Estado"}</th>
                                 <th scope="col">{"Precio Base"}</th>
                                 <th scope="col">{"Mejor oferta"}</th>
+                                <th scope="col">{"Ganador"}</th>
                                 <th scope="col">{"Acciones"}</th>
                             </tr>
                         </thead>
@@ -246,7 +287,7 @@ class _SwitchnAdminPropiedadPage extends React.Component {
         return (
             <SwitchnAdminPage title={this.props.propiedad && this.props.propiedad.titulo}>
                 <SwitchnAdminDetallePropiedad history={this.props.history} />
-                <SwitchnAdminPropiedadSubastas propiedad={this.props.propiedad} />
+                <SwitchnAdminPropiedadSubastas history={this.props.history} propiedad={this.props.propiedad} />
             </SwitchnAdminPage>
         )
     }

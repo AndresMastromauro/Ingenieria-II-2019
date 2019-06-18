@@ -8,6 +8,8 @@ from .serializers import *
 from users.models import *
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
+from datetime import datetime
 import random
 
 
@@ -120,14 +122,21 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
     def reservas(self, request, *args, **kwargs):
         ''' Trae las reservas adjudicadas '''
         propiedad = self.get_object()
-        reservas = propiedad.reserva_set.exclude(cliente__isnull=True)
+        # reservas = propiedad.reserva_set.exclude(cliente__isnull=True)
+        reservas = propiedad.get_reservas()
         return Response(ReservaSerializer(reservas, many=True).data)
 
-    @action(detail=True)
+    @action(detail=True, methods=['get', 'post'])
     def subastas(self, request, *args, **kwargs):
-        subastas = self.get_object().get_subastas()
-        serializer = SubastaSerializer(subastas, many=True)
-        return Response(serializer.data)
+        if request.method == 'GET':
+            subastas = self.get_object().get_subastas()
+            serializer = SubastaSerializer(subastas, many=True)
+            return Response(serializer.data)
+        else:
+            semana = datetime.strptime(request.data["semana"], "%Y-%m-%d").date()
+            precio_base = request.data["precioBase"]
+            subasta = self.get_object().create_subasta(semana, precio_base)
+            return Response(SubastaSerializer(subasta).data)
 
 
 class TiposPropiedadViewSet(viewsets.ModelViewSet):
@@ -166,9 +175,15 @@ class SubastaViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def ofertas(self, request, *args, **kwargs):
         subasta = self.get_object()
-        ofertas = OfertaSubasta.objects.filter(subasta_id=subasta.id)
+        # ofertas = OfertaSubasta.objects.filter(subasta_id=subasta.id)
+        ofertas = subasta.get_offers()
         serializer = OfertaSubastaSerializer(ofertas, many=True)
         return Response(serializer.data)
+
+    def destroy(self, request, *args, **kwargs):
+        subasta = self.get_object()
+        subasta.close()
+        return Response("Subasta cerrada con exito")
 
 
 class OfertaSubastaViewSet(viewsets.ModelViewSet):

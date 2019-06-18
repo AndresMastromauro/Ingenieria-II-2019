@@ -169,9 +169,30 @@ class OfertaSubastaSerializer(serializers.ModelSerializer):
 
 
 class SubastaSerializer(serializers.ModelSerializer):
+    best_offer = serializers.SerializerMethodField()
+    ganador = serializers.SerializerMethodField()
+
+    def get_best_offer(self, subasta):
+        best = subasta.get_best_offer()
+        if best is None:
+            return None
+        return {
+            "monto": best.monto,
+            "usuario": best.cliente.username
+        }
+
+    def get_ganador(self, subasta):
+        cliente = subasta.reserva.cliente
+        if cliente is not None:
+            return {
+                "username": subasta.reserva.cliente.username
+            }
+        return None
+
     class Meta:
         model = Subasta
         fields = '__all__'
+        depth = 1
 
 
 class CreditSerializer(serializers.ModelSerializer):

@@ -308,7 +308,7 @@ class _WeekField extends React.Component {
     
     handleDayChange = date => {
         var selectedDays = this.getWeekDays(this.getWeekRange(date).from);
-        this.props.input.onChange(selectedDays[0]);
+        this.props.input.onChange(moment(selectedDays[0]).format("YYYY-MM-DD"));
         console.log((selectedDays[0]));
         this.setState({
             selectedDays: selectedDays,
@@ -328,7 +328,7 @@ class _WeekField extends React.Component {
     };
 
     handleWeekClick = (weekNumber, days, e) => {
-        this.props.input.onChange(days[0]);
+        this.props.input.onChange(moment(days[0]).format("YYYY-MM-DD"));
         this.setState({
             selectedDays: days,
         });
@@ -368,6 +368,11 @@ class _WeekField extends React.Component {
                     showWeekNumbers
                     showOutsideDays
                     modifiers={modifiers}
+                    disabledDays={[
+                        {
+                            before: new Date()
+                        }
+                    ].concat(this.props.disabledDays)}
                     onDayClick={this.handleDayChange}
                     onDayMouseEnter={this.handleDayEnter}
                     onDayMouseLeave={this.handleDayLeave}

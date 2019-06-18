@@ -63,6 +63,12 @@ class EmailField extends React.Component {
     }
 }
 
+class HiddenField extends React.Component {
+    render() {
+        return <Input {...this.props} type="hidden" />
+    }
+}
+
 class TextAreaField extends React.Component {
     render() {
         return (
@@ -153,4 +159,4 @@ class DateField extends React.Component {
 
 
 
-export { TextField, TextAreaField, NumberField, PasswordField, Button, SubmitButton, EmailField, DateField  };
+export { HiddenField, TextField, TextAreaField, NumberField, PasswordField, Button, SubmitButton, EmailField, DateField  };

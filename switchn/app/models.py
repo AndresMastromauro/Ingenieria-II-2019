@@ -95,20 +95,35 @@ class Propiedad (models.Model):
 
     def is_available_on_week(self, semana):
         # NOTA: se asume que date.weekday() y reserva.semana.weekday() = 0 (lunes)
-        if self.reserva_set.filter(semana=semana).exclude(cliente__isnull=True).exists():
+        if self.reserva_set.filter(semana=semana).exists():
             # esta reservada
             return False
+        return True
+
+    def is_reserva_directa_ready(self, semana):
         hoy = date.today()
         seis_meses = timedelta(weeks=25)
         un_anio = timedelta(weeks=52)
         return (hoy + seis_meses) < semana < (hoy + un_anio)
 
+    def get_reservas(self):
+        ultimo_lunes = date.today() - timedelta(days=date.today().weekday())  # el lunes es el weekday 0
+        self.reserva_set.filter(semana__gte=ultimo_lunes)
+
     def has_reservas(self):
-        ultimo_lunes = date.today() - timedelta(days=date.today().weekday()) # el lunes es el weekday 0
-        return self.reserva_set.filter(semana__gte=ultimo_lunes).exclude(cliente__isnull=True).exists()
+        return self.get_reservas().exists()
 
     def get_subastas(self):
-        return Subasta.objects.filter(reserva__propiedad=self).filter(estado=1)
+        return Subasta.objects.filter(reserva__propiedad=self)
+
+    def get_subastas_abiertas(self):
+        return self.get_subastas().filter(es_activa=True)
+
+    def create_subasta(self, semana, precio_base):
+        if not self.is_available_on_week(semana):
+            raise ValidationError("La semana elegida está reservada")
+        reserva = self.reserva_set.create(propiedad=self, semana=semana)
+        return Subasta.objects.create(reserva=reserva, precioBase=precio_base)
 
     @staticmethod
     def get_propiedades_activas():
@@ -136,16 +151,21 @@ class Reserva (models.Model):
         semanas_restantes = self.semana - date.today()
         return self.is_open() and (timedelta(weeks=1) < semanas_restantes < timedelta(weeks=25))
 
+    def give_to(self, cliente):
+        self.cliente = cliente
+        self.save()
+
     class Meta:
         unique_together = (('semana','propiedad'),)
 
 
 class Subasta (models.Model):
     precioBase = models.DecimalField(max_digits=15, decimal_places=2)
-    estado = models.ForeignKey(EstadoSubasta, on_delete=models.PROTECT)
+    # estado = models.ForeignKey(EstadoSubasta, on_delete=models.PROTECT)
     reserva = models.OneToOneField(Reserva, on_delete=models.PROTECT)
-    fecha_inicio = models.DateField(default=timezone.now)
+    fecha_inicio = models.DateField(default=date.today)
     fecha_fin = models.DateField(null=True)
+    es_activa = models.BooleanField(default=True)
 
     def __str__(self):
         anio = self.reserva.semana.isocalendar() [0]
@@ -153,11 +173,18 @@ class Subasta (models.Model):
         return "{0} / base: ${1} ({2}, semana: {3})".format(self.reserva.propiedad.titulo, self.precioBase, anio, semana)
 
     def is_open(self):
-        return self.estado.id == 1 and self.reserva.is_open()
+        return self.es_activa and self.reserva.is_open()
 
-    def get_best_offer(self):
-        # siempre es la ultima si controlamos el monto en la creacion
-        return self.ofertasubasta_set.last()
+    def get_offers(self, **kwargs):
+        queryset = self.ofertasubasta_set.order_by("-monto")
+        if "exclude_users" in kwargs:
+            exclude = kwargs["exclude_users"]
+            for user in exclude:
+                queryset = queryset.exclude(cliente=user)
+        return queryset
+
+    def get_best_offer(self, **kwargs):
+        return self.get_offers(**kwargs).first()
 
     def make_offer(self, cliente, monto):
         if monto <= self.precioBase:
@@ -169,7 +196,22 @@ class Subasta (models.Model):
         return self.ofertasubasta_set.create(cliente=cliente, monto=monto)
 
     def close(self):
-        pass
+        def user_has_credit(user):
+            return user.credit_set.exclude(expirationDate__lte=timezone.now()).count() > 0
+
+        exclude = []
+        best_offer = self.get_best_offer(exclude_users=exclude)
+        while best_offer is not None and not user_has_credit(best_offer.cliente):
+            exclude.append(best_offer.cliente)
+            best_offer = self.get_best_offer(exclude_users=exclude)
+        if best_offer is not None:
+            self.reserva.give_to(best_offer.cliente)
+        # habria que cargarle el pago al cliente y quitarle un credito
+        self.fecha_fin = timezone.now()
+        self.es_activa = False
+        self.save()
+
+
 
 
 
@@ -181,7 +223,7 @@ class OfertaSubasta (models.Model):
 
     def __str__(self):
         return f'[{self.subasta}] {self.cliente} => ${self.monto} ({date.strftime(self.fechaHora, "%d/%m/%Y - %H:%M:%S")})'
+
     # class Meta:
         # unique_together = (('cliente','subasta'),) <- por que?
-
 
