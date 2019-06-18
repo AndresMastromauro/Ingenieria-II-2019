@@ -207,9 +207,14 @@ class MembresiaSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    es_admin = serializers.SerializerMethodField()
+
+    def get_es_admin(self, user):
+        return user.is_staff
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'first_name', 'last_name', 'email') # ademas si ponemos __all__ viaja la contraseña!
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'es_admin') # ademas si ponemos __all__ viaja la contraseña!
 
 
 class ProfileSerializer(serializers.ModelSerializer):
@@ -233,7 +238,7 @@ class subastaRandonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model=Subasta
-        fields=('precioBase', 'estado', 'reserva')
+        fields=('precioBase', 'es_activa', 'reserva')
 
 
 class ProfileSerializerPost(serializers.ModelSerializer):

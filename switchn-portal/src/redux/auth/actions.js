@@ -131,28 +131,25 @@ export const logout = () => {
     }
 }
 
-export const singUp = (username, first_name, last_name, email, password, profile) => {
+export const singUp = (values, fnSuccess, fnError) => {
     return (dispatch, getState) => {
         return $.ajax({
             url: "/auth/register/",
             method: "POST",
-            data: {
-                username: username,
-                first_name: first_name,
-                last_name: last_name,
-                email: email,
-                password: password,
-                profile:profile,
-            },
+            data: values,
             dataType: "json"
         }).done(
-            (data) => dispatch(singUpSuccessful(data))
-        ).fail(
+            (data) => {
+                dispatch(singUpSuccessful(data));
+                fnSuccess();
+        }).fail(
             function (xhr, status, err) {
                 if (xhr.status === 403 || xhr.status === 401) {
                     dispatch(authError(xhr.responseJSON && xhr.responseJSON.detail));
+                    fnError();
                 } else {
                     dispatch(singUpFailed(xhr.responseJSON && xhr.responseJSON.non_field_errors));
+                    fnError();
                 }
             }
         )

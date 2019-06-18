@@ -23,12 +23,12 @@ class _SingUpForm extends React.Component {
                         )}
                     </div> */}
                     <EmailField label={"E-mail"} name={"username"} /* onChange={this.handleUserChange} */ />
+                    <EmailField label={"Repetir email"} name={"email"} /* onChange={this.handleUserChange} */ />
                     <TextField label={"Apellido"} name={"first_name"} /* onChange={this.handleUserChange} */ />
                     <TextField label={"Nombre"} name={"last_name"} /* onChange={this.handleUserChange} */ />
-                    <EmailField label={"Repetir email"} name={"email"} /* onChange={this.handleUserChange} */ />
                     <PasswordField label={"Contraseña"} name={"password"} /* onChange={this.handlePasswordChange} */ />
-                    <NumberField label={"Nro de tarjeta de credito"} name={"profile.tarjeta_credito"}/>
-                    <DateField label={"Fecha de nacimiento"} name={"profile.fecha_nacimiento"}/>
+                    <NumberField label={"Nro de tarjeta de credito"} name={"tarjeta_credito"}/>
+                    <DateField label={"Fecha de nacimiento"} name={"fecha_nacimiento"}/>
                     <div className="form-group">
                         <SubmitButton>Registrar</SubmitButton>
                     </div>

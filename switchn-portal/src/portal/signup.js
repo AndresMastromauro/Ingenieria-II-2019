@@ -9,8 +9,16 @@ import { Row, Col, Jumbotron } from "react-bootstrap";
 class _SwitchnPortalSingUp extends React.Component {
 
     onSubmit = (values) => {
-        this.props.singUp(values.username, values.first_name, values.last_name, 
-            values.email, values.password, values.profile);
+        this.props.singUp(values, this.handleSignUpOk, this.handleSignUpFail);
+    }
+
+    handleSignUpOk = () => {
+        alert("Te registraste existosamente!");
+        this.props.history.replace("/login");
+    }
+
+    handleSignUpFail = () => {
+        alert("Ha ocurrido un error");
     }
 
     render() {
@@ -22,21 +30,21 @@ class _SwitchnPortalSingUp extends React.Component {
                 <div className="justify-content-center">
                 <Row>
                     <Col>
-                    <SingUpForm onSubmit={this.onSubmit}/>
+                        <SingUpForm onSubmit={this.onSubmit}/>
                     </Col>
                     <Col>
-                    <Jumbotron>
+                        <Jumbotron>
                     <h1>Beneficios de registrarte</h1>
-                        <p>
-                            Podras acceder a toda nuestra gama de alojamientos listos para que 
-                            puedas disfrutar de las vacaciones de tus sueños.
-                            Regitrate hoy mismo y accede a las mejores subastas, o haste miembro
-                            premium y elije fonde alojarte sin ningun tipo de restricciones.
-                            <br></br>
-                            <span>precio usuario premiun: $5000 por mes.</span>
-                            <span>precio usuario standar: $2000 por mes.</span>
+                    <p>
+                        Podras acceder a toda nuestra gama de alojamientos listos para que 
+                        puedas disfrutar de las vacaciones de tus sueños.
+                        Regitrate hoy mismo y accede a las mejores subastas, o haste miembro
+                        premium y elije fonde alojarte sin ningun tipo de restricciones.
+                        <br></br>
+                        <span>precio usuario premiun: $5000 por mes.</span>
+                        <span>precio usuario standar: $2000 por mes.</span>
 
-                        </p>
+                    </p>
 
                     </Jumbotron>
                     </Col>
@@ -65,11 +73,8 @@ const mapStateToProps = state => {
   
 const mapDispatchToProps = dispatch => {
     return {
-        singUp: (username, first_name, last_name, email, password, 
-            profile ) => {
-                
-            return dispatch(singUp(username, first_name, last_name, email, password,
-                 profile));
+        singUp: (values, fnSuccess, fnError) => {
+            return dispatch(singUp(values, fnSuccess, fnError));
         }
     };
 }

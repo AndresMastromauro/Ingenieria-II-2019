@@ -6,6 +6,8 @@ import { loadData, cleanData } from '../redux/dataprovider/actions';
 import { Button, Card} from 'react-bootstrap';
 import FlexView from 'react-flexview';
 
+import defaultPic from "../img/default-no-picture.png";
+
 
 class HomeSinRegCard extends React.Component {
 
@@ -27,7 +29,7 @@ class HomeSinRegCard extends React.Component {
             <div className= 'col'> 
             <Card border= 'info' style={{ width: '18rem' }}>
             <Card.Header>NUESTRAS PROPIEDADES</Card.Header>
-            <Card.Img variant="top" src= {this.props.propiedad[0].image} />
+            <Card.Img variant="top" src= {this.props.propiedad[0].image || defaultPic } />
             <Card.Body>
                 <Card.Title>{this.props.propiedad[0].titulo} </Card.Title>
                 <Card.Subtitle><small>{this.props.propiedad[0].direccion.pais.nombre} - 

@@ -79,6 +79,8 @@ class _SwitchnAdminListadoPropiedades extends React.Component {
             <div>
                 <div className="row justify-content-right">
                     <div className="col-4">
+                        <Link url={"/admin"}>Volver</Link>
+                        {" | "}
                         <Link url={
                             window.location.pathname.endsWith('/') ?
                             "crear"

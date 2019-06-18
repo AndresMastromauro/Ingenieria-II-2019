@@ -61,6 +61,9 @@ class SwitchnAdminDetallePropiedad extends React.Component {
         return (
             <div className="container" style={{margin: "4pt", padding: "4pt"}}>
                 <div className="row">
+                    <Link url={"/admin/propiedades"}>Volver</Link>
+                </div>
+                <div className="row">
                     <h2>Información General</h2>
                 </div>
                 <div className="row">

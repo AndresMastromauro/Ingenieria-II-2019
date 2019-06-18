@@ -18,6 +18,7 @@ class _SwitchnAdminNavbarUserActions extends React.Component {
                     <SwitchnNavbarLink url={this.props.user.url ? this.props.user.url : ''}>
                         Logueado como <u>{this.props.user.username}</u>
                     </SwitchnNavbarLink>
+                    <SwitchnNavbarLink url={"/"}>Ver Sitio</SwitchnNavbarLink>
                     <SwitchnNavbarLink url={"/logout"}>Logout</SwitchnNavbarLink>
                 </div>
             );

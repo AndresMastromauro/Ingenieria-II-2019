@@ -126,7 +126,7 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
         reservas = propiedad.get_reservas()
         return Response(ReservaSerializer(reservas, many=True).data)
 
-    @action(detail=True, methods=['get', 'post'])
+    @action(detail=True, methods=['get', 'post'], permission_classes=[permissions.IsAdminUser, permissions.IsAuthenticatedOrReadOnly])
     def subastas(self, request, *args, **kwargs):
         if request.method == 'GET':
             subastas = self.get_object().get_subastas()
