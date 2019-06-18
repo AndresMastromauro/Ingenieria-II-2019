@@ -9,6 +9,7 @@ import {
 } from "../common/base";
 import { Button, Card} from 'react-bootstrap';
 import defaultPic from "../img/default-no-picture.png";
+import { Link } from "../common/base";
 
 class SwitchnPortalNavbarTabs extends React.Component {
     render() {
@@ -98,6 +99,7 @@ export class SwitchnPortalPropiedad extends React.Component {
                         {/*  <!-- {% url 'app-detail_auction' pk=post.pk %} --> */}
                         <p><small>{this.getDireccion()}</small></p>
                         <p className="article-content">{propiedad.descripcion}</p>
+                        <Link url={`/detaPropiedad/${this.props.propiedad.id}`}>Ver Detalle</Link>
                     </div>
                 </div>
             </article>

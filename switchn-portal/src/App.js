@@ -11,6 +11,7 @@ import { SwitchnHome } from './portal/home';
 import { SwitchnPortalLogin } from './portal/login';
 import {SwitchnPortalSingUp} from './portal/signup';
 import { SwitchnPortalLogout } from './portal/logout';
+import {SwitchnDetallePropiedad} from './portal/detallePropiedad';
 import { loadUser } from "./redux/auth/actions";
 import { store } from './redux/store';
 import { SwitchnAdminCrearSubastaPage } from './admin/subasta_creacion';
@@ -46,6 +47,7 @@ class _App extends React.Component {
               <PrivateRoute exact path="/" component={SwitchnHome} />
               <Route exact path="/login" component={SwitchnPortalLogin} />
               <Route exact path="/registrar" component={SwitchnPortalSingUp} />
+              <PrivateRoute exact path="/detaPropiedad/:idPropiedad" component={SwitchnDetallePropiedad} />
               <PrivateRoute exact path="/admin" component={SwitchnAdminHome} />
               <PrivateRoute exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
               <PrivateRoute exact strict path="/admin/propiedad/:idPropiedad" component={SwitchnAdminPropiedadPage} />
