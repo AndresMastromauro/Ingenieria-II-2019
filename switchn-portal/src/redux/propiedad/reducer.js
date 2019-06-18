@@ -15,7 +15,9 @@ import {
     PROPIEDAD_LISTADO_LOAD_OK,
     PROPIEDAD_LISTADO_LOAD_FAIL,
     PROPIEDAD_SELECTED,
-    PROPIEDAD_UNSELECTED
+    PROPIEDAD_UNSELECTED,
+    SUBASTA_LOAD_OK,
+    SUBASTA_LOADING
 
 } from './actions';
 
@@ -26,7 +28,7 @@ const initialState = {
     error: null
 }
 
-export default function propiedad(state = initialState, action) {
+export function propiedad(state = initialState, action) {
     switch (action.type) {
         case PROPIEDAD_LOADING:
         case PROPIEDAD_CREATING:
@@ -78,5 +80,23 @@ export default function propiedad(state = initialState, action) {
             }
         default:
             return state;
+        
+      
     }
 }
+
+export function subasta(state = initialState, action) {
+    switch (action.type) {
+        case PROPIEDAD_LOADING:
+        case SUBASTA_LOAD_OK:
+                return {
+                    ...state,
+                    busy: false,
+                    data: action.data
+                }
+
+        default:
+            return state;
+
+            }
+        }

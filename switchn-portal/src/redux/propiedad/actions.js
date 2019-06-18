@@ -17,6 +17,10 @@ export const PROPIEDAD_LOADING = "PROPIEDAD_LOADING";
 export const PROPIEDAD_LOAD_OK = "PROPIEDAD_LOAD_OK";
 export const PROPIEDAD_LOAD_FAIL = "PROPIEDAD_LOAD_FAIL";
 
+export const SUBASTA_LOAD_OK = "SUBASTA_LOAD_OK"
+
+export const SUBASTA_LOADING = "SUBASTA_LOADING"
+
 /* Alta */
 export const PROPIEDAD_CREATING = "PROPIEDAD_CREATING";
 export const PROPIEDAD_CREATE_OK = "PROPIEDAD_CREATION_OK";
@@ -71,10 +75,23 @@ function propiedadLoading() {
     }
 }
 
+function subastaLoading() {
+    return {
+        type: SUBASTA_LOADING
+    }
+}
+
 function propiedadLoadOk(oData) {
     return {
         type: PROPIEDAD_LOAD_OK,
         data: oData
+    }
+}
+
+function subastaLoadOk(subData) {
+    return {
+        type: SUBASTA_LOAD_OK,
+        data: subData
     }
 }
 
@@ -257,5 +274,41 @@ export function eliminarPropiedad(idPropiedad, fnSuccess, fnError) {
                 fnError();
             }
         )
+    }
+}
+
+export function loadSubastaProp(skey, idPropiedad) {
+    return (dispatch, getState) => {
+        dispatch(subastaLoading(skey));
+        $.ajax({
+            url: `${PROPIEDADES_URL}${idPropiedad}/subastas`,
+            dataType: "json",
+            beforeSend: (xhr) => { xhr.setRequestHeader("Authorization", `Token ${getState().auth.token}`) }
+        }).done(
+            (data) => {
+                dispatch(subastaLoadOk(data));
+            }
+        ).fail(
+            (xhr, text, err) => {
+                dispatch(propiedadLoadFail(err));
+        });
+    }
+}
+
+export function loadReservasProp(idPropiedad) {
+    return (dispatch, getState) => {
+        dispatch(propiedadLoading());
+        $.ajax({
+            url: `${PROPIEDADES_URL}${idPropiedad}/subastas`,
+            dataType: "json",
+            beforeSend: (xhr) => { xhr.setRequestHeader("Authorization", `Token ${getState().auth.token}`) }
+        }).done(
+            (data) => {
+                dispatch(propiedadLoadOk(data));
+            }
+        ).fail(
+            (xhr, text, err) => {
+                dispatch(propiedadLoadFail(err));
+        });
     }
 }
