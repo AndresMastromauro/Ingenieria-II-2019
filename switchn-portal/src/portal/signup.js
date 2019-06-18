@@ -9,7 +9,11 @@ import { Row, Col, Jumbotron } from "react-bootstrap";
 class _SwitchnPortalSingUp extends React.Component {
 
     onSubmit = (values) => {
-        this.props.singUp(values, this.handleSignUpOk, this.handleSignUpFail);
+        if (values.username !== values.email) {
+            alert("El mail no coincide");
+        } else {
+            this.props.singUp(values, this.handleSignUpOk, this.handleSignUpFail);
+        }
     }
 
     handleSignUpOk = () => {
@@ -36,13 +40,13 @@ class _SwitchnPortalSingUp extends React.Component {
                         <Jumbotron>
                     <h1>Beneficios de registrarte</h1>
                     <p>
-                        Podras acceder a toda nuestra gama de alojamientos listos para que 
+                        Podrás acceder a toda nuestra gama de alojamientos listos para que 
                         puedas disfrutar de las vacaciones de tus sueños.
-                        Regitrate hoy mismo y accede a las mejores subastas, o haste miembro
-                        premium y elije fonde alojarte sin ningun tipo de restricciones.
+                        Regístrate hoy mismo y accede a las mejores subastas, o hazte miembro
+                        premium y elige donde alojarte sin ningún tipo de restricciones.
                         <br></br>
-                        <span>precio usuario premiun: $5000 por mes.</span>
-                        <span>precio usuario standar: $2000 por mes.</span>
+                        <span>Precio Usuario Premium: $5000 por mes.</span>
+                        <span>Precio Usuario Standard: $2000 por mes.</span>
 
                     </p>
 
