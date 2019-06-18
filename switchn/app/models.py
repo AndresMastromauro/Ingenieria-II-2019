@@ -108,7 +108,7 @@ class Propiedad (models.Model):
 
     def get_reservas(self):
         ultimo_lunes = date.today() - timedelta(days=date.today().weekday())  # el lunes es el weekday 0
-        self.reserva_set.filter(semana__gte=ultimo_lunes)
+        return self.reserva_set.filter(semana__gte=ultimo_lunes)
 
     def has_reservas(self):
         return self.get_reservas().exists()
