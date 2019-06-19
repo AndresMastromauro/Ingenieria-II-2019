@@ -214,7 +214,6 @@ class Subasta (models.Model):
 
 
 
-
 class OfertaSubasta (models.Model):
     cliente = models.ForeignKey(User, on_delete=models.PROTECT)
     subasta = models.ForeignKey(Subasta, on_delete=models.PROTECT)
@@ -226,4 +225,5 @@ class OfertaSubasta (models.Model):
 
     # class Meta:
         # unique_together = (('cliente','subasta'),) <- por que?
+
 

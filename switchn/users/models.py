@@ -38,3 +38,28 @@ class Profile(models.Model):
     def has_credit(self):
         return self.get_credit_count() > 0
 
+    def solicitar_premium(self):
+        if not self.has_solicitud_pendiente():
+            return self.solicitudcambiomembresia_set.create(a_tipo=Membresia.objects.get(id=2))
+        return None
+
+    def has_solicitud_pendiente(self):
+        return self.solicitudcambiomembresia_set.filter(pendiente=True).exists()
+
+
+class SolicitudCambioMembresia(models.Model):
+    a_tipo = models.ForeignKey(Membresia, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    fecha_hora = models.DateTimeField(default=timezone.now)
+    pendiente = models.BooleanField(default=True)
+    # aceptada = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'({self.cliente}) => {self.a_tipo}'
+
+    def aceptar(self):
+        self.cliente.membresia = self.a_tipo
+        self.aceptada = True
+        self.pendiente = False
+        self.cliente.save()
+        self.save()

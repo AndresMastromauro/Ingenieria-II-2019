@@ -219,6 +219,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
+    membresia = MembresiaSerializer()
+    solicitud = serializers.SerializerMethodField()
+
+    def get_solicitud(self, profile):
+        return profile.has_solicitud_pendiente()
 
     class Meta:
         model = Profile
