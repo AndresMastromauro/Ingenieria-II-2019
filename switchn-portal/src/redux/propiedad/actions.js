@@ -17,10 +17,6 @@ export const PROPIEDAD_LOADING = "PROPIEDAD_LOADING";
 export const PROPIEDAD_LOAD_OK = "PROPIEDAD_LOAD_OK";
 export const PROPIEDAD_LOAD_FAIL = "PROPIEDAD_LOAD_FAIL";
 
-export const SUBASTA_LOAD_OK = "SUBASTA_LOAD_OK"
-
-export const SUBASTA_LOADING = "SUBASTA_LOADING"
-
 /* Alta */
 export const PROPIEDAD_CREATING = "PROPIEDAD_CREATING";
 export const PROPIEDAD_CREATE_OK = "PROPIEDAD_CREATION_OK";
@@ -33,6 +29,12 @@ export const PROPIEDAD_UPDATE_FAIL = "PROPIEDAD_UPDATE_FAIL";
 export const PROPIEDAD_DELETING = "PROPIEDAD_DELETING";
 export const PROPIEDAD_DELETE_OK = "PROPIEDAD_REMOVE_OK";
 export const PROPIEDAD_DELETE_FAIL = "PROPIEDAD_REMOVE_FAIL";
+
+/*Para detalle propiedad */
+export const SUBASTA_LOAD_OK = "SUBASTA_LOAD_OK"
+export const SUBASTA_LOADING = "SUBASTA_LOADING"
+export const RESERVA_LOAD_OK = "RESERVA_LOAD_OK"
+export const RESERVA_LOADING = "RESERVA_LOADING"
 
 
 /* Action generators Lectura */
@@ -92,6 +94,19 @@ function subastaLoadOk(subData) {
     return {
         type: SUBASTA_LOAD_OK,
         data: subData
+    }
+}
+
+function reservaLoading() {
+    return {
+        type: RESERVA_LOADING
+    }
+}
+
+function reservaLoadOk(oData) {
+    return {
+        type: RESERVA_LOAD_OK,
+        data: oData
     }
 }
 
@@ -295,16 +310,16 @@ export function loadSubastaProp(skey, idPropiedad) {
     }
 }
 
-export function loadReservasProp(idPropiedad) {
+export function loadReservasProp(sKey, idPropiedad) {
     return (dispatch, getState) => {
-        dispatch(propiedadLoading());
+        dispatch(reservaLoading(sKey));
         $.ajax({
-            url: `${PROPIEDADES_URL}${idPropiedad}/subastas`,
+            url: `${PROPIEDADES_URL}${idPropiedad}/reservasSinAdjudicar`,
             dataType: "json",
             beforeSend: (xhr) => { xhr.setRequestHeader("Authorization", `Token ${getState().auth.token}`) }
         }).done(
             (data) => {
-                dispatch(propiedadLoadOk(data));
+                dispatch(reservaLoadOk(data));
             }
         ).fail(
             (xhr, text, err) => {

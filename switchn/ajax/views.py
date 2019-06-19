@@ -138,6 +138,13 @@ class PropiedadesViewSet(viewsets.ModelViewSet):
             subasta = self.get_object().create_subasta(semana, precio_base)
             return Response(SubastaSerializer(subasta).data)
 
+    @action(detail=True)
+    def reservasSinAdjudicar(self, request, *args, **kwargs):
+        ''' Trae las reservas sin adjudicar '''
+        propiedad = self.get_object()
+        reservas = propiedad.reserva_set.exclude(cliente__isnull=False).exclude(subasta__isnull=False)
+        return Response(ReservaSerializer(reservas, many=True).data)
+
 
 class TiposPropiedadViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)

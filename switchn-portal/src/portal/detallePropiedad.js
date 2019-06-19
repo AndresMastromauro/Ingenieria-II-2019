@@ -39,7 +39,7 @@ class SwitchReservasPropVista extends React.Component {
         } else if (!this.props.reserva || this.props.reserva.length == 0) {
             content = <h6>No hay reservas para mostrar</h6>;
         } else {
-            content = this.props.subastas.map(
+            content = this.props.reserva.map(
                 function(reserva) {
                     return <ListadoReservas key={reserva.id} reserva={reserva} />
                 }
@@ -109,31 +109,25 @@ class DetallePropiedad extends React.Component {
                                     <th scope="row">Direccion:</th>
                                     <td>{this.getDireccion()}</td>
                                 </tr>
-                                <Row>
-                                    <div className='col'>
-                                    <Col>
-                                <tr>
-                                    <th scope="row">Reservas Disponibles:</th>
-                                    <td> <SwitchReservasPropVista reserva={reserva}/> </td>
-                                </tr>
-                                </Col>
-                                </div>
-                                <div className='col'>
-                                <Col>
-                                <tr>
-                                    <th scope="row">Subastas Disponibles:</th>
-                                    <td><SwitchSubastasPropVista subasta={subasta}/></td>
-                                </tr>
-                                </Col>
-                                </div>
-                                </Row>
+
                             </tbody>
                             <tfoot>
-                                <tr>
-                                   
-                                </tr>
                             </tfoot>
                         </table>
+                        <table class="table table-borderless table-hover table-sm table-active">
+                            <thead>
+                            <tr>
+                                <th scope="col">Reservas Disponibles:</th>
+                                <th scope="col">Subastas Disponibles:</th>   
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td> <SwitchReservasPropVista reserva={reserva}/> </td>
+                                <td><SwitchSubastasPropVista subasta={subasta}/></td>
+                            </tr>
+                            </tbody>
+                            </table>
                     </div>
                 </div>
             </div>
@@ -146,6 +140,7 @@ DetallePropiedad = connect(
         return {
             propiedad: state.propiedad.data,
             subasta: state.subasta.data,
+            reserva: state.reserva.data,
         }
     }
 )(DetallePropiedad);
@@ -159,7 +154,7 @@ class _DetallePropiedad extends React.Component {
         if (idPropiedad)
             this.props.loadPropiedad(idPropiedad);
             this.props.loadSubastaProp(idPropiedad);
-            //this.props.loadReservasProp(idPropiedad)
+            this.props.loadReservasProp(idPropiedad)
                         
     }
 
@@ -191,7 +186,7 @@ let SwitchnDetallePropiedad = connect(
         return {
             loadPropiedad: (id) => dispatch(loadPropiedad(id)),
             loadSubastaProp: (id) => dispatch(loadSubastaProp('subasta',id)),
-            //loadReservasProp: (id) => dispatch(loadReservasProp(id))
+            loadReservasProp: (id) => dispatch(loadReservasProp('reserva',id))
             /* cleanUp: () => dispatch(cleanData("propiedad")) */
         }
     }

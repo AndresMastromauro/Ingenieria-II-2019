@@ -27,7 +27,7 @@ export class ListadoReservas extends React.Component {
         return (
             <tr>
                 <td>{reserva.semana}</td>
-                <td>{reserva.precio}</td>
+                <td>reserva.precio</td>
                 <td></td>
             </tr>
         );
