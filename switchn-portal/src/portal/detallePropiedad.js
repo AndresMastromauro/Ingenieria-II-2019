@@ -6,8 +6,8 @@ import $ from "jquery";
 import { loadPropiedad, loadSubastaProp, loadReservasProp } from "../redux/propiedad/actions";
 import { Link } from '../common/base';
 import { SwitchnPortalPage } from './base';
-import { Row, Col } from "react-bootstrap";
-import {ListadoSubastas, ListadoReservas} from "./listadoDeSubastas"
+import {ListadoSubastas, ListadoReservas, ListadoHotale} from "./listadoDeSubastas"
+
 
 class SwitchSubastasPropVista extends React.Component {
     render() {
@@ -42,6 +42,28 @@ class SwitchReservasPropVista extends React.Component {
             content = this.props.reserva.map(
                 function(reserva) {
                     return <ListadoReservas key={reserva.id} reserva={reserva} />
+                }
+            );
+        }
+        return (
+            <div className="col-sm-8">
+                {content}
+            </div>
+        )
+    }
+}
+
+class SwitchHotsalePropVista extends React.Component {
+    render() {
+        var content;
+        if (this.props.isLoading) {
+            content = <h2>Cargando</h2>;
+        } else if (!this.props.reserva || this.props.reserva.length >= 0) {
+            content = <h6>No hay hotsales para mostrar</h6>;
+        } else {
+            content = this.props.reserva.map(
+                function(reserva) {
+                    return <ListadoHotale/>
                 }
             );
         }
@@ -114,22 +136,26 @@ class DetallePropiedad extends React.Component {
                             <tfoot>
                             </tfoot>
                         </table>
-                        <table class="table table-borderless table-hover table-sm table-active">
-                            <thead>
+                        
+                    </div>
+                </div>
+                <table class="table table-borderless table-hover table-sm table-active">
+                            <thead class="thead-dark">
                             <tr>
                                 <th scope="col">Reservas Disponibles:</th>
-                                <th scope="col">Subastas Disponibles:</th>   
+                                <th scope="col">Subastas Disponibles:</th>
+                                <th scope="col">Hotsales Disponibles:</th>      
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
-                                <td> <SwitchReservasPropVista reserva={reserva}/> </td>
+                                
+                                <td><SwitchReservasPropVista reserva={reserva}/> </td>
                                 <td><SwitchSubastasPropVista subasta={subasta}/></td>
+                                <td><SwitchHotsalePropVista/></td>
                             </tr>
                             </tbody>
                             </table>
-                    </div>
-                </div>
             </div>
         );
     }
