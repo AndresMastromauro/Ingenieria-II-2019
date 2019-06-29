@@ -33,7 +33,7 @@ class Profile(models.Model):
         return f'{self.user.username} Profile'
 
     def get_credit_count(self):
-        return self.user.credit_set.exclude(expirationDate__lte=timezone.now).count()
+        return self.user.credit_set.exclude(expirationDate__lte=timezone.now()).count()
 
     def has_credit(self):
         return self.get_credit_count() > 0
