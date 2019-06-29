@@ -100,6 +100,10 @@ class Propiedad (models.Model):
             return False
         return True
 
+    def get_unavailable_weeks(self):
+        reservas = self.get_reservas()
+        
+
     def is_reserva_directa_ready(self, semana):
         if not self.is_available_on_week(semana):
             return False
