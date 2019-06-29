@@ -12,7 +12,7 @@ const initialState = {
     isAuthenticated: false,
     isLoading: true,
     user: null,
-    errors: {},
+    errors: [],
   };
 
 function auth(state = initialState, action) {
@@ -39,7 +39,7 @@ function auth(state = initialState, action) {
                 ...action.data, 
                 isAuthenticated: true, 
                 isLoading: false, 
-                errors: null
+                errors: []
             };
 
         case AUTHENTICATION_ERROR:

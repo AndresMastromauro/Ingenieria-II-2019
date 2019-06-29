@@ -1,12 +1,20 @@
 import React from "react";
 import { connect } from "react-redux";
-import { Route } from "react-router-dom";
+import { Button } from "react-bootstrap";
+import { reduxForm } from "redux-form";
+import moment from 'moment';
 import $ from "jquery";
+
 // import { loadData, cleanData } from "../redux/dataprovider/actions";
 import { loadPropiedad, loadSubastaProp, loadReservasProp } from "../redux/propiedad/actions";
 import { Link } from '../common/base';
+import { WeekField } from '../common/forms/select';
 import { SwitchnPortalPage } from './base';
-import {ListadoSubastas, ListadoReservas, ListadoHotale} from "./listadoDeSubastas"
+import { ListadoSubastas, ListadoReservas, ListadoHotale } from "./listadoDeSubastas"
+import defaultPic from '../img/default-no-picture.png';
+import { SubmitButton } from "../common/forms/inputs";
+
+
 
 
 class SwitchSubastasPropVista extends React.Component {
@@ -75,6 +83,136 @@ class SwitchHotsalePropVista extends React.Component {
     }
 }
 
+class DetallePropiedadVentas extends React.Component {
+    state = {
+        component: (props) => null
+    }
+    handleSubastas = (e) => {
+        this.setState({
+            component: (props) => <DetallePropiedadSubastas subastas={this.props.subastas} />
+        });
+    }
+    handleHotsales = (e) => {
+        this.setState({
+            component: (props) => null
+        });
+    }
+
+    render() {
+        let Component = this.state.component;
+        return (
+            <div>
+                <div className="row">
+                    <div className="col">
+                        <a href="javascript:void(0)" onClick={this.handleSubastas}>Subastas</a>
+                    </div>
+                    <div className="col">
+                        <a href="javascript:void(0)" onClick={this.handleHotsales}>Hotsales</a>
+                    </div>
+                </div>
+                <Component />
+            </div>
+        )
+    }
+}
+
+
+class DetallePropiedadSubastasEntry extends React.Component {
+    render() {
+        var {subasta} = this.props;
+        return (
+            <tr>
+                <td>Semana del {moment(subasta.reserva.semana).format("L")}</td>
+                <td>${subasta.precioBase}</td>
+                <td>${
+                    subasta.best_offer ?
+                        subasta.best_offer.monto
+                        : subasta.precioBase}
+                </td>
+                <td><Button variant="info"></Button></td>
+            </tr>
+        )
+    }
+}
+
+class DetallePropiedadSubastas extends React.Component {
+    render() {
+        var content = null;
+        var {subastas} = this.props;
+        if (subastas) {
+            content = subastas.map(
+                (sub, i) => <DetallePropiedadSubastasEntry key={i} subasta={sub} />
+            );
+        }
+        return (
+            <div className="row">
+                <h2>Subastas disponibles</h2>
+                <table className="table table-borderless table-hover table-sm table-active">
+                    <thead className="thead-dark">
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Precio Base</th>
+                            <th scope="col">Precio Actual</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {content}
+                    </tbody>
+                </table>
+            </div>
+        )
+    }
+}
+
+class DetallePropiedadHotsales extends React.Component {
+    render() {
+        return (
+            <div className="row">
+                <h2>Hotsales disponibles</h2>
+                <table className="table table-borderless table-hover table-sm table-active">
+                    <thead className="thead-dark">
+                        <tr>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Precio</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
+            </div>
+        )
+    }
+}
+
+class ReservaDirectaForm extends React.Component {
+    render() {
+        return (
+            <form onSubmit={this.handleSubmit}>
+                <WeekField />
+                <SubmitButton>Reservar</SubmitButton>
+            </form>
+        )
+    }
+}
+
+ReservaDirectaForm = reduxForm({
+    form: "reserva-directa"
+})(ReservaDirectaForm);
+
+class DetallePropiedadReservaDirecta extends React.Component {
+    render() {
+        return (
+            <div>
+                <h2>Reserva Directa</h2>
+                <ReservaDirectaForm />
+            </div>
+        );
+    }
+}
+
 
 class DetallePropiedad extends React.Component {
     constructor(props) {
@@ -110,7 +248,7 @@ class DetallePropiedad extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col-4">
-                        <img src={propiedad.image || `${process.env.REACT_APP_PUBLIC_URL}/default-no-picture.png` } style={{width: "100%"}} />
+                        <img src={propiedad.image || defaultPic } style={{width: "100%"}} />
                     </div>
                     <div className="col-8">
                         <table className="table table-stripped">
@@ -136,26 +274,19 @@ class DetallePropiedad extends React.Component {
                             <tfoot>
                             </tfoot>
                         </table>
-                        
                     </div>
                 </div>
-                <table class="table table-borderless table-hover table-sm table-active">
-                            <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">Reservas Disponibles:</th>
-                                <th scope="col">Subastas Disponibles:</th>
-                                <th scope="col">Hotsales Disponibles:</th>      
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                
-                                <td><SwitchReservasPropVista reserva={reserva}/> </td>
-                                <td><SwitchSubastasPropVista subasta={subasta}/></td>
-                                <td><SwitchHotsalePropVista/></td>
-                            </tr>
-                            </tbody>
-                            </table>
+                <div className="row">
+                    <div className="col">
+                        <DetallePropiedadReservaDirecta />
+                    </div>
+                    <div className="col">
+                        <DetallePropiedadSubastas subastas={subasta} />
+                    </div>
+                    {/* <div className="col">
+                        <DetallePropiedadHotsales hotsales={hotsale} />
+                    </div> */}
+                </div>
             </div>
         );
     }
@@ -193,7 +324,7 @@ class _DetallePropiedad extends React.Component {
     render() {
         return (
             <SwitchnPortalPage>
-                <DetallePropiedad subasta= {this.props.subasta} reserva= {this.props.reserva} propiedad= {this.props.propiedad}/>
+                <DetallePropiedad subasta={this.props.subasta} reserva={this.props.reserva} propiedad={this.props.propiedad}/>
             </SwitchnPortalPage>
 
         )

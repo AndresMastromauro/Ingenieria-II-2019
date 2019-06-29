@@ -46,6 +46,9 @@ class Profile(models.Model):
     def has_solicitud_pendiente(self):
         return self.solicitudcambiomembresia_set.filter(pendiente=True).exists()
 
+    def is_premium(self):
+        return self.membresia == Membresia.objects.get(id=2)
+
 
 class SolicitudCambioMembresia(models.Model):
     a_tipo = models.ForeignKey(Membresia, on_delete=models.CASCADE)

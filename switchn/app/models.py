@@ -101,6 +101,8 @@ class Propiedad (models.Model):
         return True
 
     def is_reserva_directa_ready(self, semana):
+        if not self.is_available_on_week(semana):
+            return False
         hoy = date.today()
         seis_meses = timedelta(weeks=25)
         un_anio = timedelta(weeks=52)

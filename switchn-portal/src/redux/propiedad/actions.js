@@ -189,7 +189,7 @@ function preparePropiedadData(oData) {
     if (oData.titulo) propiedad.titulo = oData.titulo;
     if (oData.descripcion) propiedad.descripcion = oData.descripcion;
     if (oData.direccion) {
-        let {direccion} = oData
+        let {direccion} = oData;
         if (direccion.calle) propiedad.calle = direccion.calle.id;
         if (direccion.numero) propiedad.numero = direccion.numero;
         if (direccion.piso) propiedad.piso = direccion.piso;

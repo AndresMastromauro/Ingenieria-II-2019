@@ -104,7 +104,7 @@ export const login = (username, password) => {
                 if (xhr.status === 403 || xhr.status === 401) {
                     dispatch(authError(xhr.responseJSON && xhr.responseJSON.detail));
                 } else {
-                    dispatch(loginFailed(xhr.responseJSON && xhr.reponseJSON.non_field_errors));
+                    dispatch(loginFailed(xhr.responseJSON && xhr.responseJSON.non_field_errors));
                 }
             }
         )

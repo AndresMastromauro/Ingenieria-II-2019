@@ -8,6 +8,8 @@ import { PropiedadCard } from './homeSinRegistrarPropiedad';
 import { PropiedadCardSubasta } from './homeSinRegistrarSubasta';
 import { Row, Col } from "react-bootstrap";
 
+
+
 class _SwitchnPortalLogin extends React.Component {
 
     onSubmit = (values) => {
@@ -41,14 +43,14 @@ class _SwitchnPortalLogin extends React.Component {
 
 
 const mapStateToProps = state => {
-    let errors = [];
+    /* let errors = [];
     if (state.auth.errors) {
       errors = Object.keys(state.auth.errors).map(field => {
         return {field, message: state.auth.errors[field]};
       });
-    }
+    } */
     return {
-      errors,
+    //   errors: state.auth.errors,
       isAuthenticated: state.auth.isAuthenticated
     };
 }
