@@ -308,10 +308,11 @@ class _DetallePropiedad extends React.Component {
     componentDidMount() {
         var idPropiedad = this.props.match.params.idPropiedad;
         
-        if (idPropiedad)
+        if (idPropiedad) {
             this.props.loadPropiedad(idPropiedad);
             this.props.loadSubastaProp(idPropiedad);
             this.props.loadReservasProp(idPropiedad)
+        }
                         
     }
 

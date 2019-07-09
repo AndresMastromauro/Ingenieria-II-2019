@@ -1,18 +1,22 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Redirect } from "react-router-dom";
-import { SingUpForm } from "../common/forms/singUp";
+import { SignUpForm } from "../common/forms/signUp";
 import { SwitchnPortalPage } from "./base";
-import { singUp } from "../redux/auth/actions";
+// import { signUp } from "../redux/auth/actions";
 import { Row, Col, Jumbotron } from "react-bootstrap";
+import { SwitchnAPI } from '../utils/client';
 
-class _SwitchnPortalSingUp extends React.Component {
+class _SwitchnPortalSignUp extends React.Component {
 
     onSubmit = (values) => {
         if (values.username !== values.email) {
-            alert("El mail no coincide");
+            alert("El email no coincide");
         } else {
-            this.props.singUp(values, this.handleSignUpOk, this.handleSignUpFail);
+            // this.props.signUp(values, this.handleSignUpOk, this.handleSignUpFail);
+            SwitchnAPI.clientes.create(values)
+                .then(this.handleSignUpOk)
+                .catch(this.handleSignUpFail);
         }
     }
 
@@ -34,7 +38,7 @@ class _SwitchnPortalSingUp extends React.Component {
                 <div className="justify-content-center">
                 <Row>
                     <Col>
-                        <SingUpForm onSubmit={this.onSubmit}/>
+                        <SignUpForm onSubmit={this.onSubmit}/>
                     </Col>
                     <Col>
                         <Jumbotron>
@@ -62,7 +66,7 @@ class _SwitchnPortalSingUp extends React.Component {
 }
 
 
-const mapStateToProps = state => {
+/* const mapStateToProps = state => {
     let errors = [];
     if (state.auth.errors) {
       errors = Object.keys(state.auth.errors).map(field => {
@@ -77,13 +81,14 @@ const mapStateToProps = state => {
   
 const mapDispatchToProps = dispatch => {
     return {
-        singUp: (values, fnSuccess, fnError) => {
-            return dispatch(singUp(values, fnSuccess, fnError));
+        signUp: (values, fnSuccess, fnError) => {
+            return dispatch(signUp(values, fnSuccess, fnError));
         }
     };
-}
+} */
 
-let SwitchnPortalSingUp = connect(mapStateToProps, mapDispatchToProps)(_SwitchnPortalSingUp)
+// let SwitchnPortalSignUp = connect(mapStateToProps, mapDispatchToProps)(_SwitchnPortalSignUp)
+let SwitchnPortalSignUp = _SwitchnPortalSignUp;
 
-export { SwitchnPortalSingUp }
+export { SwitchnPortalSignUp }
 

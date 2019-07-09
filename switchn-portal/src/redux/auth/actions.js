@@ -1,4 +1,5 @@
 import $ from "jquery";
+import { SwitchnAPI } from '../../utils/client';
 
 export const USER_LOADING = "USER_LOADING";
 export const USER_LOADED = "USER_LOADED";
@@ -25,14 +26,14 @@ function authError(err) {
     }
 }
 
-function singUpSuccessful(oData) {
+function signUpSuccessful(oData) {
     return {
         type: REGISTER_SUCCESS,
         data: oData
     }
 }
 
-function singUpFailed(oData) {
+function signUpFailed(oData) {
     return {
         type: REGISTER_FAIL,
         data: oData
@@ -77,6 +78,7 @@ export const loadUser = () => {
                         xhr.setRequestHeader("Authorization", `Token ${token}`);
                     }
                 });
+                SwitchnAPI.setHeader('Authorization', `Token ${token}`)
                 dispatch(userLoaded({
                     user: data,
                     token: token
@@ -87,10 +89,26 @@ export const loadUser = () => {
     }
 }
 
+/* export const loadUser = () => {
+    return (dispatch, getState) => {
+        dispatch({type: USER_LOADING});
+        var token = getState().auth.token
+        if (token == null) {
+            token = localStorage.getItem("token");
+        }
+        if (token == null) {
+            return dispatch(authError(null));  
+        }
+        SwitchnAPI.getUserData(token)
+            .then(data => dispatch(userLoaded(data)))
+            .catch(err => dispatch(authError(err)));
+    }
+} */
+
 export const login = (username, password) => {
     return (dispatch, getState) => {
         return $.ajax({
-            url: "/auth/login/",
+            url: "/api/auth/login/",
             method: "POST",
             data: {
                 username: username,
@@ -98,7 +116,10 @@ export const login = (username, password) => {
             },
             dataType: "json"
         }).done(
-            (data) => dispatch(loginSuccessful(data))
+            (data) => {
+                SwitchnAPI.setHeader('Authorization', `Token ${data.token}`)
+                dispatch(loginSuccessful(data))
+            }
         ).fail(
             function (xhr, status, err) {
                 if (xhr.status === 403 || xhr.status === 401) {
@@ -111,11 +132,24 @@ export const login = (username, password) => {
     }
 }
 
+/* export const login = (username, password) => {
+    return (dispatch, getState) => {
+        var promise;
+        SwitchnAPI.login(username, password)
+            .then(data => {
+                promise = dispatch(loginSuccessful(data));
+            }).catch(err => {
+                promise = dispatch(loginFailed(err))
+            })
+        return promise;
+    }
+} */
+
 export const logout = () => {
     return (dispatch, getState) => {
         if (getState().auth.isAuthenticated) {
             $.ajax({
-                url: "/auth/logout/",
+                url: "/api/auth/logout/",
                 method: "POST",
                 dataType: "json",
                 beforeSend: (xhr) => { xhr.setRequestHeader("Authorization", `Token ${getState().auth.token}`)}
@@ -131,7 +165,29 @@ export const logout = () => {
     }
 }
 
-export const singUp = (values, fnSuccess, fnError) => {
+/* export const logout = () => {
+    return (dispatch, getState) => {
+        SwitchnAPI.logout()
+            .then(() => dispatch({type: LOGOUT_SUCCESSFUL}))
+            .catch((err) => { throw(err) })
+    }
+} */
+
+export const signUp = (values, fnSuccess, fnError) => {
+    return (dispatch, getState) => {
+        SwitchnAPI.clientes.create(values)
+            .then(data => {
+                dispatch(signUpSuccessful(data))
+                fnSuccess(data)
+            })
+            .catch(data => {
+                dispatch(signUpFailed(data));
+                fnError(data);
+            });
+    }
+}
+
+/* export const signUp = (values, fnSuccess, fnError) => {
     return (dispatch, getState) => {
         return $.ajax({
             url: "/auth/register/",
@@ -140,7 +196,7 @@ export const singUp = (values, fnSuccess, fnError) => {
             dataType: "json"
         }).done(
             (data) => {
-                dispatch(singUpSuccessful(data));
+                dispatch(signUpSuccessful(data));
                 fnSuccess();
         }).fail(
             function (xhr, status, err) {
@@ -148,11 +204,11 @@ export const singUp = (values, fnSuccess, fnError) => {
                     dispatch(authError(xhr.responseJSON && xhr.responseJSON.detail));
                     fnError();
                 } else {
-                    dispatch(singUpFailed(xhr.responseJSON && xhr.responseJSON.non_field_errors));
+                    dispatch(signUpFailed(xhr.responseJSON && xhr.responseJSON.non_field_errors));
                     fnError();
                 }
             }
         )
     }
-}
+} */
 

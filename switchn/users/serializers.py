@@ -1,19 +1,23 @@
 from rest_framework import serializers
+from dynamic_rest.serializers import DynamicModelSerializer
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from users.models import Profile
-from ajax.serializers import ProfileSerializerPost
 from datetime import date
 
-class UserSerializer (serializers.ModelSerializer):
-    es_admin = serializers.SerializerMethodField()
+from .models import SwitchnUser
 
-    def get_es_admin(self, user):
-        return user.is_staff
-
+class SwitchnUserSerializer(DynamicModelSerializer):
     class Meta:
-        model = User
-        fields = ('id', 'username', 'es_admin')
+        model = SwitchnUser
+        fields = (
+            'id',
+            'nombre',
+            'apellido',
+            'fecha_nacimiento',
+            'email',
+            'is_admin'
+        )
+
 
 class LoginSerializer (serializers.Serializer):
     username = serializers.CharField()
@@ -24,27 +28,6 @@ class LoginSerializer (serializers.Serializer):
         if user and user.is_active:
             return user
         raise serializers.ValidationError("Los datos de inicio de sesión son erróneos")
-
-
-
-
-# Register Serializer
-class RegisterSerializer(serializers.ModelSerializer):
-    profile = ProfileSerializerPost()
-
-
-    class Meta:
-        model = User
-        fields = ('username', 'first_name', 'last_name', 'email', 'password','profile')
-        extra_kwargs = {'password': {'write_only': True}}
-
-    def create(self, validated_data):
-        User.objects.create_user(**validated_data)
-        profile_data = validated_data.pop('profile')
-        profile = Profile.objects.create(user=user, tarjeta_credito=profile_data['tarjeta_credito'],
-                                     fecha_nacimiento=profile_data['fecha_nacimiento']
-    )
-        return user
 
 
 class SignUpSerializer(serializers.Serializer):

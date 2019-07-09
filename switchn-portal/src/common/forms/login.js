@@ -7,7 +7,7 @@ import { Alert } from 'react-bootstrap';
 
 let LoginErrors = (props) => {
     var alerts = null;
-    if (props.errors.length > 0) {
+    if (props.errors && props.errors.length > 0) {
         alerts = props.errors.map(
             (err, i) => <Alert key={i} variant="danger">{err}</Alert>
         );

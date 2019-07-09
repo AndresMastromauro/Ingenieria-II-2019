@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['www.localhost', 'localhost',]
 INSTALLED_APPS = [
     'app.apps.AppConfig',
     'users.apps.UsersConfig',
-    'ajax.apps.AjaxConfig',
+    # 'ajax.apps.AjaxConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -42,11 +42,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'knox'
+    'knox',
+    'dynamic_rest'
 ]
 
+# TODO: RESOLVER PROBLEMA TOKENS INVALIDOS
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASES': ('knox.auth.TokenAuthentication',)
+}
+
+REST_KNOX = {
+    'USER_SERIALIZER': 'users.serializers.SwitchnUserSerializer'
 }
 
 MIDDLEWARE = [
@@ -84,15 +90,17 @@ WSGI_APPLICATION = 'switchn.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-'''
-default=subprocess.run(
-            ["heroku", "config:get", "DATABASE_URL", "--app", "switchn"],
-            stdout=subprocess.PIPE
-        ).stdout
-            .decode()
-            .strip()
-'''
 import dj_database_url
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgres://mono:123456@localhost/switchn',
+        conn_max_age=600,
+        ssl_require=True
+    )
+}
+
+'''
+
 DATABASES = {
     'default': dj_database_url.config(
         default=os.environ["DATABASE_URL"],
@@ -100,7 +108,7 @@ DATABASES = {
         ssl_require=True
     )
 }
-
+'''
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -120,6 +128,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'users.SwitchnUser'
 
 
 
@@ -146,8 +155,10 @@ CRISPY_TEMPLATE_PACK= "bootstrap4"
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
-LOGIN_REDIRECT_URL = 'app-home'
-LOGIN_URL = 'login'
-
 # Activate Django-Heroku.
 #django_heroku.settings(locals())
+
+DYNAMIC_REST = {
+    'ENABLE_LINKS': True,
+    'ENABLE_BROWSABLE_API': True
+}

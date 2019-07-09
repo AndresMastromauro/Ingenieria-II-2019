@@ -8,13 +8,13 @@ import { Link } from "../base";
 
 
 
-class _SingUpForm extends React.Component {
+class _SignUpForm extends React.Component {
     render() {
         let {handleSubmit} = this.props;
         return (
             <form onSubmit={handleSubmit} className="row">
                 <fieldset>
-                    <legend>SingUp</legend>
+                    <legend>SignUp</legend>
                     {/* <div className={ this.props.errors.length > 0 ? "alert alert-danger" : '' }>
                         {this.props.errors.length > 0 && (
                             this.props.errors.map(error => (
@@ -39,8 +39,8 @@ class _SingUpForm extends React.Component {
     }
 }
 
-let SingUpForm = reduxForm({
-    form: 'singUp-form'
-})(_SingUpForm);
+let SignUpForm = reduxForm({
+    form: 'signUp-form'
+})(_SignUpForm);
 
-export { SingUpForm };
+export { SignUpForm };
