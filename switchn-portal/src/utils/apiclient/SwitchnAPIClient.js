@@ -3,6 +3,7 @@ import PropiedadesAPIClient from './PropiedadesAPIClient';
 import SubastasAPIClient from './SubastasAPIClient';
 import ClientesAPIClient from './ClientesAPIClient';
 import AuthAPIClient from './AuthAPIClient';
+import GeoAPIClient from './GeoAPIClient';
 
 
 class SwitchnAPIClient extends APIClient {
@@ -11,30 +12,35 @@ class SwitchnAPIClient extends APIClient {
         this.registerEndpoint('propiedades', PropiedadesAPIClient);
         this.registerEndpoint('subastas', SubastasAPIClient);
         this.registerEndpoint('clientes', ClientesAPIClient);
-        // this.auth = new AuthAPIClient(this.baseURL.concat('auth'));
+        this.registerEndpoint('geo', GeoAPIClient);
         this.registerEndpoint('auth', AuthAPIClient);
     }
 
     login(sEmail, sPassword) {
-        return this.auth.login(sEmail, sPassword)
-            .then(data => {
-                this.setHeader("Authorization", `Token ${data.token}`);
-            })
-            .catch(err => {
-                console.log(err);
-            });
+        return new Promise((resolve, reject) => {
+            this.auth.login(sEmail, sPassword)
+                .then(data => {
+                    this.setHeader("Authorization", `Token ${data.token}`);
+                    resolve(data);
+                })
+                .catch(err => {
+                    reject(err);
+                })
+            }
+        );
     }
 
     logout() {
-        return this.auth.logout()
-            .then(
-                () => {
+        return new Promise((resolve, reject) => {
+            this.auth.logout()
+                .then((data) => {
                     this.removeHeader("Authorization");
-                }
-            ).catch(
-                err => {
-                    console.log(err);
-            });
+                    resolve(data);
+                }).catch(err => {
+                    reject(err);
+                });
+            }
+        );
     }
 
     getUserData(sToken) {

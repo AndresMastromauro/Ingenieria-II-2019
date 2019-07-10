@@ -1,18 +1,14 @@
 import React from "react";
-import { connect } from "react-redux";
 import { Button } from "react-bootstrap";
 import { reduxForm } from "redux-form";
 import moment from 'moment';
-import $ from "jquery";
-
-// import { loadData, cleanData } from "../redux/dataprovider/actions";
-import { loadPropiedad, loadSubastaProp, loadReservasProp } from "../redux/propiedad/actions";
 import { Link } from '../common/base';
 import { WeekField } from '../common/forms/select';
 import { SwitchnPortalPage } from './base';
 import { ListadoSubastas, ListadoReservas, ListadoHotale } from "./listadoDeSubastas"
 import defaultPic from '../img/default-no-picture.png';
 import { SubmitButton } from "../common/forms/inputs";
+import { SwitchnAPI } from "../utils/client";
 
 
 
@@ -191,7 +187,7 @@ class ReservaDirectaForm extends React.Component {
     render() {
         return (
             <form onSubmit={this.handleSubmit}>
-                <WeekField />
+                <WeekField name="semana" />
                 <SubmitButton>Reservar</SubmitButton>
             </form>
         )
@@ -215,15 +211,7 @@ class DetallePropiedadReservaDirecta extends React.Component {
 
 
 class DetallePropiedad extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            editing: false
-        }
-    }
-
     getDireccion() {
-        
         var oDireccion = this.props.propiedad.direccion;
         var sDireccion = `${oDireccion.calle.nombre} #${oDireccion.numero}`;
         if (oDireccion.piso) {
@@ -242,7 +230,7 @@ class DetallePropiedad extends React.Component {
         if (!propiedad) {
             return null;
         }
-        var {subasta} = this.props;
+        var {subasta} = propiedad.subastas;
         var {reserva} = this.props;
         return (
             <div className="container">
@@ -261,10 +249,6 @@ class DetallePropiedad extends React.Component {
                                     <th scope="row">Descripción:</th>
                                     <td>{propiedad.descripcion}</td>
                                 </tr>
-                                {/* <tr>
-                                    <th scope="row">Tipo:</th>
-                                    <td>{propiedad.tipo.descripcion}</td>
-                                </tr> */}
                                 <tr>
                                     <th scope="row">Direccion:</th>
                                     <td>{this.getDireccion()}</td>
@@ -292,62 +276,26 @@ class DetallePropiedad extends React.Component {
     }
 }
 
-DetallePropiedad = connect(
-    state => {
-        return {
-            propiedad: state.propiedad.data,
-            subasta: state.subasta.data,
-            reserva: state.reserva.data,
-        }
+class SwitchnDetallePropiedad extends React.Component {  
+    state = {
+        propiedad: null
     }
-)(DetallePropiedad);
 
-class _DetallePropiedad extends React.Component {
-    
-    
     componentDidMount() {
-        var idPropiedad = this.props.match.params.idPropiedad;
-        
-        if (idPropiedad) {
-            this.props.loadPropiedad(idPropiedad);
-            this.props.loadSubastaProp(idPropiedad);
-            this.props.loadReservasProp(idPropiedad)
-        }
-                        
-    }
-
-        
-    
-    componentWillUnmount() {
-        // this.props.cleanUp();
+        const id = this.props.match.params.idPropiedad;
+        SwitchnAPI.propiedades.retrieve(id, {"include[]": "subastas."})
+            .then(data => { this.setState({propiedad: data.propiedad})})
+            .catch(err => { console.log(err) });
     }
 
     render() {
         return (
             <SwitchnPortalPage>
-                <DetallePropiedad subasta={this.props.subasta} reserva={this.props.reserva} propiedad={this.props.propiedad}/>
+                <DetallePropiedad propiedad={this.state.propiedad}/>
             </SwitchnPortalPage>
 
         )
     }
 }
-
-let SwitchnDetallePropiedad = connect(
-    state => {
-        var propiedad = state.propiedad;
-        return {
-            propiedad: propiedad.data,
-            isLoading: propiedad.busy
-        }
-    },
-    dispatch => {
-        return {
-            loadPropiedad: (id) => dispatch(loadPropiedad(id)),
-            loadSubastaProp: (id) => dispatch(loadSubastaProp('subasta',id)),
-            loadReservasProp: (id) => dispatch(loadReservasProp('reserva',id))
-            /* cleanUp: () => dispatch(cleanData("propiedad")) */
-        }
-    }
-)(_DetallePropiedad);
 
 export { SwitchnDetallePropiedad };

@@ -5,11 +5,19 @@ import $ from "jquery";
 import { SwitchnAdminPage } from "./base";
 import { SwitchnAdminCrearPropiedadForm } from "./forms/propiedades";
 import { crearPropiedad } from "../redux/propiedad/actions";
+import { SwitchnAPI } from "../utils/client";
 
-class _SwitchnAdminCrearPropiedadPage extends React.Component {
+class SwitchnAdminCrearPropiedadPage extends React.Component {
 
     crearPropiedad = (values) => {
-        this.props.crearPropiedad(values, this.handleCreacionOk, this.handleCreacionFail);
+        values.calle = values.direccion.calle.id;
+        values.numero = values.direccion.numero;
+        values.piso = values.direccion.piso || '';
+        values.dpto = values.direccion.dpto || '';
+        delete values['direccion'];
+        SwitchnAPI.propiedades.create(values)
+            .then(this.handleCreacionOk)
+            .catch(this.handleCreacionFail);
     }
 
     handleBack = () => {
@@ -33,16 +41,5 @@ class _SwitchnAdminCrearPropiedadPage extends React.Component {
         )
     }
 }
-    
-let SwitchnAdminCrearPropiedadPage = connect(
-    state => {
-        return {}
-    },
-    dispatch => {
-        return {
-            crearPropiedad: (values, fnSucc, fnErr) => dispatch(crearPropiedad(values, fnSucc, fnErr))
-        }
-    }
-)(_SwitchnAdminCrearPropiedadPage);
 
 export { SwitchnAdminCrearPropiedadPage };

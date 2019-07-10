@@ -28,10 +28,10 @@ class _SwitchnPortalNavbarUserActions extends React.Component {
             return (
                 <div className="navbar-nav">
                     <SwitchnNavbarLink url={this.props.user.url ? this.props.user.url : ''}>
-                        Logueado como <u>{this.props.user.username}</u>
+                        Bienvenido <u>{this.props.user.apellido}, {this.props.user.nombre}</u>
                     </SwitchnNavbarLink>
                     {
-                        this.props.user.es_admin &&
+                        this.props.user.is_admin &&
                             <SwitchnNavbarLink url={"/admin"}>Administrar</SwitchnNavbarLink>
                     }
                     <SwitchnNavbarLink url={"/logout"}>Logout</SwitchnNavbarLink>

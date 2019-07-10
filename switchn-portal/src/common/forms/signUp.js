@@ -24,15 +24,15 @@ class _SignUpForm extends React.Component {
                     </div> */}
                     <EmailField label={"E-mail"} name={"username"} /* onChange={this.handleUserChange} */ />
                     <EmailField label={"Repetir email"} name={"email"} /* onChange={this.handleUserChange} */ />
-                    <TextField label={"Apellido"} name={"first_name"} /* onChange={this.handleUserChange} */ />
-                    <TextField label={"Nombre"} name={"last_name"} /* onChange={this.handleUserChange} */ />
+                    <TextField label={"Nombre"} name={"nombre"} /* onChange={this.handleUserChange} */ />
+                    <TextField label={"Apellido"} name={"apellido"} /* onChange={this.handleUserChange} */ />
                     <PasswordField label={"Contraseña"} name={"password"} /* onChange={this.handlePasswordChange} */ />
                     <NumberField label={"Nro de tarjeta de credito"} name={"tarjeta_credito"}/>
                     <DateField label={"Fecha de nacimiento"} name={"fecha_nacimiento"}/>
                     <div className="form-group">
                         <SubmitButton>Registrar</SubmitButton>
                     </div>
-                    <Link url={'/login'}> <small>Ya tenes cuenta? Accede</small> </Link>
+                    <Link url={'/login'}> <small>¿Ya tenés cuenta? Accedé</small></Link>
                 </fieldset>
             </form>
         )

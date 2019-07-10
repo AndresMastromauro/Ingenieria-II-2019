@@ -18,6 +18,10 @@ class SubastasAPIClient extends APIClient {
     constructor(sBaseURL, oHeaders, oHTTPClient) {
         super(sBaseURL, oHeaders, oHTTPClient, SubastasAPIClientDetail);
     }
+
+    random() {
+        return this.retrieve("random");
+    }
 }
 
 export default SubastasAPIClient;

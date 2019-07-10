@@ -36,7 +36,9 @@ function auth(state = initialState, action) {
             localStorage.setItem("token", action.data.token);
             return {
                 ...state, 
-                ...action.data, 
+                //...action.data, 
+                token: action.data.token,
+                user: action.data.user,
                 isAuthenticated: true, 
                 isLoading: false, 
                 errors: []

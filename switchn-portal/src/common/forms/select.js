@@ -11,9 +11,9 @@ import './weekpicker.css';
 import "moment/locale/es";
 
 import { Label } from "./misc";
-import { loadData, cleanData } from "../../redux/dataprovider/actions";
 
-// import { AJAXDataProvider } from "../utils";
+import { SwitchnAPI } from '../../utils/client';
+
 
 class ChoiceField extends React.Component { 
     render() {
@@ -36,50 +36,45 @@ class ChoiceField extends React.Component {
     }
 }
 
-/* class _DataSourcedChoiceField extends React.Component {
-    render() {
-        return (
-            <ChoiceField {...this.props} choices={this.props.data} />
-        );
+
+class CalleChoiceField extends React.Component {
+    state = {
+        calles: []
     }
-}
 
-class DataSourcedChoiceField extends React.Component {
-    render() {
-        return (
-            <AJAXDataProvider dontLoadOnMount={this.props.dontLoadOnMount} dataSourceURL={this.props.dataSourceURL} dataSourceParams={this.props.dataSourceParams}>
-                <_DataSourcedChoiceField adapter={this.props.adapter} onChange={this.props.onChange} label={this.props.label} nullKey={0} nullCaption={this.props.nullCaption} />
-            </AJAXDataProvider>
-        )
+    cargarCalles(idLocalidad) {
+        SwitchnAPI.geo.calles.list({localidad: idLocalidad})
+            .then(data => {
+                this.setState({calles: data});
+            })
+            .catch(err => console.log(err));
     }
-} */
 
-
-class _CalleChoiceField extends React.Component {
     componentDidMount() {
         if (this.props.localidad != undefined) {
-            this.props.loadCalles(this.props.localidad);
+            // this.props.loadCalles(this.props.localidad);
+            this.cargarCalles(this.props.localidad);
         }
     }
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.localidad != undefined) {
+        if (this.props.localidad !== undefined) {
             if (prevProps.localidad !== this.props.localidad) {
-                this.props.loadCalles(this.props.localidad);
+                this.cargarCalles(this.props.localidad);
             }
         } else {
-            this.props.cleanUp();
+            if (prevProps.localidad !== undefined) {
+                this.setState({calles: []});
+            }
         }
     }
-    componentWillUnmount() {
-        this.props.cleanUp();
-    }
+
     render() {
         return (
             <ChoiceField
                 label={"Calle"}
                 name={this.props.name}
                 value={this.props.value}
-                choices={this.props.calles}
+                choices={this.state.calles}
                 adapter={(calle) => { return {value: calle.id, caption: calle.nombre} }}
                 onChange={this.props.onChange}
                 nullCaption={"Elija una calle..."} />
@@ -87,39 +82,35 @@ class _CalleChoiceField extends React.Component {
     }
 }
 
-let CalleChoiceField = connect(
-    state => {
-        return {
-            calles: state.dataprovider.datamap.calles && state.dataprovider.datamap.calles.data
-        }
-    },
-    dispatch => {
-        return {
-            loadCalles: (idLocalidad) => dispatch(loadData("calles", "/ajax/calles", {localidad: idLocalidad})),
-            cleanUp: () => dispatch(cleanData("calles"))
-        }
+
+class LocalidadChoiceField extends React.Component {
+    state = {
+        localidades: []
     }
-)(_CalleChoiceField);
 
+    cargarLocalidades(idProvincia) {
+        SwitchnAPI.geo.localidades.list({provincia: idProvincia})
+            .then(data => {
+                this.setState({localidades: data});
+            })
+            .catch(err => console.log(err));
+    }
 
-
-class _LocalidadChoiceField extends React.Component {
     componentDidMount() {
-        if (this.props.provincia != undefined) {
-            this.props.loadLocalidades(this.props.provincia);
+        if (this.props.provincia !== undefined) {
+            this.cargarLocalidades(this.props.provincia);
         }
     }
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.provincia != undefined) {
+        if (this.props.provincia !== undefined) {
             if (prevProps.provincia !== this.props.provincia) {
-                this.props.loadLocalidades(this.props.provincia);
+                this.cargarLocalidades(this.props.provincia);
             }
         } else {
-            this.props.cleanUp();
+            if (prevProps.provincia !== undefined) {
+                this.setState({localidades: []});
+            }
         }
-    }
-    componentWillUnmount() {
-        this.props.cleanUp();
     }
     render() {
         return (
@@ -127,7 +118,7 @@ class _LocalidadChoiceField extends React.Component {
                 label="Localidad"
                 name={this.props.name}
                 value={this.props.value}
-                choices={this.props.localidades}
+                choices={this.state.localidades}
                 adapter={(localidad) => { return {value: localidad.id, caption: localidad.nombre} }}
                 onChange={this.props.onChange}
                 nullCaption={"Elija una localidad..."} />
@@ -135,41 +126,38 @@ class _LocalidadChoiceField extends React.Component {
     }
 }
 
-let LocalidadChoiceField = connect(
-    state => {
-        return {
-            localidades: state.dataprovider.datamap.localidades && state.dataprovider.datamap.localidades.data
-        }
-    },
-    dispatch => {
-        return {
-            loadLocalidades: (idProvincia) => dispatch(loadData("localidades", "/ajax/localidades", {provincia: idProvincia})),
-            cleanUp: () => dispatch(cleanData("localidades"))
-        }
+
+class ProvinciaChoiceField extends React.Component {
+    state = {
+        provincias: []
     }
-)(_LocalidadChoiceField);
 
+    cargarProvincias(idPais) {
+        SwitchnAPI.geo.provincias.list({pais: idPais})
+            .then(data => {
+                this.setState({provincias: data})
+            })
+            .catch(err => {
+                console.log(err);
+            })
+    }
 
-
-class _ProvinciaChoiceField extends React.Component {
     componentDidMount() {
-        if (this.props.pais != undefined) {
-            this.props.loadProvincias(this.props.pais);
+        if (this.props.pais !== undefined) {
+            this.cargarProvincias(this.props.pais);
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.props.pais != undefined) {
+        if (this.props.pais !== undefined) {
             if (prevProps.pais !== this.props.pais) {
-                this.props.loadProvincias(this.props.pais);
+                this.cargarProvincias(this.props.pais);
             }
         } else {
-            this.props.cleanUp();
+            if (prevProps.pais !== undefined) {
+                this.setState({provincias: []})
+            }
         }
-    }
-
-    componentWillUnmount() {
-        this.props.cleanUp();
     }
 
     render() {
@@ -178,7 +166,7 @@ class _ProvinciaChoiceField extends React.Component {
                 label="Provincia"
                 name={this.props.name}
                 value={this.props.value}
-                choices={this.props.provincias}
+                choices={this.state.provincias}
                 adapter={(provincia) => { return {value: provincia.id, caption: provincia.nombre} }}
                 onChange={this.props.onChange}
                 nullCaption={"Elija una provincia..."} />
@@ -186,35 +174,31 @@ class _ProvinciaChoiceField extends React.Component {
     }
 }
 
-let ProvinciaChoiceField = connect(
-    state => {
-        return {
-            provincias: state.dataprovider.datamap.provincias && state.dataprovider.datamap.provincias.data
-        }
-    },
-    dispatch => {
-        return {
-            loadProvincias: idPais => dispatch(loadData("provincias","/ajax/provincias", {pais: idPais})),
-            cleanUp: () => dispatch(cleanData("provincias"))
-        }
+
+class PaisChoiceField extends React.Component {
+    state = {
+        paises: []
     }
-)(_ProvinciaChoiceField);
 
-
-class _PaisChoiceField extends React.Component {
     componentDidMount() {
-        this.props.loadPaises();
+        SwitchnAPI.geo.paises.list()
+            .then(data => {
+                this.setState({
+                    paises: data
+                })
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
-    componentWillUnmount() {
-        this.props.cleanUp();
-    }
+
     render() {
         return (
             <ChoiceField
                 label="Pais"
                 name={this.props.name}
                 value={this.props.value}
-                choices={this.props.paises}
+                choices={this.state.paises}
                 adapter={(pais) => { return {value: pais.id, caption: pais.nombre} }}
                 onChange={this.props.onChange}
                 nullCaption={"Elija un pais..."}
@@ -222,59 +206,6 @@ class _PaisChoiceField extends React.Component {
         )
     }
 }
-
-let PaisChoiceField = connect(
-    (state) => {
-        return {
-            paises: state.dataprovider.datamap.paises && state.dataprovider.datamap.paises.data
-        }
-    },
-    (dispatch) => {
-        return {
-            loadPaises: () => dispatch(loadData("paises", "/ajax/paises")),
-            cleanUp: () => dispatch(cleanData("paises"))
-        }
-    }
-)(_PaisChoiceField);
-
-class _TipoPropiedadChoiceField extends React.Component {
-    componentDidMount() {
-        this.props.loadTipos();
-    }
-
-    componentWillUnmount() {
-        this.props.cleanUp();
-    }
-
-    render() {
-        return (
-            <ChoiceField
-                /* label="Tipo"
-                name={this.props.name}
-                value={this.props.value} */
-                {...this.props}
-                choices={this.props.tipos}
-                adapter={(tipo) => { return {value: tipo.id, caption: tipo.descripcion} }}
-                /* onChange={this.props.input.onChange} */
-                nullCaption={"Elija un tipo..."} />
-        );
-    }
-}
-
-let TipoPropiedadChoiceField = connect(
-    (state) => {
-        var tipos = state.dataprovider.datamap.tipospropiedad
-        return {
-            tipos: tipos && tipos.data
-        }
-    },
-    (dispatch) => {
-        return {
-            loadTipos: () => dispatch(loadData("tipospropiedad", "/ajax/tipospropiedad")),
-            cleanUp: () => dispatch(cleanData("tipospropiedad"))
-        }
-    }
-)(_TipoPropiedadChoiceField);
 
 
 class _WeekField extends React.Component {
@@ -393,4 +324,4 @@ class WeekField extends React.Component {
     }
 }
 
-export { ChoiceField, CalleChoiceField, LocalidadChoiceField, PaisChoiceField, ProvinciaChoiceField, TipoPropiedadChoiceField, WeekField };
+export { ChoiceField, CalleChoiceField, LocalidadChoiceField, PaisChoiceField, ProvinciaChoiceField, WeekField };

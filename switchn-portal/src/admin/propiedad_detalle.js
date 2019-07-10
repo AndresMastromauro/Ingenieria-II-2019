@@ -16,13 +16,15 @@ import defaultPic from "../img/default-no-picture.png";
 import { Button, ButtonGroup, Badge } from "react-bootstrap";
 
 import { eliminarPropiedad } from "../redux/propiedad/actions";
+import { SwitchnAPI } from "../utils/client";
 
 class SwitchnAdminDetallePropiedad extends React.Component {
-
     handleDelete = () => {
         var eliminar = window.confirm("La propiedad no se eliminará si tiene reservas en curso. ¿Continuar?");
         if (eliminar) {
-            this.props.eliminarPropiedad(this.props.propiedad.id, this.handleDeleteOk, this.handleDeleteFail);
+            SwitchnAPI.propiedades.destroy(this.props.propiedad.id)
+                .then(this.handleDeleteOk)
+                .catch(this.handleDeleteFail);
         }
     }
     
@@ -108,7 +110,7 @@ class SwitchnAdminDetallePropiedad extends React.Component {
     }
 }
 
-SwitchnAdminDetallePropiedad = connect(
+/* SwitchnAdminDetallePropiedad = connect(
     state => {
         return {
             propiedad: state.propiedad.data
@@ -119,7 +121,7 @@ SwitchnAdminDetallePropiedad = connect(
             eliminarPropiedad: (id, fnSucc, fnErr) => dispatch(eliminarPropiedad(id, fnSucc, fnErr))
         }
     }
-)(SwitchnAdminDetallePropiedad);
+)(SwitchnAdminDetallePropiedad); */
 
 class SwitchnAdminSubasta extends React.Component {
     handleClose = () => {
@@ -276,21 +278,22 @@ SwitchnAdminPropiedadSubastas = connect(
 )(SwitchnAdminPropiedadSubastas);
 
 class _SwitchnAdminPropiedadPage extends React.Component {
-    componentDidMount() {
-        var idPropiedad = this.props.match.params.idPropiedad;
-        if (idPropiedad)
-            this.props.loadPropiedad(idPropiedad);
+    state = {
+        propiedad: null
     }
-    
-    componentWillUnmount() {
-        // this.props.cleanUp();
+
+    componentDidMount() {
+        const id = this.props.match.params.idPropiedad;
+        SwitchnAPI.propiedades.retrieve(id)
+            .then(data => this.setState({propiedad: data.propiedad}))
+            .catch(err => console.log(err));
     }
 
     render() {
         return (
-            <SwitchnAdminPage title={this.props.propiedad && this.props.propiedad.titulo}>
-                <SwitchnAdminDetallePropiedad history={this.props.history} />
-                <SwitchnAdminPropiedadSubastas history={this.props.history} propiedad={this.props.propiedad} />
+            <SwitchnAdminPage title={this.state.propiedad && this.state.propiedad.titulo}>
+                <SwitchnAdminDetallePropiedad history={this.props.history} propiedad={this.state.propiedad} />
+                <SwitchnAdminPropiedadSubastas history={this.props.history} propiedad={this.state.propiedad} />
             </SwitchnAdminPage>
         )
     }

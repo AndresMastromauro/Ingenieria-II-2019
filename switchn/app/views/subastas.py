@@ -23,6 +23,8 @@ class SubastaViewSet (DynamicModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'destroy']:
             permission_classes = [IsAdmin]
+        elif self.action == 'random':
+            permission_classes = [ReadOnly]
         else:
             permission_classes = [IsCliente | IsAdmin]
         return [permission() for permission in permission_classes]

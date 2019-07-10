@@ -65,8 +65,46 @@ export const loadUser = () => {
         if (token == null) {
             return dispatch(authError(null));  
         }
+        return SwitchnAPI.getUserData(token)
+            .then(data => dispatch(userLoaded({
+                token: token,
+                user: data
+            })))
+            .catch(err => dispatch(authError(err)));
+    }
+}
+
+export const login = (username, password) => {
+    return (dispatch, getState) => {
+        return SwitchnAPI.login(username, password)
+            .then(data => {
+                dispatch(loginSuccessful(data))
+            }).catch(err => {
+                dispatch(loginFailed(err))
+            })
+    }
+}
+
+export const logout = () => {
+    return (dispatch, getState) => {
+        return SwitchnAPI.logout()
+            .then(() => dispatch({type: LOGOUT_SUCCESSFUL}))
+            .catch((err) => { throw(err) })
+    }
+}
+
+/* export const loadUser = () => {
+    return (dispatch, getState) => {
+        dispatch({type: USER_LOADING});
+        var token = getState().auth.token
+        if (token == null) {
+            token = localStorage.getItem("token");
+        }
+        if (token == null) {
+            return dispatch(authError(null));  
+        }
         $.ajax({
-            url: '/auth/user',
+            url: '/api/auth/user',
             dataType: 'json',
             beforeSend: (xhr) => {
                 xhr.setRequestHeader("Authorization",`Token ${token}`);
@@ -87,25 +125,11 @@ export const loadUser = () => {
             (xhr, status, err) => {dispatch(authError(null)) }
         );
     }
-}
-
-/* export const loadUser = () => {
-    return (dispatch, getState) => {
-        dispatch({type: USER_LOADING});
-        var token = getState().auth.token
-        if (token == null) {
-            token = localStorage.getItem("token");
-        }
-        if (token == null) {
-            return dispatch(authError(null));  
-        }
-        SwitchnAPI.getUserData(token)
-            .then(data => dispatch(userLoaded(data)))
-            .catch(err => dispatch(authError(err)));
-    }
 } */
 
-export const login = (username, password) => {
+
+
+/* export const login = (username, password) => {
     return (dispatch, getState) => {
         return $.ajax({
             url: "/api/auth/login/",
@@ -130,22 +154,10 @@ export const login = (username, password) => {
             }
         )
     }
-}
-
-/* export const login = (username, password) => {
-    return (dispatch, getState) => {
-        var promise;
-        SwitchnAPI.login(username, password)
-            .then(data => {
-                promise = dispatch(loginSuccessful(data));
-            }).catch(err => {
-                promise = dispatch(loginFailed(err))
-            })
-        return promise;
-    }
 } */
 
-export const logout = () => {
+
+/* export const logout = () => {
     return (dispatch, getState) => {
         if (getState().auth.isAuthenticated) {
             $.ajax({
@@ -163,19 +175,12 @@ export const logout = () => {
             })
         }
     }
-}
-
-/* export const logout = () => {
-    return (dispatch, getState) => {
-        SwitchnAPI.logout()
-            .then(() => dispatch({type: LOGOUT_SUCCESSFUL}))
-            .catch((err) => { throw(err) })
-    }
 } */
 
+/* NO SE USA */
 export const signUp = (values, fnSuccess, fnError) => {
     return (dispatch, getState) => {
-        SwitchnAPI.clientes.create(values)
+        return SwitchnAPI.clientes.create(values)
             .then(data => {
                 dispatch(signUpSuccessful(data))
                 fnSuccess(data)

@@ -23,8 +23,8 @@ class AxiosHTTPClient extends HTTPClient {
         return new Promise(
             (resolve, reject) => {
                 axios(config)
-                    .then(response => { return resolve(response.data) })
-                    .catch(error => { return reject(error.response.data) });
+                    .then(response => resolve(response.data))
+                    .catch(error => reject(error.response.data));
             }
         );
     }

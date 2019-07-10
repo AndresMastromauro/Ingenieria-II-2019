@@ -6,6 +6,7 @@ import { SwitchnAdminPage } from './base';
 import { TextField } from "../common/forms/inputs";
 import { loadData, cleanData } from "../redux/dataprovider/actions";
 import { Button, ButtonGroup, Badge } from "react-bootstrap";
+import { SwitchnAPI } from "../utils/client";
 
 class SwitchnAdminPropiedad extends React.Component {
     getDireccion() {
@@ -52,24 +53,26 @@ class SwitchnAdminPropiedad extends React.Component {
 }
 
 
-class _SwitchnAdminListadoPropiedades extends React.Component {
-
-    componentDidMount() {
-        this.props.loadPropiedades();
+class SwitchnAdminListadoPropiedades extends React.Component {
+    state = {
+        propiedades: []
     }
 
-    componentWillUnmount() {
-        this.props.cleanUp();
+    componentDidMount() {
+        // this.props.loadPropiedades();
+        SwitchnAPI.propiedades.list()
+            .then(data => this.setState({propiedades: data.propiedades}))
+            .catch(err => console.log(err));
     }
 
     render() {
         var content;
         if (this.props.isLoading) {
             content = <tr><td>Cargando...</td></tr>;
-        } else if (!this.props.propiedades || this.props.propiedades.length == 0) {
+        } else if (!this.state.propiedades || this.state.propiedades.length == 0) {
             content = <tr><td>No hay propiedades para mostrar</td></tr>;
         } else {
-            content = this.props.propiedades.map(
+            content = this.state.propiedades.map(
                 function(propiedad) {
                     return <SwitchnAdminPropiedad key={propiedad.id} propiedad={propiedad} history={this.props.history} />;
                 }.bind(this)
@@ -108,7 +111,7 @@ class _SwitchnAdminListadoPropiedades extends React.Component {
     }
 }
 
-let SwitchnAdminListadoPropiedades = connect(
+/* let SwitchnAdminListadoPropiedades = connect(
     state => {
         var propiedades = state.dataprovider.datamap.propiedades;
         return {
@@ -122,7 +125,7 @@ let SwitchnAdminListadoPropiedades = connect(
             cleanUp: () => dispatch(cleanData("propiedades"))
         }
     }
-)(_SwitchnAdminListadoPropiedades);
+)(_SwitchnAdminListadoPropiedades); */
 
 
 

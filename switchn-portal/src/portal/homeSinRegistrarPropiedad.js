@@ -6,21 +6,30 @@ import { loadData, cleanData } from '../redux/dataprovider/actions';
 import { Button, Card} from 'react-bootstrap';
 import FlexView from 'react-flexview';
 
+import { SwitchnAPI } from '../utils/client';
+
 import defaultPic from "../img/default-no-picture.png";
 
 
 class HomeSinRegCard extends React.Component {
+    state = {
+        propiedad: null
+    }
 
     componentDidMount(){
-        this.props.loadPropiedad()
+        // this.props.loadPropiedad()
+        SwitchnAPI.propiedades.random()
+            .then(data => {
+                this.setState({propiedad: data.propiedad});
+            })
     }
 
     componentWillUnmount(){
-        this.props.cleanUp()
+        // this.props.cleanUp()
     }
 
     render(){
-        if (!this.props.propiedad){
+        if (!this.state.propiedad){
             return null
         }
 
@@ -29,16 +38,16 @@ class HomeSinRegCard extends React.Component {
             <div className= 'col'> 
             <Card border= 'info' style={{ width: '18rem' }}>
             <Card.Header>NUESTRAS PROPIEDADES</Card.Header>
-            <Card.Img variant="top" src= {this.props.propiedad[0].image || defaultPic } />
+            <Card.Img variant="top" src= {this.state.propiedad.image || defaultPic } />
             <Card.Body>
-                <Card.Title>{this.props.propiedad[0].titulo} </Card.Title>
-                <Card.Subtitle><small>{this.props.propiedad[0].direccion.pais.nombre} - 
-                {this.props.propiedad[0].direccion.provincia.nombre} - 
-                {this.props.propiedad[0].direccion.localidad.nombre}</small></Card.Subtitle>
+                <Card.Title>{this.state.propiedad.titulo} </Card.Title>
+                <Card.Subtitle><small>{this.state.propiedad.direccion.pais.nombre} - 
+                {this.state.propiedad.direccion.provincia.nombre} - 
+                {this.state.propiedad.direccion.localidad.nombre}</small></Card.Subtitle>
                 <Card.Text>
                     
                 <span className="article-content"><small></small></span>
-                <span className="article-content">{this.props.propiedad[0].descripcion}</span>
+                <span className="article-content">{this.state.propiedad.descripcion}</span>
                 </Card.Text>
                
             </Card.Body>
@@ -51,7 +60,7 @@ class HomeSinRegCard extends React.Component {
     }
 }
 
-let PropiedadCard = connect(
+/* let PropiedadCard = connect(
     state => {
         return { propiedad: state.dataprovider.datamap.propiedad && state.dataprovider.datamap.propiedad.data }
     },
@@ -65,7 +74,9 @@ let PropiedadCard = connect(
             }
         }
 )(HomeSinRegCard);
+ */
 
+ let PropiedadCard = HomeSinRegCard;
 
 export class SwitchnPortalSinRegistrar extends React.Component {
     render() {

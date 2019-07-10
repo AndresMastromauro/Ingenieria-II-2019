@@ -6,21 +6,33 @@ import { loadData, cleanData } from '../redux/dataprovider/actions';
 import { Button, Card} from 'react-bootstrap';
 import FlexView from 'react-flexview';
 
+import { SwitchnAPI }  from '../utils/client';
+
 import defaultPic from "../img/default-no-picture.png";
 
 
 class HomeSinRegCardSubasta extends React.Component {
+    state = {
+        subasta: null
+    }
 
     componentDidMount(){
-        this.props.loadSubasta()
+        // this.props.loadSubasta()
+        SwitchnAPI.subastas.random()
+            .then(data => {
+                this.setState({subasta: data})
+            })
+            .catch(err => {
+                console.log(err);
+            })
     }
 
     componentWillUnmount(){
-        this.props.cleanUp()
+        // this.props.cleanUp()
     }
 
     render(){
-        if (!this.props.subasta){
+        if (!this.state.subasta){
             return null
         }
 
@@ -29,19 +41,19 @@ class HomeSinRegCardSubasta extends React.Component {
             <div className= 'col'> 
             <Card border='success' style={{ width: '18rem' } }>
             <Card.Header>EN SUBASTA!!!</Card.Header>
-            <Card.Img variant="top" src= {this.props.subasta[0].reserva.propiedad.image || defaultPic } />
+            <Card.Img variant="top" src= {this.state.subasta.propiedad.image || defaultPic } />
             <Card.Body>
                 
-                <Card.Title>{this.props.subasta[0].reserva.propiedad.titulo} </Card.Title>
+                <Card.Title>{this.state.subasta.propiedad.titulo} </Card.Title>
                 
                 <Card.Subtitle>
-                    <small>{this.props.subasta[0].reserva.propiedad.direccion.pais.nombre} -</small>
-                    <small>  {this.props.subasta[0].reserva.propiedad.direccion.provincia.nombre} -</small>
-                    <small>  {this.props.subasta[0].reserva.propiedad.direccion.localidad.nombre}</small>
+                    <small>{this.state.subasta.propiedad.direccion.pais.nombre} -</small>
+                    <small>  {this.state.subasta.propiedad.direccion.provincia.nombre} -</small>
+                    <small>  {this.state.subasta.propiedad.direccion.localidad.nombre}</small>
                 </Card.Subtitle>
-                <Card.Subtitle> <small>Semana: {this.props.subasta[0].reserva.semana} </small></Card.Subtitle>
+                <Card.Subtitle> <small>Semana: {this.state.subasta.semana} </small></Card.Subtitle>
                 <Card.Text>
-                <span>Precio base: {this.props.subasta[0].precioBase}</span>
+                <span>Precio base: {this.state.subasta.precio_base}</span>
                 </Card.Text>
                              
             </Card.Body>

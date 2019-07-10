@@ -23,8 +23,6 @@ class SwitchnAdminPropiedadForm extends React.Component {
         } else if (initialValues) {
             direccion = initialValues.direccion;
         }
-        /* var propiedad = this.props.propiedad;
-        if (!propiedad) return null; */
         return (
             <form className="row" onSubmit={handleSubmit}>
                 <div className="col-8">
@@ -33,9 +31,6 @@ class SwitchnAdminPropiedadForm extends React.Component {
                         <div className="col">
                             <TextField label={"Titulo"} name={"titulo"} />
                         </div>
-                       {/*  <div className="col-4">
-                            <TipoPropiedadChoiceField label={"Tipo de Propiedad"} name={"tipo.id"} />
-                        </div> */}
                     </div>
                     <div className="row">
                         <div className="col-md">
@@ -113,12 +108,12 @@ SwitchnAdminModificarPropiedadForm = reduxForm({
     form: PROPIEDAD_UPDATE_FORM_NAME
 })(SwitchnAdminModificarPropiedadForm);
 
-SwitchnAdminModificarPropiedadForm = connect(
+/* SwitchnAdminModificarPropiedadForm = connect(
     state => {
         return {
             initialValues: state.propiedad.data || {},
         }
     }
-)(SwitchnAdminModificarPropiedadForm);
+)(SwitchnAdminModificarPropiedadForm); */
 
 export { SwitchnAdminCrearPropiedadForm, SwitchnAdminModificarPropiedadForm };

@@ -13,6 +13,10 @@ class PropiedadesAPIClient extends APIClient {
     constructor(sBaseURL, oHeaders, oHTTPClient) {
         super(sBaseURL, oHeaders, oHTTPClient, PropiedadesAPIClientDetail);
     }
+
+    random() {
+        return this.retrieve("random");
+    }
 }
 
 export default PropiedadesAPIClient

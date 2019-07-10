@@ -45,6 +45,7 @@ class APIClient {
     }
 
     setHeader(sHeaderName, sHeaderContent) {
+        // debugger;
         this.oHeaders[sHeaderName] = sHeaderContent;
         Object.keys(this.endpoints).forEach(
             endpoint => this.endpoints[endpoint].setHeader(sHeaderName, sHeaderContent)
@@ -58,12 +59,12 @@ class APIClient {
         );
     }
 
-    list() {
-        return this.client.get(this.baseURL, this.oHeaders);
+    list(oParams) {
+        return this.client.get(this.baseURL, this.oHeaders, oParams);
     }
 
-    retrieve(id) {
-        return this.client.get(this.baseURL.concat(id), this.oHeaders);
+    retrieve(id, oParams) {
+        return this.client.get(this.baseURL.concat(id), this.oHeaders, oParams);
     }
 
     create(oData) {
@@ -71,7 +72,7 @@ class APIClient {
     }
 
     update(id, oData) {
-        return this.client.update(this.baseURL.concat(id), this.oHeaders, oData);
+        return this.client.patch(this.baseURL.concat(id), this.oHeaders, oData);
     }
 
     destroy(id) {

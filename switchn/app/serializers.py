@@ -144,6 +144,8 @@ class PropiedadSerializer(DynamicModelSerializer):
         write_only_fields = (
             'calle',
             'numero',
+            'piso',
+            'dpto'
         )
 
     direccion = DynamicMethodField()
@@ -157,7 +159,31 @@ class PropiedadSerializer(DynamicModelSerializer):
         return propiedad.get_unavailable_weeks()
 
     def get_direccion(self, propiedad):
-        return propiedad.string_direccion()
+        calle = propiedad.calle
+        localidad = calle.localidad
+        provincia = localidad.provincia
+        pais = provincia.pais
+        return {
+            "calle": {
+                "nombre": calle.nombre,
+                "id": calle.id
+            },
+            "numero": propiedad.numero,
+            "piso": propiedad.piso,
+            "dpto": propiedad.dpto,
+            "localidad": {
+                "nombre": localidad.nombre,
+                "id": localidad.id
+            },
+            "provincia": {
+                "nombre": provincia.nombre,
+                "id": provincia.id
+            },
+            "pais": {
+                "nombre": pais.nombre,
+                "id": pais.id
+            }
+        }
 
     def validate(self, attrs):
         direccion_registrada = Propiedad.objects.filter(

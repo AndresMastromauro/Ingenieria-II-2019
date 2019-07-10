@@ -17,11 +17,11 @@ class SwitchnPortalListadoPropiedadesVista extends React.Component {
         } else if (!this.props.propiedades || this.props.propiedades.length == 0) {
             content = <h2>No hay propiedades para mostrar</h2>;
         } else {
-            content = this.props.propiedades && this.props.propiedades.map(
-                function(propiedad) {
-                    return <SwitchnPortalPropiedad key={propiedad.id} propiedad={propiedad} />
-                }
-            );
+            // console.log(propiedad);
+            content = [];
+            for (var propiedad of this.props.propiedades) {
+                content.push(<SwitchnPortalPropiedad key={propiedad.id} propiedad={propiedad} />)
+            }
         }
         return (
             <div className="col-sm-8">
@@ -31,7 +31,7 @@ class SwitchnPortalListadoPropiedadesVista extends React.Component {
     }
 }
 
-class __SwitchnPortalPropiedadesFiltros extends React.Component {
+class SwitchnPortalPropiedadesFiltros extends React.Component {
     render() {
         var pais;
         var provincia;
@@ -52,17 +52,17 @@ class __SwitchnPortalPropiedadesFiltros extends React.Component {
     }
 }
 
-let _SwitchnPortalPropiedadesFiltros = connect(
+SwitchnPortalPropiedadesFiltros = connect(
     state => {
         return {
             filtros: getFormValues("propiedades-filtros")(state)
         }
     }
-)(__SwitchnPortalPropiedadesFiltros);
+)(SwitchnPortalPropiedadesFiltros);
 
-let SwitchnPortalPropiedadesFiltros = reduxForm({
+SwitchnPortalPropiedadesFiltros = reduxForm({
     form: "propiedades-filtros"
-})(_SwitchnPortalPropiedadesFiltros);
+})(SwitchnPortalPropiedadesFiltros);
 
 
 class SwitchnPortalListadoPropiedades extends React.Component {
@@ -72,12 +72,33 @@ class SwitchnPortalListadoPropiedades extends React.Component {
             propiedades: []
         }
     }
+
+    cargarPropiedades(oParams) {
+        if (oParams) {
+            if (isNaN(parseInt(oParams.pais, 10))) {
+                delete oParams.pais;
+                delete oParams.provincia;
+                delete oParams.localidad;
+            }
+            if (isNaN(parseInt(oParams.provincia, 10))) {
+                delete oParams.provincia;
+                delete oParams.localidad;
+            }
+            if (isNaN(parseInt(oParams.localidad, 10))) {
+                delete oParams.localidad;
+            }
+        }
+        SwitchnAPI.propiedades.list(oParams || {})
+            .then(data => {
+                if (data) {
+                    this.setState({propiedades: data.propiedades}) 
+                }
+            })
+            .catch(err => console.log(err));
+    }
     
     componentDidMount() {
-        // this.props.loadPropiedades();
-        SwitchnAPI.propiedades.list()
-            .then(data => this.setState({propiedades: data}))
-            .catch(err => console.log(err));
+        this.cargarPropiedades();
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -85,16 +106,10 @@ class SwitchnPortalListadoPropiedades extends React.Component {
             var shouldUpdate = Object.keys(this.props.filtros)
                 .some(key => this.props.filtros[key] !== prevProps.filtros[key]);
             if (shouldUpdate) {
-                // this.props.loadPropiedades(this.props.filtros);
-                SwitchnAPI.propiedades.list(this.props.filtros)
-                    .then(data => this.setState({propiedades: data}))
-                    .catch(err => console.log(err));
+                this.cargarPropiedades(this.props.filtros);
             }
         } else if (this.props.filtros !== undefined) {
-            // this.props.loadPropiedades(this.props.filtros);
-            SwitchnAPI.propiedades.list(this.props.filtros)
-                    .then(data => this.setState({propiedades: data}))
-                    .catch(err => console.log(err));
+            this.cargarPropiedades(this.props.filtros);
         }
     }
 
@@ -114,21 +129,13 @@ class SwitchnPortalListadoPropiedades extends React.Component {
     }
 }
 
-/* let SwitchnPortalListadoPropiedades = connect(
+SwitchnPortalListadoPropiedades = connect(
     state => {
-        var propiedades = state.dataprovider.datamap.propiedades;
         return {
-            filtros: getFormValues("propiedades-filtros")(state),
-            propiedades: propiedades && propiedades.data,
-            isLoading: propiedades && propiedades.isLoading
-        }
-    },
-    dispatch => {
-        return {
-            loadPropiedades: (oParams) => dispatch(loadData("propiedades", "/ajax/propiedades", oParams)),
+            filtros: getFormValues("propiedades-filtros")(state)
         }
     }
-)(_SwitchnPortalListadoPropiedades); */
+)(SwitchnPortalListadoPropiedades);
 
 
 export class SwitchnHome extends React.Component {
