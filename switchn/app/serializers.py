@@ -53,6 +53,7 @@ class ClienteSerializer(DynamicModelSerializer):
             'subastas_ofertadas',
             'subastas_ganadas',
             'pagos',
+            'solicitud',
             # write only:
             'nombre',
             'apellido',
@@ -80,6 +81,7 @@ class ClienteSerializer(DynamicModelSerializer):
     subastas_ofertadas = DynamicRelationField('SubastaSerializer', many=True, embed=True)
     subastas_ganadas = DynamicRelationField('SubastaSerializer', many=True, embed=True)
     pagos = DynamicRelationField('PagoSerializer', many=True, embed=True)
+    solicitud = DynamicMethodField()
     # para el registro y manejo del perfil:
     email = serializers.EmailField(write_only=True, required=True)
     nombre = serializers.CharField(max_length=100, write_only=True, required=True)
@@ -93,6 +95,9 @@ class ClienteSerializer(DynamicModelSerializer):
 
     def get_reservas(self, cliente):
         return ReservaSerializer(cliente.reserva_set, many=True)
+
+    def get_solicitud(self, cliente):
+        return cliente.has_solicitud_pendiente()
 
     def validate_email(self, value):
         try:
@@ -150,8 +155,8 @@ class PropiedadSerializer(DynamicModelSerializer):
 
     direccion = DynamicMethodField()
     semanas_reservadas = DynamicMethodField(requires=['reserva_set'])
-    subastas = DynamicRelationField('SubastaSerializer', many=True, deferred=True)
-    hotsales = DynamicRelationField('HotsaleSerializer', many=True, deferred=True)
+    subastas = DynamicRelationField('SubastaSerializer', many=True, deferred=True, embed=True)
+    hotsales = DynamicRelationField('HotsaleSerializer', many=True, deferred=True, embed=True)
     piso = serializers.CharField(max_length=10, write_only=True, required=False, allow_null=True, allow_blank=True)
     dpto = serializers.CharField(max_length=10, write_only=True, required=False, allow_null=True, allow_blank=True)
 
@@ -241,7 +246,31 @@ class SubastaPropiedadSerializer(DynamicModelSerializer):
     direccion = DynamicMethodField()
 
     def get_direccion(self, propiedad):
-        return propiedad.string_direccion()
+        calle = propiedad.calle
+        localidad = calle.localidad
+        provincia = localidad.provincia
+        pais = provincia.pais
+        return {
+            "calle": {
+                "nombre": calle.nombre,
+                "id": calle.id
+            },
+            "numero": propiedad.numero,
+            "piso": propiedad.piso,
+            "dpto": propiedad.dpto,
+            "localidad": {
+                "nombre": localidad.nombre,
+                "id": localidad.id
+            },
+            "provincia": {
+                "nombre": provincia.nombre,
+                "id": provincia.id
+            },
+            "pais": {
+                "nombre": pais.nombre,
+                "id": pais.id
+            }
+        }
 
 
 
@@ -269,8 +298,8 @@ class SubastaSerializer(DynamicModelSerializer):
         )
 
     precio_actual = DynamicMethodField(requires=['ofertasubasta_set'])
-    propiedad = DynamicRelationField('SubastaPropiedadSerializer')
-    ganador = DynamicRelationField('ClienteSerializer', deferred=True)
+    propiedad = DynamicRelationField('SubastaPropiedadSerializer', embed=True)
+    ganador = DynamicRelationField('ClienteSerializer', deferred=True, embed=True)
 
     def get_precio_actual(self, subasta):
         best_offer = subasta.get_best_offer()

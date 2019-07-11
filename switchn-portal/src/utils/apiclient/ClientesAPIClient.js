@@ -8,7 +8,32 @@ class ClientesAPIClientDetail extends APIClientDetail {
         this.registerEndpoint('subastas_ofertadas');
         this.registerEndpoint('pagos');
         this.registerEndpoint('reservas');
+        this.registerEndpoint('solicitud');
         // this.registerEndpoint('hotsales');
+    }
+
+    aceptarSolicitud() {
+        return new Promise((resolve, reject) => {
+            this.solicitud.create({})
+                .then(data => {
+                    resolve(data)
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        });
+    }
+
+    rechazarSolicitud() {
+        return new Promise((resolve, reject) => {
+            this.solicitud.destroy('')
+                .then(data => {
+                    resolve(data)
+                })
+                .catch(err => {
+                    reject(err)
+                })
+        });
     }
 }
 

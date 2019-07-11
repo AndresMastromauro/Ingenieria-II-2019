@@ -1,8 +1,9 @@
 from dynamic_rest.viewsets import DynamicModelViewSet
 
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.decorators import action
 
 from knox.auth import TokenAuthentication
 
@@ -12,11 +13,10 @@ from app.serializers import SwitchnUserSerializer, ClienteSerializer
 
 class ClienteViewSet (DynamicModelViewSet):
     authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsCliente]
     serializer_class = ClienteSerializer
 
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action in ['list']:
             permission_classes = [IsAdmin]
         elif self.action == 'create':
             permission_classes = [AllowAny]
@@ -46,6 +46,40 @@ class ClienteViewSet (DynamicModelViewSet):
         if request.user.is_admin or request.user.cliente == self.get_object():
             return super(ClienteViewSet, self).destroy(request, *args, **kwargs)
         raise PermissionDenied
+
+    @action(detail=True, methods=['post', 'delete'], permission_classes=[IsAdmin | IsCliente])
+    def solicitud(self, request, *args, **kwargs):
+        cliente = self.get_object()
+        if request.user.is_admin:
+            if cliente.has_solicitud_pendiente():
+                solicitud = cliente.get_ultima_solicitud()
+                if request.method.lower() == 'post':
+                    solicitud.aceptar()
+                    return Response({'detail': f'Solicitud de pase a {solicitud.a_tipo} de {cliente.user.apellido}, {cliente.user.nombre} aceptada'})
+                else:
+                    solicitud.rechazar()
+                    return Response({'detail': f'Solicitud de pase a {solicitud.a_tipo} de {cliente.user.apellido}, {cliente.user.nombre} rechazada'})
+            raise ValidationError('El cliente no tiene solicitudes pendientes')
+        elif cliente == request.user.cliente:
+            if request.method.lower() == 'post':
+                if not cliente.has_solicitud_pendiente():
+                    if cliente.is_premium():
+                        solicitud = cliente.solicitar_estandar()
+                    else:
+                        solicitud = cliente.solicitar_premium()
+                    return Response({'detail': f'Realizaste una solicitud de pase a {solicitud.a_tipo}'})
+                raise ValidationError('Ya tienes una solicitud pendiente')
+            else:
+                if cliente.has_solicitud_pendiente():
+                    solicitud = cliente.get_ultima_solicitud()
+                    solicitud.cancelar()
+                    return Response({'detail': f'Cancelaste tu solicitud de pase a {solicitud.a_tipo}'})
+                else:
+                    raise ValidationError('No tienes solicitudes pendientes')
+        else:
+            raise PermissionDenied
+
+
 
 
 

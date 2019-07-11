@@ -11,72 +11,58 @@ import { SwitchnAPI } from '../utils/client';
 import defaultPic from "../img/default-no-picture.png";
 
 
+
+
+
 class HomeSinRegCard extends React.Component {
     state = {
         propiedad: null
     }
 
     componentDidMount(){
-        // this.props.loadPropiedad()
         SwitchnAPI.propiedades.random()
             .then(data => {
                 this.setState({propiedad: data.propiedad});
             })
     }
 
-    componentWillUnmount(){
-        // this.props.cleanUp()
-    }
-
     render(){
         if (!this.state.propiedad){
             return null
         }
-
+        let {propiedad} = this.state;
+        let {direccion} = propiedad;
+        const format = (direccion) =>  `${direccion.pais.nombre}. ${direccion.localidad.nombre}, ${direccion.provincia.nombre}.`;
         return (
             <FlexView vAlignContent='center'>
-            <div className= 'col'> 
-            <Card border= 'info' style={{ width: '18rem' }}>
-            <Card.Header>NUESTRAS PROPIEDADES</Card.Header>
-            <Card.Img variant="top" src= {this.state.propiedad.image || defaultPic } />
-            <Card.Body>
-                <Card.Title>{this.state.propiedad.titulo} </Card.Title>
-                <Card.Subtitle><small>{this.state.propiedad.direccion.pais.nombre} - 
-                {this.state.propiedad.direccion.provincia.nombre} - 
-                {this.state.propiedad.direccion.localidad.nombre}</small></Card.Subtitle>
-                <Card.Text>
-                    
-                <span className="article-content"><small></small></span>
-                <span className="article-content">{this.state.propiedad.descripcion}</span>
-                </Card.Text>
-               
-            </Card.Body>
-            </Card>
-            </div>
-        </FlexView>
+                <div className= 'col'> 
+                    <Card border= 'info' style={{ width: '18rem' }}>
+                    <Card.Header>NUESTRAS PROPIEDADES</Card.Header>
+                    <Card.Img variant="top" src= {propiedad.image || defaultPic } />
+                    <Card.Body>
+                        <Card.Title>{propiedad.titulo} </Card.Title>
+                        <Card.Subtitle>
+                            <small>
+                                {format(direccion)}
+                            </small>
+                        </Card.Subtitle>
+                        <Card.Text>
+                        <span className="article-content"><small></small></span>
+                        <span className="article-content">{propiedad.descripcion}</span>
+                        </Card.Text>
+                        
+                    </Card.Body>
+                    </Card>
+                </div>
+            </FlexView>
          
                  
         )
     }
 }
 
-/* let PropiedadCard = connect(
-    state => {
-        return { propiedad: state.dataprovider.datamap.propiedad && state.dataprovider.datamap.propiedad.data }
-    },
-    dispatch => {
-        return {
-            loadPropiedad: () => {
-                dispatch(loadData('propiedad', '/ajax/propiedadRandom'))
-            },
-            cleanUp: () => {
-                dispatch(cleanData('propiedad')) }
-            }
-        }
-)(HomeSinRegCard);
- */
 
- let PropiedadCard = HomeSinRegCard;
+let PropiedadCard = HomeSinRegCard;
 
 export class SwitchnPortalSinRegistrar extends React.Component {
     render() {
@@ -95,7 +81,7 @@ export class SwitchnHomeSinRegistrar extends React.Component {
     render() {
         return (
             <SwitchnPortalPage>
-                    <PropiedadCard/>
+                <PropiedadCard/>
             </SwitchnPortalPage>
         );
     }

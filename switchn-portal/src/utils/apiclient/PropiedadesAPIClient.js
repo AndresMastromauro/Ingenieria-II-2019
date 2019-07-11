@@ -7,6 +7,19 @@ class PropiedadesAPIClientDetail extends APIClientDetail {
         this.registerEndpoint('subastas');
         this.registerEndpoint('hotsales');
     }
+
+    getSemanasOcupadas() {
+        return new Promise((resolve, reject) => {
+            this.list({
+                "include[]": 'semanas_reservadas',
+                "exclude[]": "*"
+            }).then(
+                data => resolve(data.propiedad)
+            ).catch(
+                err => reject(err)
+            )
+        });
+    }
 }
 
 class PropiedadesAPIClient extends APIClient {

@@ -110,36 +110,19 @@ class SwitchnAdminDetallePropiedad extends React.Component {
     }
 }
 
-/* SwitchnAdminDetallePropiedad = connect(
-    state => {
-        return {
-            propiedad: state.propiedad.data
-        }
-    },
-    dispatch => {
-        return {
-            eliminarPropiedad: (id, fnSucc, fnErr) => dispatch(eliminarPropiedad(id, fnSucc, fnErr))
-        }
-    }
-)(SwitchnAdminDetallePropiedad); */
-
 class SwitchnAdminSubasta extends React.Component {
     handleClose = () => {
         var cerrar = window.confirm("¿Está seguro de cerrar la subasta?");
         if (cerrar) {
-            $.ajax({
-                url: `/ajax/subastas/${this.props.subasta.id}/`,
-                method: "DELETE",
-                dataType: "json"
-            })
-            .done(this.handleCloseOk)
-            .fail(this.handleCloseFail);
+            SwitchnAPI.subastas.destroy(this.props.subasta.id)
+                .then(this.handleCloseOk)
+                .catch(this.handleCloseFail);
         }
     }
 
     handleCloseOk = () => {
         alert("Subasta cerrada con éxito");
-        this.props.refreshSubastas();
+        // this.props.refreshSubastas();
     }
 
     handleCloseFail = () => {
@@ -156,7 +139,7 @@ class SwitchnAdminSubasta extends React.Component {
             <tr>
                 <td>{formatFecha(subasta.fecha_inicio)}</td>
                 <td>{ (subasta.fecha_fin && formatFecha(subasta.fecha_fin)) || "-"}</td>
-                <td>{`Semana del ${formatFecha(subasta.reserva.semana)}`}</td>
+                <td>{`Semana del ${formatFecha(subasta.semana)}`}</td>
                 <td>
                     <Badge>
                     {
@@ -166,18 +149,18 @@ class SwitchnAdminSubasta extends React.Component {
                     }
                     </Badge>
                 </td>
-                <td>{`$${subasta.precioBase}`}</td>
+                <td>{`$${subasta.precio_base}`}</td>
                 <td>
                 {
-                    subasta.best_offer ?
-                        `$${subasta.best_offer.monto} (${subasta.best_offer.usuario})`
+                    subasta.precio_actual ?
+                        `$${subasta.precio_actual}`
                         : "-"
                 }
                 </td>
                 <td>
                 {
                     subasta.ganador ? 
-                        `${subasta.ganador.username}`
+                        `${subasta.ganador.apellido.toUpperCase()}, ${subasta.ganador.nombre}`
                         : "-"
                 }
                 </td>
@@ -194,90 +177,101 @@ class SwitchnAdminSubasta extends React.Component {
     }
 }
 
+const TablaSubastas = (props) => {
+    return (
+        <>
+            <table className="table">
+                <thead className="thead-dark">
+                    <tr>
+                        <th scope="col">{"Fecha de Inicio"}</th>
+                        <th scope="col">{"Fecha de Fin"}</th>
+                        <th scope="col">{"Semana"}</th>
+                        <th scope="col">{"Estado"}</th>
+                        <th scope="col">{"Precio Base"}</th>
+                        <th scope="col">{"Mejor oferta"}</th>
+                        <th scope="col">{"Ganador"}</th>
+                        <th scope="col">{"Acciones"}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {props.children}
+                </tbody>
+            </table>
+        </>
+    )
+}
+
 class SwitchnAdminPropiedadSubastas extends React.Component {
+    state = {
+        subastas: []
+    }
+
+    cargarSubastas(idPropiedad) {
+        SwitchnAPI.propiedades.getDetailEndpoint(idPropiedad)
+            .subastas.list({'include[]': 'ganador.*'})
+                .then(data => {
+                    this.setState({
+                        subastas: data.subastas
+                    });
+                })
+                .catch(err => console.log(err));
+    }
+
     componentDidMount() {
         if (this.props.propiedad) {
-            this.props.loadSubastas(this.props.propiedad.id);
+            this.cargarSubastas(this.props.propiedad.id)
         }
     }
+    
 
     componentDidUpdate(prevProps) {
         if (this.props.propiedad && this.props.propiedad != prevProps.propiedad) {
-            this.props.loadSubastas(this.props.propiedad.id)
+            this.cargarSubastas(this.props.propiedad.id);
         }
     }
 
-    componentWillUnmount() {
-        this.props.cleanUp();
-    }
-
     refreshSubastas = () => {
-        this.props.loadSubastas(this.props.propiedad.id);
+        this.cargarSubastas(this.props.propiedad.id);
     }
 
     render() {
         if (!this.props.propiedad) {
             return null;
         }
-        var content;
-        if (this.props.isLoading) {
-            content = <tr><td>Cargando...</td></tr>;
-        } else if (!this.props.subastas || this.props.subastas.length == 0) {
-            content = <tr><td>No hay subastas para mostrar</td></tr>;
-        } else {
-            content = this.props.subastas.map(
-                function(subasta) {
-                    return <SwitchnAdminSubasta key={subasta.id} subasta={subasta} refreshSubastas={this.refreshSubastas} history={this.props.history} />;
-                }.bind(this)
-            );
-        }
         return (
             <div className="container" style={{margin: "4pt", padding: "4pt"}}>
                 <div className="row">
                     <h2>Subastas</h2>
                 </div>
+            { !this.state.subastas || this.state.subastas.length == 0 ?
+                <div>
+                    <h4>No hay subastas para mostrar</h4>
+                </div>
+                : 
                 <div className="row">
                     <Link url={`/admin/propiedad/${this.props.propiedad.id}/subastas/crear`}>Crear Subasta</Link>
-                    <table className="table">
-                        <thead className="thead-dark">
-                            <tr>
-                                <th scope="col">{"Fecha de Inicio"}</th>
-                                <th scope="col">{"Fecha de Fin"}</th>
-                                <th scope="col">{"Semana"}</th>
-                                <th scope="col">{"Estado"}</th>
-                                <th scope="col">{"Precio Base"}</th>
-                                <th scope="col">{"Mejor oferta"}</th>
-                                <th scope="col">{"Ganador"}</th>
-                                <th scope="col">{"Acciones"}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {content}
-                        </tbody>
-                    </table>
-                </div>
+                    <TablaSubastas>
+                        {this.state.subastas.map(
+                            function(subasta) {
+                                return(
+                                    <SwitchnAdminSubasta
+                                        key={subasta.id}
+                                        subasta={subasta}
+                                        refreshSubastas={this.refreshSubastas}
+                                        history={this.props.history}
+                                    />
+                                )
+                            }.bind(this)
+                        )}
+                    </TablaSubastas>
+                </div>   
+                }
             </div>
         )
     }
 }
 
-SwitchnAdminPropiedadSubastas = connect(
-    state => {
-        var subastas = state.dataprovider.datamap.subastas;
-        return {
-            subastas: subastas && subastas.data,
-            isLoading: subastas && subastas.isLoading
-        }
-    },
-    dispatch => {
-        return {
-            loadSubastas: (idPropiedad) => dispatch(loadData("subastas", `/ajax/propiedades/${idPropiedad}/subastas`)),
-            cleanUp: () => dispatch(cleanData("subastas"))
-        }
-    }
-)(SwitchnAdminPropiedadSubastas);
-
-class _SwitchnAdminPropiedadPage extends React.Component {
+class SwitchnAdminPropiedadPage extends React.Component {
     state = {
         propiedad: null
     }
@@ -298,21 +292,5 @@ class _SwitchnAdminPropiedadPage extends React.Component {
         )
     }
 }
-
-let SwitchnAdminPropiedadPage = connect(
-    state => {
-        var propiedad = state.propiedad;
-        return {
-            propiedad: propiedad.data,
-            isLoading: propiedad.busy
-        }
-    },
-    dispatch => {
-        return {
-            loadPropiedad: (id) => dispatch(loadPropiedad(id)),
-            /* cleanUp: () => dispatch(cleanData("propiedad")) */
-        }
-    }
-)(_SwitchnAdminPropiedadPage);
 
 export { SwitchnAdminPropiedadPage };

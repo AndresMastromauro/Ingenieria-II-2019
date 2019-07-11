@@ -10,7 +10,7 @@ import { Row, Col } from "react-bootstrap";
 
 
 
-class _SwitchnPortalLogin extends React.Component {
+class SwitchnPortalLogin extends React.Component {
 
     onSubmit = (values) => {
         this.props.login(values.username, values.password);
@@ -18,6 +18,9 @@ class _SwitchnPortalLogin extends React.Component {
 
     render() {
         if (this.props.isAuthenticated) {
+            if (this.props.user && this.props.user.is_admin) {
+                return (<Redirect to="/admin" />);
+            }
             return (<Redirect to="/" />);
         }
         return (
@@ -28,10 +31,10 @@ class _SwitchnPortalLogin extends React.Component {
                         <LoginForm onSubmit={this.onSubmit}/>
                     </Col>
                     <Col>
-                        <PropiedadCard/>
+                        <PropiedadCard />
                     </Col>
                     <Col>
-                        <PropiedadCardSubasta/>
+                        <PropiedadCardSubasta />
                     </Col>
 
                 </Row>   
@@ -43,15 +46,9 @@ class _SwitchnPortalLogin extends React.Component {
 
 
 const mapStateToProps = state => {
-    /* let errors = [];
-    if (state.auth.errors) {
-      errors = Object.keys(state.auth.errors).map(field => {
-        return {field, message: state.auth.errors[field]};
-      });
-    } */
     return {
-    //   errors: state.auth.errors,
-      isAuthenticated: state.auth.isAuthenticated
+      isAuthenticated: state.auth.isAuthenticated,
+      user: state.auth.user
     };
 }
   
@@ -63,6 +60,6 @@ const mapDispatchToProps = dispatch => {
     };
 }
 
-let SwitchnPortalLogin = connect(mapStateToProps, mapDispatchToProps)(_SwitchnPortalLogin)
+SwitchnPortalLogin = connect(mapStateToProps, mapDispatchToProps)(SwitchnPortalLogin)
 
 export { SwitchnPortalLogin }

@@ -16,13 +16,13 @@ class SwitchnPortalNavbarTabs extends React.Component {
         return (
             <SwitchnNavbarTabs>
                 <SwitchnNavbarLink url={'/'}>Home</SwitchnNavbarLink>
-                <SwitchnNavbarLink url={'/subastas'}>Subastas</SwitchnNavbarLink>
+                {/* <SwitchnNavbarLink url={'/subastas'}>Subastas</SwitchnNavbarLink> */}
             </SwitchnNavbarTabs>
         );
     }
 }
 
-class _SwitchnPortalNavbarUserActions extends React.Component {
+class SwitchnPortalNavbarUserActions extends React.Component {
     render() {
         if (this.props.user) {
             return (
@@ -48,14 +48,13 @@ class _SwitchnPortalNavbarUserActions extends React.Component {
     }
 }
 
-let SwitchnPortalNavbarUserActions = connect(
+SwitchnPortalNavbarUserActions = connect(
     (state) => {
         return {
             user: state.auth.user
         }
-    },
-    (dispatch) => {return {}}
-)(_SwitchnPortalNavbarUserActions);
+    }
+)(SwitchnPortalNavbarUserActions);
 
 
 class SwitchnPortalHeader extends React.Component {

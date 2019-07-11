@@ -5,28 +5,71 @@ import { Link } from "../common/base";
 import { SwitchnAdminPage } from './base';
 import { loadData, cleanData } from "../redux/dataprovider/actions";
 import { Button, ButtonGroup, Badge } from "react-bootstrap";
+import { SwitchnAPI } from "../utils/client";
 
-class SwitchnAdminUsuario extends React.Component {
+class SwitchnAdminCliente extends React.Component {
+    state = {
+        busy: false
+    }
 
     handleView = () => {
         alert("O.o");
         // this.props.history.push(`/admin/propiedad/${this.props.propiedad.id}`);
     }
 
+    cartelito = (data) => {
+        this.setState({busy: false})
+        alert(data.detail);
+        this.props.refresh();
+    }
+
+    aceptarSolicitud = () => {
+        const continuar = window.confirm('Va a aceptar esta solicitud. ¿Está seguro?');
+        if (continuar) {
+            const idCliente = this.props.cliente.datos_personales.id;
+            this.setState({busy: true});
+            SwitchnAPI.clientes.getDetailEndpoint(idCliente).aceptarSolicitud()
+                .then(this.cartelito)
+                .catch(this.cartelito);
+        }
+    }
+
+    rechazarSolicitud = () => {
+        const continuar = window.confirm('Va a rechazar esta solicitud. ¿Está seguro?');
+        if (continuar) {
+            const idCliente = this.props.cliente.datos_personales.id;
+            this.setState({busy: true});
+            SwitchnAPI.clientes.getDetailEndpoint(idCliente).rechazarSolicitud()
+                .then(this.cartelito)
+                .catch(this.cartelito);
+        }
+    }
+
     render() {
-        var usuario = this.props.usuario;
-        if (!usuario) return null;
+        var cliente = this.props.cliente;
+        if (!cliente) return null;
+        let {busy} = this.state;
         return (
             <tr>
-                <td>{usuario.user.first_name}</td>
-                <td>{usuario.user.last_name}</td>
-                <td>{usuario.user.email}</td>
-                <td>{usuario.membresia.tipo}</td>
-                <td><Badge>{
-                    (usuario.solicitud) ?
-                        "Pendiente"
-                        : "No"   
-                }</Badge></td>
+                <th scope='row'>{cliente.datos_personales.apellido}</th>
+                <td>{cliente.datos_personales.nombre}</td>
+                <td>{cliente.datos_personales.email}</td>
+                <td>
+                    <Badge variant={cliente.membresia == 'PREMIUM' ? 'success' : 'danger'}>
+                        {cliente.membresia}
+                    </Badge>
+                </td>
+                <td>
+                    {
+                        (cliente.solicitud) ?
+                            <ButtonGroup small>
+                                <Button variant="primary" disabled={busy} size='sm' onClick={!busy ? this.aceptarSolicitud : null}>Aceptar</Button>
+                                <Button variant="outline-primary" disabled={busy} size='sm' onClick={!busy ? this.rechazarSolicitud : null}>Denegar</Button>
+                            </ButtonGroup>
+                            : <Badge variant='success'>No</Badge>
+                    }
+                    
+                </td>
                 <td>
                     <ButtonGroup>
                         <Button disabled={true} onClick={this.handleView}>Ver</Button>
@@ -37,59 +80,81 @@ class SwitchnAdminUsuario extends React.Component {
     }
 }
 
+const TablaClientes = (props) => {
+    return (
+        <>
+        <table className="table">
+            <thead className="thead-dark">
+                <tr>
+                    <th scope="col">{"Apellido"}</th>
+                    <th scope="col">{"Nombre"}</th>
+                    <th scope="col">{"E-mail"}</th>
+                    <th scope="col">{"Tipo Membresía"}</th>
+                    <th scope="col">{"Solicitud de cambio"}</th>
+                    <th scope="col">{"Acciones"}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {props.children}
+            </tbody>
+        </table>
+        </>
+    )
+}
+
 class SwitchnAdminListadoUsuarios extends React.Component {
+    state = {
+        clientes: []
+    }
+
+    cargarClientes = () => {
+        SwitchnAPI.clientes.list()
+            .then(data => {
+                this.setState({
+                    clientes: data.clientes
+                })
+            })
+            .catch(err => {
+                console.log(err)
+            })
+    }
 
     componentDidMount() {
-        this.props.loadUsuarios();
+        this.cargarClientes();
     }
 
-    componentWillUnmount() {
-        this.props.cleanUp();
-    }
 
     render() {
-        var content;
-        if (this.props.isLoading) {
-            content = <tr><td>Cargando...</td></tr>;
-        } else if (!this.props.usuarios || this.props.usuarios.length == 0) {
-            content = <tr><td>No hay usuarios para mostrar</td></tr>;
-        } else {
-            content = this.props.usuarios.map(
-                function(usuario) {
-                    return <SwitchnAdminUsuario key={usuario.id} usuario={usuario} history={this.props.history} />;
-                }.bind(this)
-            );
-        }
+        let {clientes} = this.state;
         return (
             <div>
                 <div className="row justify-content-right">
                     <div className="col-4">
                         <Link url={"/admin"}>Volver</Link>
-                        {/* {" | "}
-                        <Link url={
-                            window.location.pathname.endsWith('/') ?
-                            "crear"
-                            : "propiedades/crear"
-                        }>Agregar Propiedad</Link> */}
                     </div>
                 </div>
-                <div className="row">
-                    <table className="table">
-                        <thead className="thead-dark">
-                            <tr>
-                                <th scope="col">{"Nombre"}</th>
-                                <th scope="col">{"Apellido"}</th>
-                                <th scope="col">{"E-mail"}</th>
-                                <th scope="col">{"Tipo Membresía"}</th>
-                                <th scope="col">{"Solicitud de cambio"}</th>
-                                <th scope="col">{"Acciones"}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {content}
-                        </tbody>
-                    </table>
-                </div>
+                {!clientes ?
+                    <h4>No hay clientes para mostrar</h4>
+                    :
+                    <div className="row">
+                        <TablaClientes>
+                            {
+                            clientes.map(
+                                function(cliente) {
+                                    return (
+                                        <SwitchnAdminCliente
+                                            key={cliente.id}
+                                            cliente={cliente}
+                                            history={this.props.history}
+                                            refresh={this.cargarClientes}
+                                        />
+                                    );
+                                }.bind(this)
+                            )
+                            }
+                        </TablaClientes>
+                    </div>
+                }
             </div>
         )
     }

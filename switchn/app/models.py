@@ -113,6 +113,9 @@ class Cliente(models.Model):
     def has_solicitud_pendiente(self):
         return self.solicitudcambiomembresia_set.filter(pendiente=True).exists()
 
+    def get_ultima_solicitud(self):
+        return self.solicitudcambiomembresia_set.first()
+
     def is_premium(self):
         return self.membresia == Membresia.objects.get(codigo='PREMIUM')
 
@@ -145,20 +148,37 @@ class Credit(models.Model):
 
 
 class SolicitudCambioMembresia(models.Model):
+    class Meta:
+        ordering = ['-fecha_hora']
     a_tipo = models.ForeignKey(Membresia, on_delete=models.CASCADE)
     cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
     fecha_hora = models.DateTimeField(default=timezone.now)
     pendiente = models.BooleanField(default=True)
-    # aceptada = models.BooleanField(default=False)
+    aceptada = models.BooleanField(default=False)
 
     def __str__(self):
         return f'({self.cliente}) => {self.a_tipo}'
 
     def aceptar(self):
+        if not self.pendiente:
+            raise ValueError('La solicitud ya fue resuelta o cancelada')
         self.cliente.membresia = self.a_tipo
-        # self.aceptada = True
+        self.aceptada = True
         self.pendiente = False
         self.cliente.save()
+        self.save()
+
+    def rechazar(self):
+        if not self.pendiente:
+            raise ValueError('La solicitud ya fue resuelta o cancelada')
+        self.pendiente = False
+        self.aceptada = False
+        self.save()
+
+    def cancelar(self):
+        if not self.pendiente:
+            raise ValueError('La solicitud ya fue resuelta o cancelada')
+        self.pendiente = False
         self.save()
 
 

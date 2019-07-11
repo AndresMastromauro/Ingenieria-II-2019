@@ -27,6 +27,7 @@ class SwitchnAdminModificarPropiedadPage extends React.Component {
     }
 
     modificarPropiedad = (values) => {
+        values = Object.assign(values);
         values.calle = values.direccion.calle.id;
         values.numero = values.direccion.numero ;
         values.dpto = values.direccion.dpto || '';
@@ -37,12 +38,12 @@ class SwitchnAdminModificarPropiedadPage extends React.Component {
             .catch(this.handleModificarFail);
     }
 
-    handleModificarOk = () => {
+    handleModificarOk = (data) => {
         alert("Se realizó correctamente la modificación");
         this.handleBack();
     }
 
-    handleModificarFail = () => {
+    handleModificarFail = (err) => {
         alert("Ha ocurrido un error al modificar la propiedad");
     }
 

@@ -3,23 +3,19 @@ import $ from "jquery";
 
 import { SwitchnAdminPage } from "./base";
 import { SwitchnAdminSubastaForm } from "./forms/subastas";
+import { SwitchnAPI } from '../utils/client';
 
 class SwitchnAdminCrearSubastaPage extends React.Component {
     crearSubasta = (values) => {
         var idPropiedad = this.props.match.params.idPropiedad;
-        $.ajax({
-            url: `/ajax/propiedades/${idPropiedad}/subastas/`,
-            data: values,
-            method: "POST",
-            dataType: "json"
-        }).done(
-            () => {
+        values.propiedad = idPropiedad;
+        SwitchnAPI.subastas.create(values)
+            .then (() => {
                 alert("Subasta creada con éxito");
                 this.handleBack();
-            }
-        ).fail(
-            (xhr, text, err) => {
-                alert("Ha ocurrido un error: " + xhr.responseText);
+            }).catch(
+            (err) => {
+                alert("Ha ocurrido un error: " + err);
             }
         )
     }
@@ -34,7 +30,6 @@ class SwitchnAdminCrearSubastaPage extends React.Component {
                 <SwitchnAdminSubastaForm
                     handleBack={this.handleBack}
                     onSubmit={this.crearSubasta}
-                    idPropiedad={this.props.match.params.idPropiedad}
                 />
             </SwitchnAdminPage>
         )

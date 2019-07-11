@@ -10,14 +10,16 @@ import {
 } from "../common/base";
 
 
-class _SwitchnAdminNavbarUserActions extends React.Component {
+class SwitchnAdminNavbarUserActions extends React.Component {
     render() {
         if (this.props.user) {
+            let {user} = this.props;
+            const UserName = user.url ?
+                (props) => <SwitchnNavbarLink url={user.url}>{props.children}</SwitchnNavbarLink>
+                : (props) => <span className="nav-item nav-link">{props.children}</span>;
             return (
                 <div className="navbar-nav">
-                    <SwitchnNavbarLink url={this.props.user.url ? this.props.user.url : ''}>
-                        Logueado como <u>{this.props.user.username}</u>
-                    </SwitchnNavbarLink>
+                    <UserName>Bienvenido <u>{user.apellido}, {user.nombre}</u></UserName>
                     <SwitchnNavbarLink url={"/"}>Ver Sitio</SwitchnNavbarLink>
                     <SwitchnNavbarLink url={"/logout"}>Logout</SwitchnNavbarLink>
                 </div>
@@ -26,14 +28,13 @@ class _SwitchnAdminNavbarUserActions extends React.Component {
     }
 }
 
-let SwitchnAdminNavbarUserActions = connect(
+SwitchnAdminNavbarUserActions = connect(
     (state) => {
         return {
             user: state.auth.user
         }
-    },
-    (dispatch) => {return {}}
-)(_SwitchnAdminNavbarUserActions);
+    }
+)(SwitchnAdminNavbarUserActions);
 
 class SwitchnAdminNavbarTabs extends React.Component {
     render() {
