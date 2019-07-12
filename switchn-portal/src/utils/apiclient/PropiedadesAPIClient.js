@@ -6,6 +6,7 @@ class PropiedadesAPIClientDetail extends APIClientDetail {
         super(sBaseURL, oHeaders, oHTTPClient, detailEndpointClass);
         this.registerEndpoint('subastas');
         this.registerEndpoint('hotsales');
+        this.registerEndpoint('reservar');
     }
 
     getSemanasOcupadas() {
@@ -19,6 +20,10 @@ class PropiedadesAPIClientDetail extends APIClientDetail {
                 err => reject(err)
             )
         });
+    }
+
+    reservaDirecta(oData) {
+        return this.reservar.create(oData);
     }
 }
 

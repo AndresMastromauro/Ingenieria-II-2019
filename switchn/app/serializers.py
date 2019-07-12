@@ -192,11 +192,11 @@ class PropiedadSerializer(DynamicModelSerializer):
 
     def validate(self, attrs):
         direccion_registrada = Propiedad.objects.filter(
-            calle=attrs['calle'],
-            numero=attrs['numero'],
-            piso__iexact=attrs["piso"],
-            dpto__iexact=attrs["dpto"]
-            ).exists()
+            calle=attrs.get('calle', None),
+            numero=attrs.get('numero', None),
+            piso__iexact=attrs.get("piso", ""),
+            dpto__iexact=attrs.get("dpto", "")
+            ).exclude(id=attrs.get('id', None)).exists()
         if direccion_registrada:
             raise serializers.ValidationError("La dirección ya está registrada")
         return attrs

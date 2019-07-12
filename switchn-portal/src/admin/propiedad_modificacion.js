@@ -26,13 +26,56 @@ class SwitchnAdminModificarPropiedadPage extends React.Component {
             .catch(data => console.log(data));
     }
 
+    limpiarDireccion = (direccion) => {
+        var camposConCambios = Object.keys(direccion).filter(
+            key => {
+                return direccion[key] !== this.state.propiedad.direccion[key]
+            }
+        );
+        var camposParaEnviar = {};
+        camposConCambios.forEach(
+            campo => camposParaEnviar[campo] = direccion[campo]
+        );
+        return camposParaEnviar;
+    }
+
+    limpiarDatos = (values) => {
+        var camposConCambios = Object.keys(values).filter(
+            key => {
+                return values[key] !== this.state.propiedad[key]
+            }
+        );
+        var camposParaEnviar = {};
+        camposConCambios.forEach(
+            campo => camposParaEnviar[campo] = values[campo]
+        );
+        if ('direccion' in camposParaEnviar) {
+            debugger;
+            camposParaEnviar.direccion = this.limpiarDireccion(camposParaEnviar.direccion);
+            if (Object.keys(camposParaEnviar.direccion).length == '0') {
+                delete camposParaEnviar['direccion'];
+            } else {
+                let {direccion} = camposParaEnviar;
+                if (direccion.calle) {
+                    camposParaEnviar.calle = direccion.calle.id;
+                }
+                if (direccion.numero) {
+                    camposParaEnviar.numero = direccion.numero;
+                }
+                if (direccion.dpto) {
+                    camposParaEnviar.dpto = direccion.dpto || '';
+                }
+                if (direccion.piso) {
+                    camposParaEnviar.piso = direccion.piso || '';
+                }
+            }
+        }
+        camposParaEnviar.id = this.state.propiedad.id;
+        return camposParaEnviar;
+    }
+
     modificarPropiedad = (values) => {
-        values = Object.assign(values);
-        values.calle = values.direccion.calle.id;
-        values.numero = values.direccion.numero ;
-        values.dpto = values.direccion.dpto || '';
-        values.piso = values.direccion.piso || '';
-        delete values['direccion'];
+        values = this.limpiarDatos(values);
         SwitchnAPI.propiedades.update(this.state.propiedad.id, values)
             .then(this.handleModificarOk)
             .catch(this.handleModificarFail);

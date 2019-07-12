@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm, getFormValues } from "redux-form";
 
 import { SwitchnPortalPage, SwitchnPortalPropiedad } from '../portal/base';
-import { PaisChoiceField, ProvinciaChoiceField, LocalidadChoiceField } from '../common/forms/select';
+import { PaisChoiceField, ProvinciaChoiceField, LocalidadChoiceField, WeekPickerModal } from '../common/forms/select';
 import { loadData } from '../redux/dataprovider/actions';
 import { SwitchnAPI } from '../utils/client';
 
@@ -42,10 +42,24 @@ class SwitchnPortalPropiedadesFiltros extends React.Component {
         return ( 
             <form>
                 <div className='form-group'>
-                    <legend>Filtros</legend>
+                    <h3>Filtros</h3>
+                    <legend>Por localidad</legend>
                     <PaisChoiceField name={"pais"} />
                     <ProvinciaChoiceField name={"provincia"} pais={pais} />
                     <LocalidadChoiceField name={"localidad"} provincia={provincia} />
+                </div>
+                <div className='form-group'>
+                    <legend>Por fecha disponible</legend>
+                    <WeekPickerModal
+                        name='fecha_inicio'
+                        id='range-start'
+                        title='Desde'
+                    />
+                    <WeekPickerModal
+                        name='fecha_fin'
+                        id='range-end'
+                        title='Hasta'
+                    />
                 </div>
             </form>
         );

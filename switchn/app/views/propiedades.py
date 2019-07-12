@@ -42,7 +42,7 @@ class PropiedadesViewSet(DynamicModelViewSet):
             try:
                 despues_del = datetime.strptime(despues_del, '%Y-%m-%d').date() if despues_del is not None else None
                 antes_del = datetime.strptime(antes_del, '%Y-%m-%d').date() if antes_del is not None else None
-                queryset = Propiedad.get_available_beetween(despues_del, antes_del, queryset)
+                queryset = Propiedad.get_available_between(despues_del, antes_del, queryset)
             except ValueError as err:
                 raise ValidationError(err)
 

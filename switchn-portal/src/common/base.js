@@ -69,10 +69,10 @@ class SwitchnNavbar extends React.Component {
 class SwitchnMainContainer extends React.Component {
     render() {
         // Para pasar las props (por ejemplo el user)
-        var children = React.Children.map(this.props.children, child => React.cloneElement(child, this.props));
+        // var children = React.Children.map(this.props.children, child => React.cloneElement(child, this.props));
         return (
-            <main role="main" className="container">
-                {children}
+            <main /* role="main" */ className="container">
+                {this.props.children}
             </main>
         );
     }

@@ -10,9 +10,11 @@ import MomentLocaleUtils from "react-day-picker/moment";
 import './weekpicker.css';
 import "moment/locale/es";
 
+import { Popover, Overlay, Button, Modal, Badge, ButtonGroup } from 'react-bootstrap';
 import { Label } from "./misc";
 
 import { SwitchnAPI } from '../../utils/client';
+import { DayPickerInput } from "react-day-picker/DayPickerInput";
 
 
 class ChoiceField extends React.Component { 
@@ -208,7 +210,7 @@ class PaisChoiceField extends React.Component {
 }
 
 
-class _WeekField extends React.Component {
+class __WeekField extends React.Component {
     state = {
         hoverRange: undefined,
         selectedDays: [],
@@ -239,8 +241,8 @@ class _WeekField extends React.Component {
     
     handleDayChange = date => {
         var selectedDays = this.getWeekDays(this.getWeekRange(date).from);
-        this.props.input.onChange(moment(selectedDays[0]).format("YYYY-MM-DD"));
-        console.log((selectedDays[0]));
+        const {onChange} = this.props.input || this.props;
+        onChange(moment(selectedDays[0]).format("YYYY-MM-DD"));
         this.setState({
             selectedDays: selectedDays,
         });
@@ -259,15 +261,20 @@ class _WeekField extends React.Component {
     };
 
     handleWeekClick = (weekNumber, days, e) => {
-        this.props.input.onChange(moment(days[0]).format("YYYY-MM-DD"));
+        const {onChange} = this.props.input || this.props;
+        onChange(moment(days[0]).format("YYYY-MM-DD"));
         this.setState({
             selectedDays: days,
         });
     };
 
     componentDidMount() {
-        let {value} = this.props.input;
-        this.handleDayChange(value);
+        let {value} = this.props.input || this.props;
+        // this.handleDayChange(value);
+        var selectedDays = this.getWeekDays(this.getWeekRange(value || moment()).from);
+        this.setState({
+            selectedDays: selectedDays,
+        });
     }
 
     componentDidUpdate() {
@@ -292,9 +299,10 @@ class _WeekField extends React.Component {
             selectedRangeStart: daysAreSelected && selectedDays[0],
             selectedRangeEnd: daysAreSelected && selectedDays[6],
         };
+        const {Component} = this.props || { Component: null };
         return (
             <div className="WeekPicker">
-                <DayPicker
+                <Component
                     selectedDays={selectedDays}
                     showWeekNumbers
                     showOutsideDays
@@ -316,12 +324,139 @@ class _WeekField extends React.Component {
     }
 }
 
-class WeekField extends React.Component {
+const _WeekField = (props) => {
+    return <__WeekField Component={DayPicker} {...props} />;
+}
+
+const WeekInput = (props) => {
+    return <__WeekField Component={DayPickerInput} {...props} />;
+}
+
+/* class WeekField extends React.Component {
     render() {
         return (
             <Field name={this.props.name} component={_WeekField} />
         )
     }
+} */
+
+const WeekField = (props) => {
+    return <Field {...props} component={_WeekField} />;
 }
 
-export { ChoiceField, CalleChoiceField, LocalidadChoiceField, PaisChoiceField, ProvinciaChoiceField, WeekField };
+class CalendarPopover extends React.Component {
+    state = {
+        button: null
+    };
+
+    attachRef = (target) => { this.setState({button: target}) };
+    
+    render() {
+        let {props, state} = this;
+        return (
+            <span>
+                <Button variant='link' onClick={props.onClick} ref={this.attachRef}>
+                    {!props.value ? 'Elegir fecha' : 'Elegir otra fecha'}
+                </Button>
+                <Overlay show={props.show} target={state.button} placement='right'>
+                    <Popover id={props.id} title={props.title}>
+                        <_WeekField onChange={props.onChange} />
+                    </Popover>
+                </Overlay>
+            </span>
+        );
+    }
+}
+
+class _WeekPickerModal extends React.Component {
+    constructor(props) {
+        super(props);
+        let {value} = this.props.input || this.props;
+        this.state = {
+            selectedWeek: value,
+            selecting: false,
+        }
+    }
+
+    onChange = (value) => {
+        let {onChange} = this.props.input || this.props;
+        this.setState({
+            selectedWeek: value,
+            selecting: false
+        });
+        if (onChange) onChange(value);
+    }
+
+    onClick = (e) => {
+        this.setState({
+            selecting: !this.state.selectingEnd
+        });
+    }
+
+    handleClose = () => {
+        this.setState({
+            selecting: false
+        });
+    }
+
+    handleClean = () => {
+        let {onChange} = this.props.input || this.props;
+        this.setState({
+            selectedWeek: undefined
+        });
+        if (onChange) onChange(null);
+    }
+
+    formatFecha = (fecha) => moment(fecha).format('[Semana del] D [de] MMMM');
+
+    render() {
+        let {formatFecha} = this;
+        let {selecting, selectedWeek} = this.state;
+        let {title} = this.props;
+        return (
+            <div className='justify-content-end'>
+                <p><b>{title}</b></p>
+                <div>
+                {
+                    selectedWeek &&
+                        <h4><Badge variant='secondary'>{formatFecha(selectedWeek)}</Badge></h4>
+                }
+                </div>
+                <div style={{paddingTop: '4px', paddingBottom: '4px'}}>
+                    <ButtonGroup>
+                        <Button variant='dark' size='sm' onClick={this.onClick}>
+                            {!selectedWeek ? 'Elegir fecha' : 'Cambiar fecha'}
+                        </Button>
+                        {selectedWeek &&
+                            <Button variant='secondary' size='sm' onClick={this.handleClean}>
+                                Limpiar
+                            </Button>
+                        }
+                    </ButtonGroup>
+                </div>
+                <Modal show={selecting} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>{title}</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <_WeekField onChange={this.onChange} />
+                    </Modal.Body>
+                </Modal>
+            </div>
+        )
+    }
+}
+
+const WeekPickerModal = (props) => {
+    return <Field {...props} component={_WeekPickerModal} />
+}
+
+export { 
+    ChoiceField,
+    CalleChoiceField, 
+    LocalidadChoiceField, 
+    PaisChoiceField, 
+    ProvinciaChoiceField, 
+    WeekField,
+    WeekPickerModal
+ };
