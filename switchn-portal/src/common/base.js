@@ -13,7 +13,7 @@ class Link extends React.Component {
 class SwitchnNavbarLink extends React.Component {
     render() {
         return (
-            <Link className="nav-item nav-link" url={this.props.url}>{this.props.children}</Link>
+            <Link className="nav-item nav-link"  url={this.props.url}>{this.props.children}</Link>
         );
     }
 }
