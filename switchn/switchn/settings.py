@@ -91,6 +91,7 @@ WSGI_APPLICATION = 'switchn.wsgi.application'
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 import dj_database_url
+'''
 DATABASES = {
     'default': dj_database_url.config(
         default='postgres://mono:123456@localhost/switchn',
@@ -108,7 +109,7 @@ DATABASES = {
         ssl_require=True
     )
 }
-'''
+
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

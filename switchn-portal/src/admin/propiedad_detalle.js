@@ -1,21 +1,13 @@
 import React from "react";
-import { connect } from "react-redux";
-import { Route } from "react-router-dom";
-import $ from "jquery";
 import moment from "moment";
-
-// import { loadData, cleanData } from "../redux/dataprovider/actions";
-import { loadPropiedad } from "../redux/propiedad/actions";
-import { loadData, cleanData } from "../redux/dataprovider/actions";
+import { reduxForm } from 'redux-form';
 import { SwitchnAdminPage } from "./base";
-import { SwitchnAdminPropiedadForm } from "./forms/propiedades";
 
 import { Link } from '../common/base';
-import { TextField } from "../common/forms/inputs";
 import defaultPic from "../img/default-no-picture.png";
-import { Button, ButtonGroup, Badge } from "react-bootstrap";
+import { Button, ButtonGroup, Badge, Tabs, Tab, Modal } from "react-bootstrap";
 
-import { eliminarPropiedad } from "../redux/propiedad/actions";
+import { NumberField, SubmitButton } from '../common/forms/inputs';
 import { SwitchnAPI } from "../utils/client";
 
 class SwitchnAdminDetallePropiedad extends React.Component {
@@ -240,16 +232,14 @@ class SwitchnAdminPropiedadSubastas extends React.Component {
         }
         return (
             <div className="container" style={{margin: "4pt", padding: "4pt"}}>
-                <div className="row">
-                    <h2>Subastas</h2>
-                </div>
+                <Link url={`/admin/propiedad/${this.props.propiedad.id}/subastas/crear`}>Crear Subasta</Link>
             { !this.state.subastas || this.state.subastas.length == 0 ?
                 <div>
                     <h4>No hay subastas para mostrar</h4>
                 </div>
                 : 
                 <div className="row">
-                    <Link url={`/admin/propiedad/${this.props.propiedad.id}/subastas/crear`}>Crear Subasta</Link>
+                    
                     <TablaSubastas>
                         {this.state.subastas.map(
                             function(subasta) {
@@ -271,6 +261,159 @@ class SwitchnAdminPropiedadSubastas extends React.Component {
     }
 }
 
+
+const HotsaleForm = reduxForm({
+    form: 'hotsale-form'
+})((props) => {
+    return (
+        <form onSubmit={props.handleSubmit}>
+            <p>Ingrese el precio</p>
+            <NumberField name='precio' label='$' />
+            <SubmitButton>Aceptar</SubmitButton>
+        </form>
+    )
+});
+
+class SwitchnAdminHotsale extends React.Component {
+    state = {
+        editing: false
+    }
+
+    handleEdit = () => {
+        this.setState({editing: true})
+    }
+    
+    handleDeactivate = () => {
+        SwitchnAPI.hotsales.destroy(this.props.hotsale.id)
+            .then(data => {
+                alert('Hotsale desactivado exitosamente');
+                this.props.refreshHotsales();
+            })
+            .catch(err => console.log(err));
+    }
+
+    handleClose = () => {
+        this.setState({editing: false});
+    }
+
+    handleEditSuccess = (values) => {
+        this.handleClose();
+        let {hotsale} = this.props;
+        values.semana = hotsale.semana;
+        values.propiedad = hotsale.propiedad;
+        values.es_activo = true;
+        SwitchnAPI.hotsales.update(hotsale.id, values)
+                .then(data => {
+                    alert('Hotsale editado exitosamente');
+                    this.props.refreshHotsales();
+                })
+                .catch(err => console.log(err));
+    }
+
+    render() {
+        let {hotsale} = this.props;
+        return (
+            <>
+            <tr>
+                <td>{moment(hotsale.semana).format('L')}</td>
+                <td>{hotsale.precio ? '$'.concat(hotsale.precio) : '-'}</td>
+                <td>
+                    <Badge variant={hotsale.es_activo ? 'success' : 'dark'}>
+                        {hotsale.es_activo ? 'Activo' : 'Inactivo'}
+                    </Badge>
+                </td>
+                <td> 
+                    <ButtonGroup>
+                        {hotsale.es_activo ?
+                            <Button onClick={this.handleDeactivate}>Desactivar</Button>
+                            : <Button onClick={this.handleEdit}>Activar</Button>
+                        }
+                        {hotsale.es_activo && <Button onClick={this.handleEdit}>Editar</Button>}
+                    </ButtonGroup>
+                </td>
+            </tr>
+            <Modal show={this.state.editing} onHide={this.handleClose}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Hotsale</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <HotsaleForm onSubmit={this.handleEditSuccess} />
+                </Modal.Body>
+            </Modal>
+            </>
+        )
+    }
+}
+
+const TablaHotsales = (props) => {
+    return (
+        <>
+        <table className="table">
+            <thead className="thead-dark">
+                <tr>
+                    <th scope="col">{"Semana"}</th>
+                    <th scope="col">{"Precio"}</th>
+                    <th scope="col">{"Estado"}</th>
+                    <th scope="col">{"Acciones"}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {props.children}
+            </tbody>
+        </table>
+        </>
+    )
+}
+
+class SwitchnAdminPropiedadHotsales extends React.Component {
+    state = {
+        hotsales: []
+    }
+
+    cargarHotsales = (idPropiedad) => {
+        SwitchnAPI.propiedades.getDetailEndpoint(idPropiedad)
+            .hotsales.list()
+                .then(data => this.setState({hotsales: data.hotsales}))
+                .catch(err => console.log(err));
+    }
+
+    componentDidMount() {
+        this.cargarHotsales(this.props.propiedad.id);
+    }
+
+    render() {
+        if (!this.props.propiedad) {
+            return null;
+        }
+        return (
+            <div className="container" style={{margin: "4pt", padding: "4pt"}}>
+            { !this.state.hotsales || this.state.hotsales.length == 0 ?
+                <div>
+                    <h4>No hay hotsales para mostrar</h4>
+                </div>
+                : 
+                <div className="row">
+                    <TablaHotsales>
+                        {this.state.hotsales.map(
+                            function(hotsale) {
+                                return(
+                                    <SwitchnAdminHotsale
+                                        key={hotsale.id}
+                                        hotsale={hotsale}
+                                        refreshHotsales={() => this.cargarHotsales(this.props.propiedad.id)}
+                                        history={this.props.history}
+                                    />
+                                )
+                            }.bind(this)
+                        )}
+                    </TablaHotsales>
+                </div>   
+                }
+            </div>
+        )
+    }
+}
+
 class SwitchnAdminPropiedadPage extends React.Component {
     state = {
         propiedad: null
@@ -284,10 +427,18 @@ class SwitchnAdminPropiedadPage extends React.Component {
     }
 
     render() {
+        if (!this.state.propiedad) return null;
         return (
             <SwitchnAdminPage title={this.state.propiedad && this.state.propiedad.titulo}>
                 <SwitchnAdminDetallePropiedad history={this.props.history} propiedad={this.state.propiedad} />
-                <SwitchnAdminPropiedadSubastas history={this.props.history} propiedad={this.state.propiedad} />
+                <Tabs defaultActiveKey='subastas'>
+                    <Tab eventKey='subastas' title='Subastas'>
+                        <SwitchnAdminPropiedadSubastas history={this.props.history} propiedad={this.state.propiedad} />
+                    </Tab>
+                    <Tab eventKey='hotsales' title='Hotsales'>
+                        <SwitchnAdminPropiedadHotsales history={this.props.history} propiedad={this.state.propiedad} />
+                    </Tab>
+                </Tabs>
             </SwitchnAdminPage>
         )
     }

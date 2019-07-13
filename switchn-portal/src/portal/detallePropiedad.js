@@ -185,6 +185,97 @@ class DetallePropiedadReservaDirecta extends React.Component {
     }
 }
 
+class SwitchnPortalHotsale extends React.Component {
+    handleBuy = () => {
+        SwitchnAPI.hotsales.getDetailEndpoint(this.props.hotsale.id)
+            .comprarHotsale()
+                .then(data => alert('Hotsale comprado exitosamente'))
+                .catch(err => console.log(err));
+    }
+
+    render() {
+        let {hotsale} = this.props;
+        return (
+            <>
+            <tr>
+                <td>{moment(hotsale.semana).format('L')}</td>
+                <td>{hotsale.precio ? '$'.concat(hotsale.precio) : '-'}</td>
+                <td> 
+                    <Button variant='success' onClick={this.handleBuy}>Comprar</Button>
+                </td>
+            </tr>
+            </>
+        )
+    }
+}
+
+const TablaHotsales = (props) => {
+    return (
+        <>
+        <table className="table">
+            <thead className="thead-dark">
+                <tr>
+                    <th scope="col">{"Semana"}</th>
+                    <th scope="col">{"Precio"}</th>
+                    <th scope="col">{"Acciones"}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {props.children}
+            </tbody>
+        </table>
+        </>
+    )
+}
+
+class SwitchnPortalPropiedadHotsales extends React.Component {
+    state = {
+        hotsales: []
+    }
+
+    cargarHotsales = (idPropiedad) => {
+        SwitchnAPI.propiedades.getDetailEndpoint(idPropiedad)
+            .hotsales.list()
+                .then(data => this.setState({hotsales: data.hotsales.filter(h => h.es_activo)}))
+                .catch(err => console.log(err));
+    }
+
+    componentDidMount() {
+        this.cargarHotsales(this.props.propiedad.id);
+    }
+
+    render() {
+        if (!this.props.propiedad) {
+            return null;
+        }
+        return (
+            <div className="container" style={{margin: "4pt", padding: "4pt"}}>
+            { !this.state.hotsales || this.state.hotsales.length == 0 ?
+                <div>
+                    <h4>No hay hotsales para mostrar</h4>
+                </div>
+                : 
+                <div className="row">
+                    <TablaHotsales>
+                        {this.state.hotsales.map(
+                            function(hotsale) {
+                                return(
+                                    <SwitchnPortalHotsale
+                                        key={hotsale.id}
+                                        hotsale={hotsale}
+                                        refreshHotsales={() => this.cargarHotsales(this.props.propiedad.id)}
+                                        history={this.props.history}
+                                    />
+                                )
+                            }.bind(this)
+                        )}
+                    </TablaHotsales>
+                </div>   
+                }
+            </div>
+        )
+    }
+}
 
 class DetallePropiedad extends React.Component {
     getDireccion() {
@@ -243,22 +334,20 @@ class DetallePropiedad extends React.Component {
                                 <DetallePropiedadSubastas subastas={subasta} />
                             </Tab>
                             <Tab eventKey='hotsales' title='Hotsales'>
-                                <h1>:(</h1>
+                                <SwitchnPortalPropiedadHotsales propiedad={propiedad} />
                             </Tab>
                         </Tabs>
                     </div>
                     <div className="col-4">
                         <DetallePropiedadReservaDirecta idPropiedad={propiedad.id} />
                     </div>
-                    
-                    {/* <div className="col">
-                        <DetallePropiedadHotsales hotsales={hotsale} />
-                    </div> */}
                 </div>
             </div>
         );
     }
 }
+
+
 
 class SwitchnDetallePropiedad extends React.Component {  
     state = {

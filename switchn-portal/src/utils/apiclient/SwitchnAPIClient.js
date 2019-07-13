@@ -4,11 +4,13 @@ import SubastasAPIClient from './SubastasAPIClient';
 import ClientesAPIClient from './ClientesAPIClient';
 import AuthAPIClient from './AuthAPIClient';
 import GeoAPIClient from './GeoAPIClient';
+import HotsalesAPIClient from './HotsalesAPIClient';
 
 
 class SwitchnAPIClient extends APIClient {
     constructor(sBaseURL, oHTTPClient) {
         super(sBaseURL, undefined, oHTTPClient);
+        this.registerEndpoint('hotsales', HotsalesAPIClient);
         this.registerEndpoint('propiedades', PropiedadesAPIClient);
         this.registerEndpoint('subastas', SubastasAPIClient);
         this.registerEndpoint('clientes', ClientesAPIClient);

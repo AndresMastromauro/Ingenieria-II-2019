@@ -341,7 +341,7 @@ class Hotsale(models.Model):
 
     def __str__(self):
         anio = self.semana.year
-        semana = self.isocalendar[1]
+        semana = self.semana.isocalendar()[1]
         activo = f'{"ACTIVO" if self.es_activo else "INACTIVO"}'
         adquirido = f"{f' (Adquirido por {self.comprador})' if self.comprador is not None else ''}"
         return f'[HOTSALE - {activo}] {self.propiedad.titulo} ({anio}, semana: {semana}): ${self.precio}.{adquirido}'
@@ -362,7 +362,9 @@ class Hotsale(models.Model):
         except:
             raise ValueError("El cliente no tiene capacidad de pago")
 
-
+    def desactivar(self):
+        self.es_activo = False
+        self.save()
 
 class Subasta(models.Model):
     precio_base = models.DecimalField(max_digits=15, decimal_places=2)

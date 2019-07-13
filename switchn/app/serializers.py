@@ -332,6 +332,7 @@ class HotsaleSerializer (DynamicModelSerializer):
         model = Hotsale
         name = 'hotsale'
         fields = (
+            'id',
             "propiedad",
             "semana",
             "precio",
@@ -344,9 +345,7 @@ class HotsaleSerializer (DynamicModelSerializer):
         )
 
         read_only_fields = (
-            'es_activo',
             'comprador',
-            'propiedad'
         )
 
     propiedad = DynamicRelationField('SubastaPropiedadSerializer')
