@@ -21,7 +21,7 @@ function authError(err) {
     return {
         type: AUTHENTICATION_ERROR,
         data: {
-            errors: err
+            data: err
         }
     }
 }
@@ -70,7 +70,7 @@ export const loadUser = () => {
                 token: token,
                 user: data
             })))
-            .catch(err => dispatch(authError(err)));
+            .catch(err => dispatch(authError(err || [])));
     }
 }
 
@@ -80,7 +80,7 @@ export const login = (username, password) => {
             .then(data => {
                 dispatch(loginSuccessful(data))
             }).catch(err => {
-                dispatch(loginFailed(err))
+                dispatch(loginFailed(err || []))
             })
     }
 }

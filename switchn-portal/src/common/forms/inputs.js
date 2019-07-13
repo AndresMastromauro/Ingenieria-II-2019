@@ -30,7 +30,7 @@ class Input extends React.Component {
 
 class Button extends React.Component {
     render() {
-        var sClass = "form-control button";
+        var sClass = "form-control button" + (this.props.disabled ? ' disabled' : '');
         return (
             <button
                 {...this.props}
