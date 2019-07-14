@@ -372,4 +372,4 @@ class SwitchnDetallePropiedad extends React.Component {
     }
 }
 
-export { SwitchnDetallePropiedad };
+export { SwitchnDetallePropiedad , SwitchSubastasPropVista, SwitchHotsalePropVista, SwitchReservasPropVista };

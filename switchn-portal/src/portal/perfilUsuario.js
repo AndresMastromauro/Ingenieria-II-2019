@@ -1,4 +1,5 @@
 import React from "react";
+import { Redirect } from 'react-router-dom'
 import { connect } from "react-redux";
 import { Route } from "react-router-dom";
 import $ from "jquery";
@@ -7,6 +8,8 @@ import { loadPropiedad, loadSubastaProp, loadReservasProp } from "../redux/propi
 import { Link } from '../common/base';
 import { SwitchnPortalPage } from './base';
 import { SwitchnAPI } from "../utils/client";
+import {SwitchSubastasPropVista, SwitchHotsalePropVista, SwitchReservasPropVista} from "./detallePropiedad";
+
 
 class SwitchPerfilUsuario extends React.Component {
     render() {
@@ -28,17 +31,59 @@ class SwitchPerfilUsuario extends React.Component {
 }
 
 class PerfilUsuario extends React.Component {
-             
-    
+    state = {
+        redirect: false,
+      }  
+      setRedirect = () => {
+        this.setState({
+          redirect: true
+        })
+      }  
+      renderRedirect = () => {
+        if (this.state.redirect) {
+          return <Redirect to={`modPerfil/${this.props.cliente.datos_personales.id}`} />
+        }
+      }
 
-        
-    
     componentWillUnmount() {
         // this.props.cleanUp();
     }
 
+    handleSolicitar = () => {
+        var {cliente} = this.props
+        if (cliente){
+        var solicitud = window.confirm("¿Está seguro que quiere solicitar el cambio de membresia?");
+        
+        if (solicitud) {
+            SwitchnAPI.clientes.solicitud(`${cliente.datos_personales.id}/solicitud`)
+                .then(this.handleCloseOk)
+                .catch(this.handleCloseFail);
+        }}else{
+            alert("No user");
+        }
+    }
+
+    handleCloseOk = () => {
+        alert("Mambresia cambiada");
+        // this.props.refreshSubastas();
+    }
+
+    handleCloseFail = () => {
+        alert("Hubo un error al cambiar la membresia");
+    }
+
+
     
     render() {
+        let flexStyle={
+          display: 'flex',
+          flexWrap: 'no-wrap',
+          flexDirection: 'column',
+          alignContent: 'center',
+          justifyContent: 'center',
+          
+          
+        }
         var {cliente} = this.props;
         if (!cliente) {
             return null;
@@ -46,12 +91,20 @@ class PerfilUsuario extends React.Component {
         return (
             <div className="container">
                 <div className="row">
-                    <div className="col-4"  style={{display: "flex-row"}}>
-                        <img  className="rounded-circle" src={cliente.image || `${process.env.REACT_APP_PUBLIC_URL}/default-no-picture.png` } style={{width: "50%"}} />
-                        <div className="col-4" style={{display: "flex"}}>
-                        <div>{ cliente.solicitud ? <button className="btn btn-danger">Pasar a Estandar</button> : 
-                                <button className="btn btn-success" >Pasar a Premium</button> } </div>
-                            <div>    {<button className="btn btn-warning" >Modificar Datos</button> }</div>
+                    <div className="col-4"  style={flexStyle}>
+                        
+                        <img  className="rounded-circle" 
+                        src={cliente.image || `${process.env.REACT_APP_PUBLIC_URL}/default-no-picture.png` }
+                         style={{width: "75%", backgroundColor: 'red',}} />
+                        <div className="col">
+                        <div  style={{display: 'flex'}}>
+                        <div>{cliente.membresia.includes('PREMIUM') ? <button  disabled={!(cliente.solicitud)} className="btn btn-danger"   onClick={this.handleSolicitar}>Pasar a Estandar</button> : 
+                                <button  disabled={!cliente.solicitud} className="btn btn-success" onClick={this.handleSolicitar} >Pasar a Premium</button> } </div>
+                            <div>    
+                            {this.renderRedirect()}
+                            {<button className="btn btn-warning" 
+                            onClick={this.setRedirect} >Modificar Datos</button> }</div>
+                    </div>
                     </div> 
                     </div>
                    
@@ -76,10 +129,6 @@ class PerfilUsuario extends React.Component {
                                     <th scope="row">Nombre:</th>
                                     <td>{cliente.datos_personales.nombre}</td>
                                 </tr>
-                                {/* <tr>
-                                    <th scope="row">Tipo:</th>
-                                    <td>{propiedad.tipo.descripcion}</td>
-                                </tr> */}
                                 <tr>
                                     <th scope="row">Tarjeta de credito:</th>
                                     <td>{cliente.tarjeta_credito}</td>
@@ -109,16 +158,17 @@ class PerfilUsuario extends React.Component {
                             <thead class="thead-dark">
                             <tr>
                                 <th scope="col">Reservas Directas:</th>
-                                <th scope="col">Subastas Adjudicadad:</th>
+                                <th scope="col">Subastas Adjudicadas:</th>
                                 <th scope="col">Hotsales Adjudicados:</th>      
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
+                            
                                 
-                               {/*<td><SwitchReservasPropVista reserva={reserva}/> </td>
-                                <td><SwitchSubastasPropVista subasta={subasta}/></td>
-                            <td><SwitchHotsalePropVista/></td>*/}
+                               <td><SwitchReservasPropVista reserva={cliente.reserva}/> </td>
+                                <td><SwitchSubastasPropVista subasta={cliente.subasta}/></td>
+                            <td><SwitchHotsalePropVista/></td>
                             </tr>
                             </tbody>
                             </table>
@@ -164,30 +214,14 @@ class _DetalleProfile extends React.Component {
     render() {
         return (
             <SwitchnPortalPage>
-                <SwitchPerfilUsuario cliente= {this.state.cliente} subasta= {this.props.subasta} reserva= {this.props.reserva} propiedad= {this.props.propiedad}/>
+                <SwitchPerfilUsuario cliente= {this.state.cliente} /*subasta= {this.props.subasta} reserva= {this.props.reserva} propiedad= {this.props.propiedad}*//>
             </SwitchnPortalPage>
 
         )
     }
 }
 
-/*let SwitchnDetallePropiedadUser = connect(
-    state => {
-        var profile = state.profile;
-        return {
-            profile: profile.data,
-            isLoading: profile.busy
-        }
-    },
-    dispatch => {
-        return {
-            loadProfile: (id) => dispatch(loadProfile(id)),
-            loadSubastaProp: (id) => dispatch(loadSubastaProp('subasta',id)),
-            loadReservasProp: (id) => dispatch(loadReservasProp('reserva',id))
-            ///cleanUp: () => dispatch(cleanData("propiedad"))
-        }
-    }
-)(_DetalleProfile); */
+
 
 
 
