@@ -318,18 +318,27 @@ class SwitchnAdminHotsale extends React.Component {
                 <td>{moment(hotsale.semana).format('L')}</td>
                 <td>{hotsale.precio ? '$'.concat(hotsale.precio) : '-'}</td>
                 <td>
-                    <Badge variant={hotsale.es_activo ? 'success' : 'dark'}>
-                        {hotsale.es_activo ? 'Activo' : 'Inactivo'}
+                    <Badge variant={
+                        hotsale.es_activo ?
+                            'success'
+                            : !hotsale.comprador ?
+                                'dark'
+                                : 'warning'
+                    }>{
+                        hotsale.es_activo ? 
+                            'Activo'
+                            : !hotsale.comprador ? 
+                                'Candidato'
+                                : 'Adquirido'
+                        }
                     </Badge>
                 </td>
-                <td> 
-                    <ButtonGroup>
-                        {hotsale.es_activo ?
-                            <Button onClick={this.handleDeactivate}>Desactivar</Button>
-                            : <Button onClick={this.handleEdit}>Activar</Button>
-                        }
-                        {hotsale.es_activo && <Button onClick={this.handleEdit}>Editar</Button>}
-                    </ButtonGroup>
+                <td>
+                    {
+                        hotsale.es_activo ?
+                        <Button onClick={this.handleEdit}>Editar</Button>
+                        : <Button onClick={this.handleEdit}>Activar</Button>
+                    }
                 </td>
             </tr>
             <Modal show={this.state.editing} onHide={this.handleClose}>
@@ -372,7 +381,7 @@ class SwitchnAdminPropiedadHotsales extends React.Component {
 
     cargarHotsales = (idPropiedad) => {
         SwitchnAPI.propiedades.getDetailEndpoint(idPropiedad)
-            .hotsales.list()
+            .hotsales.list({'include[]': 'comprador.'})
                 .then(data => this.setState({hotsales: data.hotsales}))
                 .catch(err => console.log(err));
     }

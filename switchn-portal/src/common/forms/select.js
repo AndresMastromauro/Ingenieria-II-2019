@@ -256,14 +256,14 @@ class __WeekField extends React.Component {
 
     getFirstAvailableWeek = () => {
         const {offsetSemanaDesde} = this.props;
-        const hoy = moment();
-        return hoy.add(offsetSemanaDesde || 1, 'weeks').subtract(hoy.weekday(), 'days');
+        const lunes_siguiente = this.getNextMonday(); // moment();
+        return lunes_siguiente.add(offsetSemanaDesde || 1, 'weeks');
     }
 
     getLastAvailableWeek = () => {
         const {offsetSemanaHasta} = this.props;
-        const hoy = moment();
-        return hoy.add(offsetSemanaHasta || 53, 'weeks').subtract(hoy.weekday() + 1, 'days');
+        const lunes_siguiente = this.getNextMonday(); // moment();
+        return lunes_siguiente.add(offsetSemanaHasta || 53, 'weeks');
     }
 
     getDisabledRange = () => {
@@ -362,7 +362,7 @@ class __WeekField extends React.Component {
                     disabledDays={this.getDisabledDays()}
                     fromMonth={this.getFirstCalendarMonth()}
                     initialMonth={this.getFirstCalendarMonth()}
-                    toMonth={this.props.toMonth}
+                    toMonth={this.getLastCalendarMonth()}
                     onDayClick={this.handleDayChange}
                     onDayMouseEnter={this.handleDayEnter}
                     onDayMouseLeave={this.handleDayLeave}

@@ -6,7 +6,7 @@ from datetime import date, timedelta
 from switchn import settings
 from users.models import SwitchnUser
 
-from app.utils import a_year_from_now, adjust_date_to_last_monday, validate_monday
+from app.utils import a_year_from_now, adjust_date_to_last_monday, validate_monday, three_days_from_now
 
 
 class Pais(models.Model):
@@ -120,8 +120,8 @@ class Cliente(models.Model):
         self.user.delete()
         return super(Cliente, self).delete(using, keep_parents)
 
-    def cargar_pago(self, monto):
-        self.pagos.create(monto=monto)
+    def cargar_pago(self, tipo, monto):
+        self.pagos.create(monto=monto, tipo=tipo)
 
 
 class Credit(models.Model):
@@ -271,7 +271,7 @@ class Propiedad (models.Model):
             )
         )
 
-        semanas = (hasta - desde).days // 7
+        semanas = ((hasta - desde).days // 7) + 1
         return queryset.filter(reservas_periodo__lt=semanas)
 
 
@@ -282,39 +282,6 @@ class Reserva (models.Model):
     cliente = models.ForeignKey(Cliente, null=True, on_delete=models.CASCADE)
     semana = models.DateField(validators=[validate_monday])
     propiedad = models.ForeignKey(Propiedad, on_delete=models.CASCADE)
-
-    """
-    DEPRECADO
-    ---------------
-    @staticmethod
-    def get_proximas(desde=None, hasta=None):
-        if desde is None:
-            desde = date.today()
-        queryset = Reserva.objects.filter(semana__gte=desde)
-        if hasta is not None:
-            queryset = queryset.filter(semana_lte=hasta)
-        return queryset
-
-    @staticmethod
-    def get_adjudicadas():
-        # return Reserva.objects.filter(cliente__isnull=False)
-        return Reserva.objects.all()
-
-    @staticmethod
-    def get_proximas_adjudicadas(desde=None, hasta=None):
-        return Reserva.get_proximas(desde, hasta).intersection(Reserva.get_adjudicadas())
-    
-    def is_open(self):
-        return self.cliente is None
-
-    def is_hotsale_ready(self):
-        semanas_restantes = self.semana - date.today()
-        return self.is_open() and (timedelta(weeks=1) < semanas_restantes < timedelta(weeks=25))
-    
-    def give_to(self, cliente):
-       self.cliente = cliente
-       self.save()
-    """
 
     def __str__(self):
         anio = self.semana.isocalendar()[0]
@@ -328,6 +295,7 @@ class Hotsale(models.Model):
     propiedad = models.ForeignKey('Propiedad', related_name='hotsales', on_delete=models.CASCADE)
     es_activo = models.BooleanField(default=False)
     comprador = models.ForeignKey('Cliente', related_name='hotsales_adquiridos', on_delete=models.DO_NOTHING, null=True)
+    pago = models.OneToOneField('Pago', related_name='detalle_hotsale', on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
         anio = self.semana.year
@@ -344,7 +312,7 @@ class Hotsale(models.Model):
         if not self.es_activo:
             raise ValueError('El hotsale no se encuentra activo')
         try:
-            cliente.cargar_pago(self.precio)
+            self.pago = cliente.cargar_pago('H', self.precio)
             self.propiedad.create_reserva(self.semana, cliente)
             self.comprador = cliente
             self.es_activo = False
@@ -360,11 +328,12 @@ class Subasta(models.Model):
     precio_base = models.DecimalField(max_digits=15, decimal_places=2)
     semana = models.DateField()
     fecha_inicio = models.DateField(default=date.today)
-    fecha_fin = models.DateField(default=lambda: date.today() + timedelta(days=3))
+    fecha_fin = models.DateField(default=three_days_from_now)
     es_activa = models.BooleanField(default=True)
     ofertantes = models.ManyToManyField('Cliente', related_name='+', through='OfertaSubasta')
     ganador = models.ForeignKey('Cliente', null=True, related_name='subastas_ganadas', on_delete=models.DO_NOTHING)
     propiedad = models.ForeignKey('Propiedad', related_name='subastas', on_delete=models.CASCADE)
+    pago = models.OneToOneField('Pago', related_name='detalle_subasta', on_delete=models.DO_NOTHING, null=True)
 
     def __str__(self):
         anio = self.semana.isocalendar()[0]
@@ -406,7 +375,7 @@ class Subasta(models.Model):
             best_offer = self.get_best_offer(exclude_users=exclude)
         if best_offer is not None:
             try:
-                best_offer.cobrar()
+                self.pago = best_offer.cobrar()
                 self.ganador = best_offer.cliente
                 self.ganador.reservar(self.propiedad, self.semana)
             except:
@@ -434,10 +403,28 @@ class OfertaSubasta(models.Model):
         return f'[{self.subasta}] {self.cliente} => ${self.monto} ({date.strftime(self.fechaHora, "%d/%m/%Y - %H:%M:%S")})'
 
     def cobrar(self):
-        self.cliente.cargar_pago(self.monto)
+        return self.cliente.cargar_pago('S', self.monto)
 
 
 class Pago(models.Model):
+    tipo = models.CharField(max_length=1, choices=(
+        ('H', 'Hotsale'),
+        ('S', 'Subasta')
+    ), blank=True)
     monto = models.DecimalField(max_digits=15, decimal_places=2)
     cliente = models.ForeignKey('Cliente', related_name='pagos', on_delete=models.CASCADE)
     pendiente = models.BooleanField(default=True)
+    fecha = models.DateField(default=timezone.now)
+
+    def __str__(self):
+        estado = f'{"PENDIENTE" if self.pendiente else "CANCELADO"}'
+        detalle = self.get_detalle()
+        return f'{detalle}: ${self.monto} [{estado}]'
+
+    def get_detalle(self):
+        if self.tipo == '':
+            return None
+        if self.tipo == 'H':
+            return self.detalle_hotsale
+        if self.tipo == 'S':
+            return self.detalle_subasta
