@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import {Field} from "redux-form";
 
 /* WeekPicker */
-import DayPicker from "react-day-picker";
+import DayPicker, { ModifiersUtils } from "react-day-picker";
 import 'react-day-picker/lib/style.css';
 import moment from "moment";
 import MomentLocaleUtils from "react-day-picker/moment";
@@ -238,8 +238,57 @@ class __WeekField extends React.Component {
                 .toDate(),
         };
     }
+
+    getNextMonday(date) {
+        const today = moment();
+        return ((date && moment(date)) || moment()).add((7 - today.weekday()), 'days');
+    }
+
+    getDisabledDays() {
+        if (this.props.disabled) {
+            return [
+                { after: new Date() },
+                { before: new Date() }
+            ];
+        }
+        return this.getDisabledRange().concat(this.props.disabledDays);
+    }
+
+    getFirstAvailableWeek = () => {
+        const {offsetSemanaDesde} = this.props;
+        const hoy = moment();
+        return hoy.add(offsetSemanaDesde || 1, 'weeks').subtract(hoy.weekday(), 'days');
+    }
+
+    getLastAvailableWeek = () => {
+        const {offsetSemanaHasta} = this.props;
+        const hoy = moment();
+        return hoy.add(offsetSemanaHasta || 53, 'weeks').subtract(hoy.weekday() + 1, 'days');
+    }
+
+    getDisabledRange = () => {
+        return [
+            {
+                before: this.getFirstAvailableWeek().toDate(),
+                after: this.getLastAvailableWeek().toDate()
+            }
+        ];
+    }
+
+    getFirstCalendarMonth() {
+        var month = this.getFirstAvailableWeek();
+        // month = month.subtract(month.date(), 'days');
+        return month.toDate();
+    }
+
+    getLastCalendarMonth() {
+        var month = this.getLastAvailableWeek();
+        // month = month.subtract(month.date(), 'days');
+        return month.toDate();
+    }
     
-    handleDayChange = date => {
+    handleDayChange = (date, {disabled}) => {
+        if (disabled) return;
         var selectedDays = this.getWeekDays(this.getWeekRange(date).from);
         const {onChange} = this.props.input || this.props;
         onChange(moment(selectedDays[0]).format("YYYY-MM-DD"));
@@ -248,7 +297,8 @@ class __WeekField extends React.Component {
         });
     };
 
-    handleDayEnter = date => {
+    handleDayEnter = (date, {disabled}) => {
+        if (disabled) return;
         this.setState({
             hoverRange: this.getWeekRange(date),
         });
@@ -270,11 +320,12 @@ class __WeekField extends React.Component {
 
     componentDidMount() {
         let {value} = this.props.input || this.props;
-        // this.handleDayChange(value);
-        var selectedDays = this.getWeekDays(this.getWeekRange(value || moment()).from);
-        this.setState({
-            selectedDays: selectedDays,
-        });
+        if (value) {
+            var selectedDays = this.getWeekDays(this.getWeekRange(value || this.getNextMonday()).from);
+            this.setState({
+                selectedDays: selectedDays,
+            });
+        }
     }
 
     componentDidUpdate() {
@@ -303,15 +354,15 @@ class __WeekField extends React.Component {
         return (
             <div className="WeekPicker">
                 <Component
+                    disabled={this.props.disabled}
                     selectedDays={selectedDays}
                     showWeekNumbers
                     showOutsideDays
                     modifiers={modifiers}
-                    disabledDays={[
-                        {
-                            before: new Date()
-                        }
-                    ].concat(this.props.disabledDays)}
+                    disabledDays={this.getDisabledDays()}
+                    fromMonth={this.getFirstCalendarMonth()}
+                    initialMonth={this.getFirstCalendarMonth()}
+                    toMonth={this.props.toMonth}
                     onDayClick={this.handleDayChange}
                     onDayMouseEnter={this.handleDayEnter}
                     onDayMouseLeave={this.handleDayLeave}
@@ -412,7 +463,7 @@ class _WeekPickerModal extends React.Component {
     render() {
         let {formatFecha} = this;
         let {selecting, selectedWeek} = this.state;
-        let {title} = this.props;
+        let {title, offsetSemanaDesde, offsetSemanaHasta} = this.props;
         return (
             <div className='justify-content-end'>
                 <p><b>{title}</b></p>
@@ -439,7 +490,10 @@ class _WeekPickerModal extends React.Component {
                         <Modal.Title>{title}</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <_WeekField onChange={this.onChange} />
+                        <_WeekField
+                            offsetSemanaDesde={offsetSemanaDesde}
+                            offsetSemanaHasta={offsetSemanaHasta}
+                            onChange={this.onChange} />
                     </Modal.Body>
                 </Modal>
             </div>

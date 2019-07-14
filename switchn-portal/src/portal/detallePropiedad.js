@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Tabs, Tab, Card } from "react-bootstrap";
 import { reduxForm } from "redux-form";
+import { connect } from "react-redux";
 import moment from 'moment';
 import { Link } from '../common/base';
 import { WeekField } from '../common/forms/select';
@@ -153,13 +154,20 @@ class DetallePropiedadHotsales extends React.Component {
 
 class ReservaDirectaForm extends React.Component {
     render() {
+        let {user} = this.props;
+        let disabled = user.membresia !== 'PREMIUM';
         return (
             <form onSubmit={this.props.handleSubmit}>
                 <Card>
                     <Card.Body>
                         <Card.Title>Reserva Directa</Card.Title>
-                        <WeekField name="semana" />
-                        <SubmitButton>Reservar</SubmitButton>
+                        <WeekField
+                            disabled={disabled}
+                            offsetSemanaDesde={26}
+                            offsetSemanaHasta={53}
+                            name="semana" />
+                        <SubmitButton disabled={disabled}>Reservar</SubmitButton>
+                        {disabled && <small>Solo para clientes premium</small>}
                     </Card.Body>
                 </Card>
             </form>
@@ -180,10 +188,18 @@ class DetallePropiedadReservaDirecta extends React.Component {
             .catch(data => alert(data.detail));
     }
 
-    render() {
-        return (<ReservaDirectaForm onSubmit={this.onSubmit} />);
+    render() { 
+        return (<ReservaDirectaForm user={this.props.user} onSubmit={this.onSubmit} />);
     }
 }
+
+DetallePropiedadReservaDirecta = connect(
+    state => {
+        return {
+            user: state.auth.user
+        }
+    }
+)(DetallePropiedadReservaDirecta);
 
 class SwitchnPortalHotsale extends React.Component {
     handleBuy = () => {

@@ -50,7 +50,7 @@ function auth(state = initialState, action) {
             localStorage.removeItem("token");
             return {
                 ...state,
-                errors: action.data,
+                errors: [action.data],
                 token: null,
                 user: null,
                 isAuthenticated: false,

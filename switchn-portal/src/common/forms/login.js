@@ -9,7 +9,7 @@ let LoginErrors = (props) => {
     var alerts = null;
     if (props.errors && props.errors.length > 0) {
         alerts = props.errors.map(
-            (err, i) => <Alert key={i} variant="danger">{err}</Alert>
+            (err, i) => <Alert key={i} variant="danger">{(err && err.non_field_errors) || 'Error desconocido'}</Alert>
         );
     }
     return alerts;
@@ -23,7 +23,7 @@ LoginErrors = connect(
     }
 )(LoginErrors);
 
-class _LoginForm extends React.Component {
+class LoginForm extends React.Component {
     render() {
         let {handleSubmit} = this.props;
         return (
@@ -35,7 +35,7 @@ class _LoginForm extends React.Component {
                     <div className="form-group">
                         <SubmitButton>Acceder</SubmitButton>
                     </div>
-                    <LoginErrors />
+                    {/* <LoginErrors /> */}
                     <Link url={'/registrar'}><small>¿No tenés cuenta? ¡Registrate!</small></Link>
                 </fieldset>
             </form>
@@ -44,9 +44,9 @@ class _LoginForm extends React.Component {
 }
 
 
-let LoginForm = reduxForm({
+LoginForm = reduxForm({
     form: 'login-form'
-})(_LoginForm);
+})(LoginForm);
 
 export { LoginForm };
 

@@ -6,19 +6,7 @@ from datetime import date, timedelta
 from switchn import settings
 from users.models import SwitchnUser
 
-
-def a_year_from_now():
-    # TODO: Mover a algun lugar con otros helpers
-    today = date.today()
-    return date(today.year + 1, today.month, today.day)
-
-def adjust_date_to_last_monday(a_date):
-    return a_date - timedelta(days=a_date.weekday())
-
-def validate_monday(value):
-    if not value.isocalendar() [2] == 1 :
-        from django.core.exceptions import ValidationError
-        raise ValidationError("Debe elegir un Lunes")
+from app.utils import a_year_from_now, adjust_date_to_last_monday, validate_monday
 
 
 class Pais(models.Model):
@@ -249,6 +237,8 @@ class Propiedad (models.Model):
         if not self.es_activa:
             raise ValueError("La propiedad no se encuentra activa")
         semana = adjust_date_to_last_monday(semana)
+        if self.subastas.filter(semana=semana).exists():
+            raise ValueError("Ya existe una subasta para la semana elegida")
         if not self.is_available_on_week(semana):
             raise ValueError("La semana elegida está reservada")
         return self.subastas.create(semana=semana, precio_base=precio_base)
@@ -370,7 +360,7 @@ class Subasta(models.Model):
     precio_base = models.DecimalField(max_digits=15, decimal_places=2)
     semana = models.DateField()
     fecha_inicio = models.DateField(default=date.today)
-    fecha_fin = models.DateField(null=True)
+    fecha_fin = models.DateField(default=lambda: date.today() + timedelta(days=3))
     es_activa = models.BooleanField(default=True)
     ofertantes = models.ManyToManyField('Cliente', related_name='+', through='OfertaSubasta')
     ganador = models.ForeignKey('Cliente', null=True, related_name='subastas_ganadas', on_delete=models.DO_NOTHING)
@@ -424,9 +414,14 @@ class Subasta(models.Model):
                 self.propiedad.hotsales.create(semana=self.semana)
         else:
             self.propiedad.hotsales.create(semana=self.semana)
-        self.fecha_fin = timezone.now()
+        # self.fecha_fin = timezone.now()
         self.es_activa = False
         self.save()
+        try:
+            self.propiedad.create_subasta((self.semana + timedelta(days=7)), self.precio_base)
+        except:
+            pass
+
 
 
 class OfertaSubasta(models.Model):

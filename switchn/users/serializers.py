@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from dynamic_rest.serializers import DynamicModelSerializer
+from dynamic_rest.fields import DynamicMethodField
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from datetime import date
@@ -15,8 +16,16 @@ class SwitchnUserSerializer(DynamicModelSerializer):
             'apellido',
             'fecha_nacimiento',
             'email',
-            'is_admin'
+            'is_admin',
+            'membresia'
         )
+    membresia = DynamicMethodField()
+
+    def get_membresia(self, user):
+        try:
+            return user.cliente.membresia.codigo
+        except:
+            return None
 
 
 class LoginSerializer (serializers.Serializer):
