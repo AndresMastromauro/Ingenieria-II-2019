@@ -63,21 +63,22 @@ class PerfilUsuario extends React.Component {
         var solicitud = window.confirm("¿Está seguro que quiere solicitar el cambio de membresia?");
         
         if (solicitud) {
-            SwitchnAPI.clientes.solicitud(`${cliente.datos_personales.id}/solicitud`)
-                .then(this.handleCloseOk)
-                .catch(this.handleCloseFail);
+            SwitchnAPI.clientes.getDetailEndpoint(cliente.datos_personales.id)
+                .hacerSolicitud()
+                    .then(this.handleCloseOk)
+                    .catch(this.handleCloseFail);
         }}else{
             alert("No user");
         }
     }
 
     handleCloseOk = () => {
-        alert("Mambresia cambiada");
+        alert("Solicitud realizada. Uno de nuestros agentes la resolverá a la brevedad.");
         // this.props.refreshSubastas();
     }
 
     handleCloseFail = () => {
-        alert("Hubo un error al cambiar la membresia");
+        alert("Hubo un error al generar la solicitud");
     }
 
 
