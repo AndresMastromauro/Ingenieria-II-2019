@@ -31,19 +31,27 @@ class SwitchPerfilUsuario extends React.Component {
 }
 
 class PerfilUsuario extends React.Component {
-    state = {
+    constructor(props) {
+        super(props);
+        this.state = {
+            redirect: false,
+           
+            disabled: true
+        }
+    /*state = {
         redirect: false,
       }  
       setRedirect = () => {
         this.setState({
           redirect: true
-        })
+        })*/
       }  
       renderRedirect = () => {
         if (this.state.redirect) {
           return <Redirect to={`modPerfil/${this.props.cliente.datos_personales.id}`} />
         }
       }
+   
 
     componentWillUnmount() {
         // this.props.cleanUp();
@@ -88,6 +96,8 @@ class PerfilUsuario extends React.Component {
         if (!cliente) {
             return null;
         }
+        let bool = this.props.cliente.solicitud;
+
         return (
             <div className="container">
                 <div className="row">
@@ -98,9 +108,11 @@ class PerfilUsuario extends React.Component {
                          style={{width: "75%", backgroundColor: 'red',}} />
                         <div className="col">
                         <div  style={{display: 'flex'}}>
-                        <div>{cliente.membresia.includes('PREMIUM') ? <button  disabled={!(cliente.solicitud)} className="btn btn-danger"   onClick={this.handleSolicitar}>Pasar a Estandar</button> : 
-                                <button  disabled={!cliente.solicitud} className="btn btn-success" onClick={this.handleSolicitar} >Pasar a Premium</button> } </div>
-                            <div>    
+                        <div>{cliente.membresia.includes('PREMIUM') ? <button  disabled={bool} className="btn btn-danger"   onClick={this.handleSolicitar}>Pasar a Estandar</button> : 
+                               
+                                <button  disabled={bool} className="btn btn-success " onClick={this.handleSolicitar} >Pasar a Premium</button> } </div>
+                            <div>
+                    
                             {this.renderRedirect()}
                             {<button className="btn btn-warning" 
                             onClick={this.setRedirect} >Modificar Datos</button> }</div>
