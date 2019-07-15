@@ -285,6 +285,7 @@ class Propiedad (models.Model):
 class Reserva (models.Model):
     class Meta:
         unique_together = (('semana','propiedad'),)
+        ordering = ('semana',)
 
     cliente = models.ForeignKey(Cliente, null=True, on_delete=models.CASCADE)
     semana = models.DateField(validators=[validate_monday])

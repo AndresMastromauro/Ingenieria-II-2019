@@ -205,6 +205,7 @@ class ReservaSerializer(DynamicModelSerializer):
     class Meta:
         model = Reserva
         fields = (
+            'id',
             'propiedad',
             'semana'
         )
@@ -286,10 +287,12 @@ class SubastaSerializer(DynamicModelSerializer):
             'precio_base',
             'ganador',
             'propiedad',
-            'es_activa'
+            'es_activa',
+            'ofertas'
         )
         deferred_fields = (
-            'es_activa'
+            'es_activa',
+            'ofertas'
         )
         read_only_fields = (
             'precio_actual',
@@ -300,6 +303,7 @@ class SubastaSerializer(DynamicModelSerializer):
     precio_actual = DynamicMethodField(requires=['ofertasubasta_set'])
     propiedad = DynamicRelationField('SubastaPropiedadSerializer', embed=True)
     ganador = DynamicRelationField('ClienteSerializer', deferred=True, embed=True)
+    ofertas = DynamicRelationField('OfertaSerializer', source='ofertasubasta_set', deferred=True, embed=True, many=True)
 
     def get_precio_actual(self, subasta):
         best_offer = subasta.get_best_offer()

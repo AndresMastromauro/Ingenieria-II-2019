@@ -9,40 +9,75 @@ import { Link } from '../common/base';
 import { SwitchnPortalPage } from './base';
 import { SwitchnAPI } from "../utils/client";
 import { ListadoHotale, ListadoReservas, ListadoSubastas} from "./detallePropiedad";
+import { Tabs, Tab, Table } from "react-bootstrap";
 
 
 
-class SwitchSubastasPropVista extends React.Component {
+class TablaSubastas extends React.Component {
     state = {
         subastas: []
     }
 
-    cargarReserva = (idUsuario) => {
-        SwitchnAPI.clientes.getDetailEndpoint(idUsuario).subastas_ganadas.list()
+    cargarSubastas = (idUsuario) => {
+        if (this.props.ganadas) {
+            SwitchnAPI.clientes.getDetailEndpoint(idUsuario).subastas_ganadas.list()
                 .then(data => this.setState({subastas: data.subastas}))
                 .catch(err => console.log(err));
+        } else {
+            const params = {
+                'include[]': 'ofertas.',
+            };
+            SwitchnAPI.clientes.getDetailEndpoint(idUsuario).subastas_ofertadas.list(params)
+                .then(data => {
+                    var {subastas} = data;
+                    subastas.forEach(subasta => {
+                        subasta.mejor_oferta_user = subasta.ofertas
+                            .filter(o => o.cliente == idUsuario)
+                                .reduce((max, o) => o.monto > max.monto ? o : max);
+                    });
+                    this.setState({
+                        subastas
+                    });
+                })
+                .catch(err => console.log(err));
+        }
     }
 
     componentDidMount() {
-        this.cargarReserva(this.props.idUsuario);
+        this.cargarSubastas(this.props.idUsuario);
     }
+
     render() {
-        var content;
-        if (this.props.isLoading) {
-            content = <h2>Cargando</h2>;
-        } else if (!this.state.subastas || this.state.subastas.length == 0) {
-            content = <h6>No hay subastas para mostrar</h6>;
-        } else {
-            content = this.state.subastas.map(
-                function(subasta) {
-                    return <ListadoSubastas key={subasta.id} subasta={subasta} />
-                }
-            );
+        if (!this.state.subastas || this.state.subastas.length == 0) {
+            return <div><h6>No hay subastas para mostrar</h6></div>
         }
+        let {ganadas} = this.props;
         return (
-            <div className="col-sm-8">
-                {content}
-            </div>
+            <Table borderless>
+                <thead className="thead-dark">
+                    <tr>
+                        <th scope='col'>Semana</th>
+                        <th scope='col'>Propiedad</th>
+                        <th scope='col'>Precio Base</th>
+                        <th scope='col'>
+                        {
+                        ganadas ?
+                            'Precio Final'
+                            : 'Tu mejor oferta'
+                        }
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {
+                    this.state.subastas.map(
+                        function(subasta) {
+                            return <ListadoSubastas ganada={ganadas} key={subasta.id} subasta={subasta} />
+                        })
+                    }
+                </tbody>
+            </Table>
         )
     }
 }
@@ -52,35 +87,41 @@ class SwitchReservasPropVista extends React.Component {
         reservas: []
     }
 
-    cargarReserva = (idUsuario) => {
-        SwitchnAPI.clientes.getDetailEndpoint(idUsuario).reservas.list()
+    cargarReservas = (idUsuario) => {
+        const params = {
+            'include[]': 'propiedad.',
+        };
+        SwitchnAPI.clientes.getDetailEndpoint(idUsuario).reservas.list(params)
                 .then(data => this.setState({reservas: data.reservas}))
                 .catch(err => console.log(err));
     }
 
     componentDidMount() {
-        this.cargarReserva(this.props.idUsuario);
+        this.cargarReservas(this.props.idUsuario);
     }
 
-   
-
     render() {
-        var content;
-        if (this.state.isLoading) {
-            content = <h2>Cargando</h2>;
-        } else if (!this.state.reservas || this.state.reservas.length == 0) {
-            content = <h6>No hay reservas para mostrar</h6>;
-        } else {
-            content = this.state.reservas.map(
-                function(reserva) {
-                    return <ListadoReservas key={reserva.id} reserva={reserva} />
-                }
-            );
+        if (!this.state.reservas || this.state.reservas.length == 0) {
+            return <div><h6>No hay reservas para mostrar</h6></div>;
         }
         return (
-            <div className="col-sm-8">
-                {content}
-            </div>
+            <Table borderless>
+                <thead className="thead-dark">
+                    <tr>
+                        <th scope='col'>Semana</th>
+                        <th scope='col'>Propiedad</th>
+                        <th scope='col'></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {this.state.reservas.map(
+                        function(reserva) {
+                            return <ListadoReservas key={reserva.id} reserva={reserva} />
+                        }
+                    )}
+                </tbody>
+            </Table>
         )
     }
 }
@@ -93,7 +134,7 @@ class SwitchPerfilUsuario extends React.Component {
         if (this.props.isLoading) {
             content = <h2>Cargando</h2>;
         } else {
-            content = <PerfilUsuario cliente={this.props.cliente} />
+            content = <PerfilUsuario cliente={cliente} />
         }
 
         return (
@@ -110,28 +151,21 @@ class PerfilUsuario extends React.Component {
         super(props);
         this.state = {
             redirect: false,
-           
             disabled: true
         }}
     /*state = {
         redirect: false,
       }  */
-      setRedirect = () => {
+    setRedirect = () => {
         this.setState({
-          redirect: true
-        })
-      }  
+            redirect: true
+        });
+    }  
 
-      renderRedirect = () => {
+    renderRedirect = () => {
         if (this.state.redirect) {
-          return <Redirect to={`modPerfil/${this.props.cliente.datos_personales.id}`} />
+            return <Redirect to={`modPerfil/${this.props.cliente.datos_personales.id}`} />
         }
-      }
-    
-   
-
-    componentWillUnmount() {
-        // this.props.cleanUp();
     }
 
     handleSolicitar = () => {
@@ -151,15 +185,12 @@ class PerfilUsuario extends React.Component {
 
     handleCloseOk = () => {
         alert("Solicitud realizada. Uno de nuestros agentes la resolverá a la brevedad.");
-        // this.props.refreshSubastas();
     }
 
     handleCloseFail = () => {
         alert("Hubo un error al generar la solicitud");
     }
 
-
-    
     render() {
         let flexStyle={
           display: 'flex',
@@ -181,86 +212,94 @@ class PerfilUsuario extends React.Component {
                 <div className="row">
                     <div className="col-4"  style={flexStyle}>
                         <div className="col">
-                        <div  style={{display: 'flex'}}>
-                        <div>{cliente.membresia.includes('PREMIUM') ? <button  disabled={bool} className="btn btn-danger"   onClick={this.handleSolicitar}>Pasar a Estandar</button> : 
-                               
-                                <button  disabled={bool} className="btn btn-success " onClick={this.handleSolicitar} >Pasar a Premium</button> } </div>
+                            <div  style={{display: 'flex'}}>
+                                <div>
+                                {cliente.membresia.includes('PREMIUM') ?
+                                    <button  disabled={bool} className="btn btn-danger" onClick={this.handleSolicitar}>Pasar a Estandar</button>
+                                    : <button  disabled={bool} className="btn btn-success " onClick={this.handleSolicitar}>Pasar a Premium</button>
+                                }
+                                </div>
                             <div>
                     
                             {this.renderRedirect()}
                             {<button className="btn btn-warning" 
-                            onClick={this.setRedirect} >Modificar Datos</button> }</div>
+                                onClick={this.setRedirect} >Modificar Datos</button> }
+                        </div>
                     </div>
-                    </div> 
-                    </div>
-                   
-                    <div className="col-8">
-                        <table className="table table">
-                        <thead class="thead-dark">
-                            <tr>
+                </div> 
+            </div>   
+            <div className="col-8">
+                <table className="table table">
+                    <thead class="thead-dark">
+                        <tr>
                             <th scope="col">Datos de Usuario</th>
                             <th scope="col"></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">Nombre de usuario:</th>
-                                    <td>{cliente.datos_personales.email}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Apellido:</th>
-                                    <td>{cliente.datos_personales.apellido}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Nombre:</th>
-                                    <td>{cliente.datos_personales.nombre}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Tarjeta de credito:</th>
-                                    <td>{cliente.tarjeta_credito}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Fecha de nacimiento:</th>
-                                    <td>{cliente.datos_personales.fecha_nacimiento}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Membresia:</th>
-                                    <td>{cliente.membresia}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">Creditos:</th>
-                                    <td>{cliente.creditos}</td>
-                                </tr>
-
-                            </tbody>
-                            <tfoot>
-                               
-                            </tfoot>
-                        </table>
-                        
-                    </div>
-                </div>
-                <table class="table table-borderless table-hover table-sm table-active">
-                            <thead class="thead-dark">
+                        </tr>
+                    </thead>
+                        <tbody>
                             <tr>
-                                <th scope="col">Reservas Directas:</th>
-                                <th scope="col">Subastas Ganadas:</th>
-                                <th scope="col">Subastas Ofertadas:</th>
-                                    
+                                <th scope="row">Nombre de usuario:</th>
+                                <td>{cliente.datos_personales.email}</td>
                             </tr>
-                            </thead>
-                            <tbody>
                             <tr>
+                                <th scope="row">Apellido:</th>
+                                <td>{cliente.datos_personales.apellido}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Nombre:</th>
+                                <td>{cliente.datos_personales.nombre}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Tarjeta de credito:</th>
+                                <td>{cliente.tarjeta_credito}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Fecha de nacimiento:</th>
+                                <td>{cliente.datos_personales.fecha_nacimiento}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Membresia:</th>
+                                <td>{cliente.membresia}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Creditos:</th>
+                                <td>{cliente.creditos}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
                             
-                                
-                                <td><SwitchReservasPropVista idUsuario={cliente.datos_personales.id}/> </td>
-                                <td><SwitchSubastasPropVista idUsuario={cliente.datos_personales.id}/></td>
-                                <td><SwitchSubastasPropVista idUsuario={cliente.datos_personales.id}/></td>
-                                
-                            </tr>
-                            </tbody>
-                            </table>
+                        </tfoot>
+                    </table>     
+                </div>
             </div>
+            <Tabs defaultActiveKey='reservas'>
+                <Tab eventKey='reservas' title='Reservas Adjudicadas'>
+                    <SwitchReservasPropVista idUsuario={cliente.datos_personales.id} />
+                </Tab>
+                <Tab eventKey='subastas_ganadas' title='Subastas Ganadas'>
+                    <TablaSubastas ganadas idUsuario={cliente.datos_personales.id} />
+                </Tab>
+                <Tab eventKey='subastas_ofertadas' title='Subastas Ofertadas'>
+                    <TablaSubastas idUsuario={cliente.datos_personales.id}/>
+                </Tab>
+            </Tabs>
+            {/* <table class="table table-borderless table-hover table-sm table-active">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Reservas Directas:</th>
+                    <th scope="col">Subastas Ganadas:</th>
+                    <th scope="col">Subastas Ofertadas:</th>   
+                </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><SwitchReservasPropVista idUsuario={cliente.datos_personales.id}/> </td>
+                        <td><TablaSubastas idUsuario={cliente.datos_personales.id}/></td>
+                        <td><TablaSubastas idUsuario={cliente.datos_personales.id}/></td>   
+                    </tr>
+                </tbody>
+            </table> */}
+        </div>
         );
     }
 }
@@ -301,7 +340,7 @@ class _DetalleProfile extends React.Component {
   
     render() {
         return (
-            <SwitchnPortalPage>
+            <SwitchnPortalPage title='Información Personal'>
                 <SwitchPerfilUsuario cliente= {this.state.cliente} /*subasta= {this.props.subasta} reserva= {this.props.reserva} propiedad= {this.props.propiedad}*//>
             </SwitchnPortalPage>
 
