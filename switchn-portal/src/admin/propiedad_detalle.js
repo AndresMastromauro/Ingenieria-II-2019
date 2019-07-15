@@ -129,11 +129,11 @@ class SwitchnAdminSubasta extends React.Component {
         if (!subasta) return null;
         return (
             <tr>
+                <th scope='row'>{moment(subasta.semana).format("D [de] MMMM (Y)")}</th>
                 <td>{formatFecha(subasta.fecha_inicio)}</td>
                 <td>{ (subasta.fecha_fin && formatFecha(subasta.fecha_fin)) || "-"}</td>
-                <td>{`Semana del ${formatFecha(subasta.semana)}`}</td>
                 <td>
-                    <Badge>
+                    <Badge variant={subasta.es_activa ? 'success' : 'warning'}>
                     {
                     subasta.es_activa ? 
                         "Abierta"
@@ -152,7 +152,7 @@ class SwitchnAdminSubasta extends React.Component {
                 <td>
                 {
                     subasta.ganador ? 
-                        `${subasta.ganador.apellido.toUpperCase()}, ${subasta.ganador.nombre}`
+                        <b>`${subasta.ganador.apellido.toUpperCase()}, ${subasta.ganador.nombre}`</b>
                         : "-"
                 }
                 </td>
@@ -175,9 +175,9 @@ const TablaSubastas = (props) => {
             <table className="table">
                 <thead className="thead-dark">
                     <tr>
+                        <th scope="col">{"Semana"}</th>
                         <th scope="col">{"Fecha de Inicio"}</th>
                         <th scope="col">{"Fecha de Fin"}</th>
-                        <th scope="col">{"Semana"}</th>
                         <th scope="col">{"Estado"}</th>
                         <th scope="col">{"Precio Base"}</th>
                         <th scope="col">{"Mejor oferta"}</th>
@@ -232,7 +232,7 @@ class SwitchnAdminPropiedadSubastas extends React.Component {
         }
         return (
             <div className="container" style={{margin: "4pt", padding: "4pt"}}>
-                <Link url={`/admin/propiedad/${this.props.propiedad.id}/subastas/crear`}>Crear Subasta</Link>
+                { /* <Link url={`/admin/propiedad/${this.props.propiedad.id}/subastas/crear`}>Crear Subasta</Link> */ }
             { !this.state.subastas || this.state.subastas.length == 0 ?
                 <div>
                     <h4>No hay subastas para mostrar</h4>
@@ -298,9 +298,9 @@ class SwitchnAdminHotsale extends React.Component {
 
     handleEditSuccess = (values) => {
         this.handleClose();
-        let {hotsale} = this.props;
+        let {hotsale, propiedad} = this.props;
         values.semana = hotsale.semana;
-        values.propiedad = hotsale.propiedad;
+        values.propiedad = propiedad.id;
         values.es_activo = true;
         SwitchnAPI.hotsales.update(hotsale.id, values)
                 .then(data => {
@@ -315,29 +315,30 @@ class SwitchnAdminHotsale extends React.Component {
         return (
             <>
             <tr>
-                <td>{moment(hotsale.semana).format('L')}</td>
+                <th scope="row">{moment(hotsale.semana).format('D [de] MMMM (Y)')}</th>
                 <td>{hotsale.precio ? '$'.concat(hotsale.precio) : '-'}</td>
                 <td>
                     <Badge variant={
                         hotsale.es_activo ?
-                            'success'
+                            'warning'
                             : !hotsale.comprador ?
-                                'dark'
-                                : 'warning'
+                                'danger'
+                                : 'success'
                     }>{
                         hotsale.es_activo ? 
                             'Activo'
                             : !hotsale.comprador ? 
                                 'Candidato'
-                                : 'Adquirido'
+                                : 'Vendido'
                         }
                     </Badge>
                 </td>
                 <td>
                     {
                         hotsale.es_activo ?
-                        <Button onClick={this.handleEdit}>Editar</Button>
-                        : <Button onClick={this.handleEdit}>Activar</Button>
+                        <Button size='sm' onClick={this.handleEdit}>Editar</Button>
+                        : !hotsale.comprador &&
+                            <Button size='sm' onClick={this.handleEdit}>Activar</Button>
                     }
                 </td>
             </tr>
@@ -381,7 +382,10 @@ class SwitchnAdminPropiedadHotsales extends React.Component {
 
     cargarHotsales = (idPropiedad) => {
         SwitchnAPI.propiedades.getDetailEndpoint(idPropiedad)
-            .hotsales.list({'include[]': 'comprador.'})
+            .hotsales.list({
+                'exclude[]': 'propiedad.*',
+                'include[]': 'comprador'
+            })
                 .then(data => this.setState({hotsales: data.hotsales}))
                 .catch(err => console.log(err));
     }
@@ -411,6 +415,7 @@ class SwitchnAdminPropiedadHotsales extends React.Component {
                                         hotsale={hotsale}
                                         refreshHotsales={() => this.cargarHotsales(this.props.propiedad.id)}
                                         history={this.props.history}
+                                        propiedad={this.props.propiedad}
                                     />
                                 )
                             }.bind(this)

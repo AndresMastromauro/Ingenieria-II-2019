@@ -12,6 +12,7 @@ import { SwitchnPortalLogin } from './portal/login';
 import {SwitchnPortalSignUp} from './portal/signup';
 import { SwitchnPortalLogout } from './portal/logout';
 import {SwitchnDetallePropiedad} from './portal/detallePropiedad';
+import { SwitchnPortalHotsalesPage } from './portal/hotsales';
 import {_DetalleProfile} from './portal/perfilUsuario';
 import { loadUser } from "./redux/auth/actions";
 import { store } from './redux/store';
@@ -50,7 +51,7 @@ class _App extends React.Component {
               <Route exact path="/login" component={SwitchnPortalLogin} />
               <Route exact path="/registrar" component={SwitchnPortalSignUp} />
               <PrivateRoute exact path="/detaPropiedad/:idPropiedad" component={SwitchnDetallePropiedad} />
-
+              <PrivateRoute exact path="/hotsales" component={SwitchnPortalHotsalesPage} />
               <PrivateRoute exact path="/profile/:idProfile" component={_DetalleProfile} />
 
               <PrivateRoute exact path="/admin" component={SwitchnAdminHome} />

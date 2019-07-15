@@ -16,7 +16,7 @@ class SwitchnPortalNavbarTabs extends React.Component {
         return (
             <SwitchnNavbarTabs>
                 <SwitchnNavbarLink url={'/'}>Home</SwitchnNavbarLink>
-                {/* <SwitchnNavbarLink url={'/subastas'}>Subastas</SwitchnNavbarLink> */}
+                <SwitchnNavbarLink url={'/hotsales'}>Ver Hotsales</SwitchnNavbarLink>
             </SwitchnNavbarTabs>
         );
     }
@@ -29,7 +29,7 @@ class SwitchnPortalNavbarUserActions extends React.Component {
                 <div className="navbar-nav">
 
                     <SwitchnNavbarLink usuario={this.props.user} url={this.props.user.url ? this.props.user.url : `/profile/${this.props.user.id}`}>
-                        Logueado como <u>{this.props.user.nombre}</u>
+                        Bienvenido <u>{this.props.user.nombre}</u>
                     </SwitchnNavbarLink>
                     {
                         this.props.user.is_admin &&

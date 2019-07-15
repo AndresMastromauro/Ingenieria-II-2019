@@ -243,6 +243,13 @@ class Propiedad (models.Model):
             raise ValueError("La semana elegida está reservada")
         return self.subastas.create(semana=semana, precio_base=precio_base)
 
+    def create_hotsale(self, semana, precio=None):
+        if not self.es_activa:
+            raise ValueError("La propiedad no se encuentra activa")
+        if not self.is_available_on_week(semana):
+            raise ValueError("La semana elegida no está disponible")
+        return self.hotsales.create(semana=semana, precio=None)
+
     @staticmethod
     def get_propiedades_activas():
         return Propiedad.objects.filter(es_activa=True)
@@ -290,6 +297,10 @@ class Reserva (models.Model):
 
 
 class Hotsale(models.Model):
+    class Meta:
+        unique_together = (('semana', 'propiedad'),)
+        ordering = ['semana']
+
     precio = models.DecimalField(max_digits=15, decimal_places=2, null=True)
     semana = models.DateField()
     propiedad = models.ForeignKey('Propiedad', related_name='hotsales', on_delete=models.CASCADE)
@@ -325,6 +336,10 @@ class Hotsale(models.Model):
         self.save()
 
 class Subasta(models.Model):
+    class Meta:
+        unique_together = (('semana', 'propiedad'),)
+        ordering = ['semana']
+
     precio_base = models.DecimalField(max_digits=15, decimal_places=2)
     semana = models.DateField()
     fecha_inicio = models.DateField(default=date.today)
@@ -380,9 +395,9 @@ class Subasta(models.Model):
                 self.ganador.reservar(self.propiedad, self.semana)
             except:
                 # FIXME: Ver como se resuelve posta.
-                self.propiedad.hotsales.create(semana=self.semana)
+                self.propiedad.create_hotsale(semana=self.semana)
         else:
-            self.propiedad.hotsales.create(semana=self.semana)
+            self.propiedad.create_hotsale(semana=self.semana)
         # self.fecha_fin = timezone.now()
         self.es_activa = False
         self.save()

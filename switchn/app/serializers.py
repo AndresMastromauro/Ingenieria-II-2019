@@ -348,4 +348,4 @@ class HotsaleSerializer (DynamicModelSerializer):
             'comprador',
         )
 
-    propiedad = DynamicRelationField('SubastaPropiedadSerializer')
+    propiedad = DynamicRelationField('SubastaPropiedadSerializer', embed=True)

@@ -70,11 +70,11 @@ class SwitchnAdminCliente extends React.Component {
                     }
                     
                 </td>
-                <td>
+                {/* <td>
                     <ButtonGroup>
                         <Button disabled={true} onClick={this.handleView}>Ver</Button>
                     </ButtonGroup>
-                </td>
+                </td> */}
             </tr>
         );
     }
@@ -91,7 +91,7 @@ const TablaClientes = (props) => {
                     <th scope="col">{"E-mail"}</th>
                     <th scope="col">{"Tipo Membresía"}</th>
                     <th scope="col">{"Solicitud de cambio"}</th>
-                    <th scope="col">{"Acciones"}</th>
+                    {/* <th scope="col">{"Acciones"}</th> */}
                 </tr>
             </thead>
             <tbody>
