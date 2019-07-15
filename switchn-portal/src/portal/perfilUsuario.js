@@ -8,7 +8,82 @@ import { loadPropiedad, loadSubastaProp, loadReservasProp } from "../redux/propi
 import { Link } from '../common/base';
 import { SwitchnPortalPage } from './base';
 import { SwitchnAPI } from "../utils/client";
-import {SwitchSubastasPropVista, SwitchHotsalePropVista, SwitchReservasPropVista} from "./detallePropiedad";
+import { ListadoHotale, ListadoReservas, ListadoSubastas} from "./detallePropiedad";
+
+
+
+class SwitchSubastasPropVista extends React.Component {
+    state = {
+        subastas: []
+    }
+
+    cargarReserva = (idUsuario) => {
+        SwitchnAPI.clientes.getDetailEndpoint(idUsuario).subastas_ganadas.list()
+                .then(data => this.setState({subastas: data.subastas}))
+                .catch(err => console.log(err));
+    }
+
+    componentDidMount() {
+        this.cargarReserva(this.props.idUsuario);
+    }
+    render() {
+        var content;
+        if (this.props.isLoading) {
+            content = <h2>Cargando</h2>;
+        } else if (!this.state.subastas || this.state.subastas.length == 0) {
+            content = <h6>No hay subastas para mostrar</h6>;
+        } else {
+            content = this.state.subastas.map(
+                function(subasta) {
+                    return <ListadoSubastas key={subasta.id} subasta={subasta} />
+                }
+            );
+        }
+        return (
+            <div className="col-sm-8">
+                {content}
+            </div>
+        )
+    }
+}
+
+class SwitchReservasPropVista extends React.Component {
+    state = {
+        reservas: []
+    }
+
+    cargarReserva = (idUsuario) => {
+        SwitchnAPI.clientes.getDetailEndpoint(idUsuario).reservas.list()
+                .then(data => this.setState({reservas: data.reservas}))
+                .catch(err => console.log(err));
+    }
+
+    componentDidMount() {
+        this.cargarReserva(this.props.idUsuario);
+    }
+
+   
+
+    render() {
+        var content;
+        if (this.state.isLoading) {
+            content = <h2>Cargando</h2>;
+        } else if (!this.state.reservas || this.state.reservas.length == 0) {
+            content = <h6>No hay reservas para mostrar</h6>;
+        } else {
+            content = this.state.reservas.map(
+                function(reserva) {
+                    return <ListadoReservas key={reserva.id} reserva={reserva} />
+                }
+            );
+        }
+        return (
+            <div className="col-sm-8">
+                {content}
+            </div>
+        )
+    }
+}
 
 
 class SwitchPerfilUsuario extends React.Component {
@@ -102,10 +177,6 @@ class PerfilUsuario extends React.Component {
             <div className="container">
                 <div className="row">
                     <div className="col-4"  style={flexStyle}>
-                        
-                        <img  className="rounded-circle" 
-                        src={cliente.image || `${process.env.REACT_APP_PUBLIC_URL}/default-no-picture.png` }
-                         style={{width: "75%", backgroundColor: 'red',}} />
                         <div className="col">
                         <div  style={{display: 'flex'}}>
                         <div>{cliente.membresia.includes('PREMIUM') ? <button  disabled={bool} className="btn btn-danger"   onClick={this.handleSolicitar}>Pasar a Estandar</button> : 
@@ -170,17 +241,19 @@ class PerfilUsuario extends React.Component {
                             <thead class="thead-dark">
                             <tr>
                                 <th scope="col">Reservas Directas:</th>
-                                <th scope="col">Subastas Adjudicadas:</th>
-                                <th scope="col">Hotsales Adjudicados:</th>      
+                                <th scope="col">Subastas Ganadas:</th>
+                                <th scope="col">Subastas Ofertadas:</th>
+                                    
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
                             
                                 
-                               <td><SwitchReservasPropVista reserva={cliente.reserva}/> </td>
-                                <td><SwitchSubastasPropVista subasta={cliente.subasta}/></td>
-                            <td><SwitchHotsalePropVista/></td>
+                                <td><SwitchReservasPropVista idUsuario={cliente.datos_personales.id}/> </td>
+                                <td><SwitchSubastasPropVista idUsuario={cliente.datos_personales.id}/></td>
+                                <td><SwitchSubastasPropVista idUsuario={cliente.datos_personales.id}/></td>
+                                
                             </tr>
                             </tbody>
                             </table>
