@@ -79,14 +79,7 @@ class APIClient {
         return this.client.delete(this.baseURL.concat(id), this.oHeaders);
     }
 
-<<<<<<< HEAD
-    solicitud(id) {
-        return this.client.post(this.baseURL.concat(id), this.oHeaders);
-    }
 
-
-=======
->>>>>>> 6319ff401284d18c63459a5c9a2a0fbfaba04828
 }
 
 export default APIClient;

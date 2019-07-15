@@ -112,20 +112,22 @@ class PerfilUsuario extends React.Component {
             redirect: false,
            
             disabled: true
-        }
+        }}
     /*state = {
         redirect: false,
-      }  
+      }  */
       setRedirect = () => {
         this.setState({
           redirect: true
-        })*/
+        })
       }  
+
       renderRedirect = () => {
         if (this.state.redirect) {
           return <Redirect to={`modPerfil/${this.props.cliente.datos_personales.id}`} />
         }
       }
+    
    
 
     componentWillUnmount() {
