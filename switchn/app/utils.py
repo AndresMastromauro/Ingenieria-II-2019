@@ -17,3 +17,6 @@ def validate_monday(value):
     if not value.isocalendar() [2] == 1 :
         from django.core.exceptions import ValidationError
         raise ValidationError("Debe elegir un Lunes")
+
+def three_days_from_now():
+    date.today() + timedelta(days=3)

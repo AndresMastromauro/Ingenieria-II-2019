@@ -31,22 +31,80 @@ class SwitchnPortalListadoPropiedadesVista extends React.Component {
 }
 
 class SwitchnPortalPropiedadesFiltros extends React.Component {
-    getOffsetSemanaHasta() {
-        debugger;
-        if (!this.props.filtros || !this.props.filtros.fecha_inicio)
-            return 53;
-        let {fecha_inicio} = this.props.filtros;
-        var semanas = (moment.duration(moment().diff(fecha_inicio)));
-        semanas = semanas.add(2, 'months').get('weeks');
+
+    getInicioOffsetSemanaDesde() {
+        const ult_lunes = moment().subtract(moment().weekday());
+        if (!this.props.filtros || !this.props.filtros.fecha_fin)
+            return 25;
+        let {fecha_fin} = this.props.filtros;
+        var semanas = moment.duration(moment(fecha_fin).diff(ult_lunes));
+        semanas = semanas.subtract(8, 'weeks').as('weeks');
+        return semanas > 25 ? semanas : 25;
+    }
+
+    getInicioOffsetSemanaHasta() {
+        const ult_lunes = moment().subtract(moment().weekday());
+        var semanas;
+        if (this.props.filtros)
+            if (this.props.filtros.fecha_fin) {
+                let {fecha_fin} = this.props.filtros;
+                var semanas = moment.duration(moment(fecha_fin).diff(ult_lunes));
+                // semanas = semanas.add(2, 'months').as('weeks');
+                semanas = semanas.as('weeks');
+            } else {
+                semanas = 53;
+            }
+        return semanas;
+    }
+
+    getFinOffsetSemanaDesde() {
+        const ult_lunes = moment().subtract(moment().weekday());
+        var semanas;
+        if (this.props.filtros) {
+            let {fecha_inicio, fecha_fin} = this.props.filtros;
+            if (fecha_inicio) {
+                semanas = moment.duration(moment(fecha_inicio).diff(ult_lunes));
+                semanas = semanas.as('weeks');
+            } else if (fecha_fin) {
+                semanas = moment.duration(moment(fecha_fin).diff(ult_lunes));
+                semanas = semanas.subtract(8, 'weeks').as('weeks');
+                semanas = semanas > 25 ? semanas : 25;
+            }
+        } else {
+            semanas = 25;
+        }
+        return semanas;
+
+       /*  if (!this.props.filtros || !this.props.filtros.fecha_fin)
+            return 25;
+        let {fecha_fin} = this.props.filtros;
+        var semanas = moment.duration(moment(fecha_fin).diff(moment()));
+        semanas = semanas.subtract(2, 'months').as('weeks');
+        return semanas > 25 ? semanas : 25; */
+    }
+
+    getFinOffsetSemanaHasta() {
+        const ult_lunes = moment().subtract(moment().weekday());
+        var semanas;
+        if (this.props.filtros)
+            if (this.props.filtros.fecha_inicio) {
+                let {fecha_inicio} = this.props.filtros;
+                var semanas = moment.duration(moment(fecha_inicio).diff(ult_lunes));
+                semanas = semanas.add(8, 'weeks').as('weeks');
+            } else {
+                semanas = 53;
+            }
         return semanas;
     }
 
     render() {
-        var pais;
-        var provincia;
+        var pais, provincia, fecha_inicio, fecha_fin;
         if (this.props.filtros) {
-            pais = this.props.filtros.pais;
-            provincia = this.props.filtros.provincia;
+            let {filtros} = this.props;
+            pais = filtros.pais;
+            provincia = filtros.provincia;
+            fecha_inicio = filtros.fecha_inicio;
+            fecha_fin = filtros.fecha_fin;
         }
         return ( 
             <form>
@@ -63,15 +121,17 @@ class SwitchnPortalPropiedadesFiltros extends React.Component {
                         name='fecha_inicio'
                         id='range-start'
                         title='Desde'
-                        offsetSemanaDesde={25}
-                        offsetSemanaHasta={53}
+                        value={fecha_inicio}
+                        offsetSemanaDesde={this.getInicioOffsetSemanaDesde()}
+                        offsetSemanaHasta={this.getInicioOffsetSemanaHasta()}
                     />
                     <WeekPickerModal
                         name='fecha_fin'
                         id='range-end'
                         title='Hasta'
-                        offsetSemanaDesde={25}
-                        offsetSemanaHasta={this.getOffsetSemanaHasta()}
+                        value={fecha_fin}
+                        offsetSemanaDesde={this.getFinOffsetSemanaDesde()}
+                        offsetSemanaHasta={this.getFinOffsetSemanaHasta()}
                     />
                 </div>
             </form>
@@ -79,13 +139,13 @@ class SwitchnPortalPropiedadesFiltros extends React.Component {
     }
 }
 
-/* SwitchnPortalPropiedadesFiltros = connect(
+SwitchnPortalPropiedadesFiltros = connect(
     state => {
         return {
             filtros: getFormValues("propiedades-filtros")(state)
         }
     }
-)(SwitchnPortalPropiedadesFiltros); */
+)(SwitchnPortalPropiedadesFiltros);
 
 SwitchnPortalPropiedadesFiltros = reduxForm({
     form: "propiedades-filtros"
@@ -145,7 +205,7 @@ class SwitchnPortalListadoPropiedades extends React.Component {
             <div className="container-fluid">
                 <div className="row">
                     <div className="col-4">
-                        <SwitchnPortalPropiedadesFiltros filtros={this.props.filtros} />
+                        <SwitchnPortalPropiedadesFiltros /* filtros={this.props.filtros}  *//>
                     </div>
                     <div className="col-8">
                         <SwitchnPortalListadoPropiedadesVista propiedades={this.state.propiedades} />

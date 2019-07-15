@@ -12,6 +12,10 @@ class ClientesAPIClientDetail extends APIClientDetail {
         // this.registerEndpoint('hotsales');
     }
 
+    hacerSolicitud() {
+        return this.aceptarSolicitud();
+    }
+
     aceptarSolicitud() {
         return new Promise((resolve, reject) => {
             this.solicitud.create({})
