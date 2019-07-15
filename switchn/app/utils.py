@@ -19,4 +19,4 @@ def validate_monday(value):
         raise ValidationError("Debe elegir un Lunes")
 
 def three_days_from_now():
-    date.today() + timedelta(days=3)
+    return date.today() + timedelta(days=3)

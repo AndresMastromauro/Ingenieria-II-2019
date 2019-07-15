@@ -45,7 +45,7 @@ export class ListadoReservas extends React.Component {
             <tr>
                 <th scope='row'><FormatFecha fecha={reserva.semana} /></th>
                 <td><FormatPropiedad propiedad={reserva.propiedad} /></td>
-                <td><Link url={`/detaPropiedad/${this.props.reserva.propiedad}`}>Detalle</Link> </td>
+                <td><Link url={`/detaPropiedad/${this.props.reserva.propiedad.id}`}>Detalle</Link> </td>
             </tr>
         );
     }
