@@ -20,7 +20,10 @@ import { loadUser } from "./redux/auth/actions";
 import { store } from './redux/store';
 import { SwitchnAdminCrearSubastaPage } from './admin/subasta_creacion';
 import { SwitchnAdminUsuariosPage } from './admin/usuarios';
+
 import { SwitchnAdminAdmins } from './admin/admins';
+import {SwitchnModificarPerfil} from '../src/portal/modificarPerfil';
+
 
 // import './App.css';
 
@@ -48,6 +51,7 @@ class App extends React.Component {
   render() {
     let {PrivateRoute} = this;
     return (
+
       <LoadingOverlay spinner fadeSpeed={1000} active={this.props.showOverlay}>
         <div className="App" style={{height: '100%'}}>
           <Router>
@@ -57,7 +61,7 @@ class App extends React.Component {
             <PrivateRoute exact path="/detaPropiedad/:idPropiedad" component={SwitchnDetallePropiedad} />
             <PrivateRoute exact path="/hotsales" component={SwitchnPortalHotsalesPage} />
             <PrivateRoute exact path="/profile/:idProfile" component={_DetalleProfile} />
-
+            <PrivateRoute exact path="/profile/modPerfil/:idProfile" component={SwitchnModificarPerfil} />
             <PrivateRoute exact path="/admin" component={SwitchnAdminHome} />
             <PrivateRoute exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
             <PrivateRoute exact strict path="/admin/propiedad/:idPropiedad" component={SwitchnAdminPropiedadPage} />
@@ -68,6 +72,7 @@ class App extends React.Component {
             <PrivateRoute exact path="/admin/administradores" component={SwitchnAdminAdmins} />
             <PrivateRoute exact path="/logout" component={SwitchnPortalLogout} />
           </Router>
+
         </div>
       </LoadingOverlay>
     );
