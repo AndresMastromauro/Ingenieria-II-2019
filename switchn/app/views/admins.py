@@ -19,6 +19,18 @@ class AdminsViewSet(DynamicModelViewSet):
         request.query_params.add('filter{is_admin}', True)
         return super(AdminsViewSet, self).retrieve(request, *args, **kwargs)
 
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        admin = SwitchnUser.objects.create_admin(
+            data.get('email'),
+            data.get('password'),
+            data.get('nombre'),
+            data.get('apellido')
+        )
+        Response(SwitchnUserSerializer(admin).data)
+
     def destroy(self, request, *args, **kwargs):
         user = self.get_object()
         if not user.is_admin:

@@ -1,9 +1,48 @@
 import React, { Component } from "react";
-
+import { reduxForm } from 'redux-form';
 import { SwitchnAdminPage } from './base';
 import { SwitchnAPI } from '../utils/client';
-import { Table, ButtonGroup, Button } from "react-bootstrap";
+import { Table, ButtonGroup, Button, Modal } from "react-bootstrap";
+import { TextField, EmailField, PasswordField, SubmitButton } from "../common/forms/inputs";
 
+
+class FormAdmin extends Component {
+    render() {
+        let {props} = this;
+        return (
+            <form onSubmit={props.handleSubmit}>
+                <TextField name='nombre' label='Nombre' />
+                <TextField name='apellido' label='Apellido' />
+                { !props.editing && <>
+                        <EmailField name='email' label='E-mail' />
+                        <PasswordField name='password' label='Contraseña' />
+                        <PasswordField name='repetir-password' label='Repetir' />
+                    </>
+                }
+                <Button type='submit'>{props.editing ? 'Guardar' : 'Crear Administrador'}</Button>
+                <Button onClick={props.onHide} variant='light'>Cerrar</Button>
+            </form>
+        );
+    }
+}
+
+FormAdmin = reduxForm({
+    form: 'admin-form'
+})(FormAdmin);
+
+const FormAdminModal = (props) => (
+    <Modal show={props.show} onHide={props.onHide}>
+        <Modal.Header>{props.editing ? 'Edicion' : 'Nuevo administrador'}</Modal.Header>
+        <Modal.Body>
+            <FormAdmin
+                initialValues={props.initialValues}
+                onSubmit={props.onSubmit}
+                onHide={props.onHide}
+                editing={props.editing}
+            />
+        </Modal.Body>
+    </Modal>
+);
 
 const TablaAdmins = (props) => {
     return (
@@ -32,13 +71,14 @@ const RowAdmin = (props) => {
             <td>{admin.email}</td>
             <td>
                 <ButtonGroup>
-                    <Button onClick={props.toggleActivate} variant={admin.is_active ? 'danger' : 'success'}>
+                    <Button size='sm' onClick={props.toggleActivate} variant={admin.is_active ? 'danger' : 'success'}>
                     {
                     admin.is_active ? 
                         'Desactivar'
                         : 'Activar'
                     }
                     </Button>
+                    <Button size='sm' onClick={props.onEdit} variant='outline-primary'>Editar</Button>
                 </ButtonGroup>
             </td>
         </tr>
@@ -53,6 +93,7 @@ class ListadoAdmins extends Component {
             .catch(err => alert(`Se ha producido un error: ${err.detail}`))
             .finally(this.props.refrescar)
     }
+
     render() {
         return (
             <TablaAdmins>
@@ -62,6 +103,7 @@ class ListadoAdmins extends Component {
                         key={a.id}
                         admin={a}
                         toggleActivate={() => this.toggleActivate(a)}
+                        onEdit={() => this.props.onEdit(a)}
                     />
                 )
             })}
@@ -73,7 +115,45 @@ class ListadoAdmins extends Component {
 
 class SwitchnAdminAdmins extends Component {
     state = {
-        admins: []
+        admins: [],
+        showModal: false,
+        editing: false,
+        current: {}
+    }
+
+    handleSubmit = (adminData) => {
+        if (this.state.editing) {
+            SwitchnAPI.switchn_users.update(adminData.id, adminData)
+                .then(() => alert('Cuenta de administrador actualizada'))
+                .catch((err) => alert(`Ha ocurrido un error${err ? `: ${err.detail}` : '.'}`))
+                .finally(this.cargarListado);
+        } else {
+            SwitchnAPI.switchn_users.create(adminData)
+                .then(() => alert('Cuenta de administrador creada'))
+                .catch((err) => alert(`Ha ocurrido un error${err ? `: ${err.detail}` : '.'}`))
+                .finally(this.cargarListado);
+        }
+        this.setState({
+            showModal: false,
+            editing: false,
+            current: {}
+        });
+    }
+
+    onCloseModal = () => {
+        this.setState({showModal: false});
+    }
+
+    onClickCreate = () => {
+        this.setState({showModal: true})
+    }
+
+    onClickEdit = (oAdmin) => {
+        this.setState({
+            editing: true,
+            showModal: true,
+            current: oAdmin
+        });
     }
 
     cargarListado = () => {
@@ -90,11 +170,23 @@ class SwitchnAdminAdmins extends Component {
         return (
             <SwitchnAdminPage title="Administradores">
                 <div className='row'>
+                    <div><Button onClick={this.onClickCreate} variant='link'>Crear Administrador</Button></div>
                 {this.state.admins.length === 0 ?
                     <div><h4>No hay usuarios para mostrar</h4></div>
-                    : <ListadoAdmins refrescar={this.cargarListado} admins={this.state.admins} />
+                    : <ListadoAdmins
+                        refrescar={this.cargarListado}
+                        admins={this.state.admins}
+                        onEdit={this.onClickEdit}
+                        />
                 }
                 </div>
+                <FormAdminModal
+                    onHide={this.onCloseModal}
+                    initialValues={this.state.current}
+                    onSubmit={(values) => this.handleSubmit(values)}
+                    editing={this.state.editing}
+                    show={this.state.showModal}
+                />
             </SwitchnAdminPage>
         )
     }

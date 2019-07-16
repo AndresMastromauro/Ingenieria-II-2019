@@ -30,13 +30,14 @@ class Input extends React.Component {
 
 class Button extends React.Component {
     render() {
+        let {children, className, ...rest} = this.props;
         var sClass = "form-control button" + (this.props.disabled ? ' disabled' : '');
         return (
             <button
-                {...this.props}
+                {...rest}
                /*  type={this.props.type} */
-                className={this.props.className ? sClass +' '+ this.props.className : sClass}>
-                {this.props.children}
+                className={className ? sClass +' '+ className : sClass}>
+                {children}
             </button>
         );
     }
@@ -44,9 +45,10 @@ class Button extends React.Component {
 
 class SubmitButton extends React.Component {
     render() {
+        let {children, ...rest} = this.props;
         return (
-            <Button {...this.props} type="submit" className="btn-primary">
-                {this.props.children}
+            <Button {...rest} type="submit" className="btn-primary">
+                {children}
             </Button>
         );
     }

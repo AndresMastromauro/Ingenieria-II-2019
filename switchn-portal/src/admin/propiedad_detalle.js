@@ -152,7 +152,7 @@ class SwitchnAdminSubasta extends React.Component {
                 <td>
                 {
                     subasta.ganador ? 
-                        <b>`${subasta.ganador.apellido.toUpperCase()}, ${subasta.ganador.nombre}`</b>
+                        <b>{`${subasta.ganador.datos_personales.apellido.toUpperCase()}, ${subasta.ganador.datos_personales.nombre}`}</b>
                         : "-"
                 }
                 </td>
