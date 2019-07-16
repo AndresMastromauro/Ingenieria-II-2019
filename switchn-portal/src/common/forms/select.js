@@ -214,6 +214,7 @@ class __WeekField extends React.Component {
     state = {
         hoverRange: undefined,
         selectedDays: [],
+        today: null
     };
 
     getWeekDays(weekStart) {
@@ -240,9 +241,9 @@ class __WeekField extends React.Component {
     }
 
     getNextMonday(date) {
-        const today = moment();
-        if (today.weekday() == 0) return moment();
-        return ((date && moment(date)) || moment()).add((7 - today.weekday()), 'days');
+        const today = moment(this.state.today) // moment();
+        if (today.weekday() == 0) return moment(this.state.today);
+        return ((date && moment(date)) || moment(this.state.today)).add((7 - today.weekday()), 'days');
     }
 
     getDisabledDays = () => {
@@ -321,6 +322,9 @@ class __WeekField extends React.Component {
     };
 
     componentDidMount() {
+        SwitchnAPI.getToday()
+            .then(data => this.setState({today: data.today}))
+            .catch(() => this.setState({today: new Date()}));
         let {value} = this.props.input || this.props;
         if (value) {
             var selectedDays = this.getWeekDays(this.getWeekRange(value || this.getNextMonday()).from);
@@ -337,6 +341,7 @@ class __WeekField extends React.Component {
     }
     
     render() {
+        if (!this.state.today) return null;
         const { hoverRange, selectedDays } = this.state;
     
         const daysAreSelected = selectedDays.length > 0;

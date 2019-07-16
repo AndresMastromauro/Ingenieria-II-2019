@@ -7,6 +7,7 @@ from .views.usuarios import ClienteViewSet
 from .views.utils import CallesViewSet, ProvinciasViewSet, PaisesViewSet, LocalidadesViewSet
 from .views.hotsales import HotsalesViewSet
 from .views.admins import AdminsViewSet
+from .views.date import DateView
 from knox.views import LogoutView
 
 router = DynamicRouter()
@@ -27,5 +28,6 @@ geo_router.register(r'geo/calles', CallesViewSet, base_name='calles')
 urlpatterns = [
     path(r'', include(router.urls)),
     path(r'', include(geo_router.urls)),
+    path(r'today/', DateView.as_view(), name='today')
 ]
 

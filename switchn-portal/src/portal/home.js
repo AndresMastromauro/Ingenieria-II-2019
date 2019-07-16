@@ -31,9 +31,18 @@ class SwitchnPortalListadoPropiedadesVista extends React.Component {
 }
 
 class SwitchnPortalPropiedadesFiltros extends React.Component {
+    state = {
+        today: null
+    }
+
+    componentDidMount() {
+        SwitchnAPI.getToday()
+            .then(data => this.setState({today: data.today}))
+            .catch(() => this.setState({today: new Date()}))
+    }
 
     getInicioOffsetSemanaDesde() {
-        const ult_lunes = moment().subtract(moment().weekday());
+        const ult_lunes = moment(this.state.today).subtract(moment(this.state.today).weekday());
         if (!this.props.filtros || !this.props.filtros.fecha_fin)
             return 25;
         let {fecha_fin} = this.props.filtros;
@@ -43,7 +52,7 @@ class SwitchnPortalPropiedadesFiltros extends React.Component {
     }
 
     getInicioOffsetSemanaHasta() {
-        const ult_lunes = moment().subtract(moment().weekday());
+        const ult_lunes = moment(this.state.today).subtract(moment(this.state.today).weekday());
         var semanas;
         if (this.props.filtros)
             if (this.props.filtros.fecha_fin) {
@@ -58,7 +67,7 @@ class SwitchnPortalPropiedadesFiltros extends React.Component {
     }
 
     getFinOffsetSemanaDesde() {
-        const ult_lunes = moment().subtract(moment().weekday());
+        const ult_lunes = moment(this.state.today).subtract(moment(this.state.today).weekday());
         var semanas;
         if (this.props.filtros) {
             let {fecha_inicio, fecha_fin} = this.props.filtros;
@@ -74,17 +83,10 @@ class SwitchnPortalPropiedadesFiltros extends React.Component {
             semanas = 25;
         }
         return semanas;
-
-       /*  if (!this.props.filtros || !this.props.filtros.fecha_fin)
-            return 25;
-        let {fecha_fin} = this.props.filtros;
-        var semanas = moment.duration(moment(fecha_fin).diff(moment()));
-        semanas = semanas.subtract(2, 'months').as('weeks');
-        return semanas > 25 ? semanas : 25; */
     }
 
     getFinOffsetSemanaHasta() {
-        const ult_lunes = moment().subtract(moment().weekday());
+        const ult_lunes = moment(this.state.today).subtract(moment(this.state.today).weekday());
         var semanas;
         if (this.props.filtros)
             if (this.props.filtros.fecha_inicio) {
@@ -98,6 +100,7 @@ class SwitchnPortalPropiedadesFiltros extends React.Component {
     }
 
     render() {
+        if (!this.state.today) return null;
         var pais, provincia, fecha_inicio, fecha_fin;
         if (this.props.filtros) {
             let {filtros} = this.props;

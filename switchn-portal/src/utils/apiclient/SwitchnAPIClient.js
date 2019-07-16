@@ -18,6 +18,7 @@ class SwitchnAPIClient extends APIClient {
         this.registerEndpoint('geo', GeoAPIClient);
         this.registerEndpoint('auth', AuthAPIClient);
         this.registerEndpoint('switchn_users', AdminsAPIClient);
+        this.registerEndpoint('today');
     }
 
     login(sEmail, sPassword) {
@@ -51,6 +52,10 @@ class SwitchnAPIClient extends APIClient {
     getUserData(sToken) {
         this.setHeader("Authorization", `Token ${sToken}`);
         return this.auth.getUserData();
+    }
+
+    getToday() {
+        return this.today.list();
     }
 }
 
