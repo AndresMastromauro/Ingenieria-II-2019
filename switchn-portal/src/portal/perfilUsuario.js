@@ -156,6 +156,8 @@ class PerfilUsuario extends React.Component {
     /*state = {
         redirect: false,
       }  */
+    
+
     setRedirect = () => {
         this.setState({
             redirect: true
