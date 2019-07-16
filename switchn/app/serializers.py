@@ -110,11 +110,12 @@ class ClienteSerializer(DynamicModelSerializer):
         return Cliente.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.email = validated_data.get('email', instance.email)
-        instance.password = validated_data.get('password', instance.password)
-        instance.nombre = validated_data.get('nombre', instance.nombre)
-        instance.apellido = validated_data.get('apellido', instance.apellido)
-        instance.fecha_nacimiento = validated_data.get('fecha_nacimiento', instance.fecha_nacimiento)
+        # instance.user.email = validated_data.get('email', instance.user.email)
+        instance.user.password = validated_data.get('password', instance.user.password)
+        instance.user.nombre = validated_data.get('nombre', instance.user.nombre)
+        instance.user.apellido = validated_data.get('apellido', instance.user.apellido)
+        instance.user.fecha_nacimiento = validated_data.get('fecha_nacimiento', instance.user.fecha_nacimiento)
+        instance.user.save()
         instance.save()
         return instance
 

@@ -232,7 +232,7 @@ class PerfilUsuario extends React.Component {
             </div>   
             <div className="col-8">
                 <table className="table table">
-                    <thead class="thead-dark">
+                    <thead className="thead-dark">
                         <tr>
                             <th scope="col">Datos de Usuario</th>
                             <th scope="col"></th>

@@ -22,10 +22,13 @@ class _SwitchnModificarPerfil extends React.Component {
     }
 
     modificarPerfil(values) {
-       
+        values.nombre = values.datos_personales.nombre;
+        values.apellido = values.datos_personales.apellido;
+        values.fecha_nacimiento = values.datos_personales.fecha_nacimiento;
+        delete values['datos_personales'];
         SwitchnAPI.clientes.update(this.state.cliente.datos_personales.id, values)
-        .then(this.handleModificarOk)
-        .catch(this.handleModificarFail);
+            .then(this.handleModificarOk)
+            .catch(this.handleModificarFail);
     }
     handleModificarOk = (data) => {
         alert("Se realizó correctamente la modificación");
@@ -35,11 +38,6 @@ class _SwitchnModificarPerfil extends React.Component {
     handleModificarFail = (err) => {
         alert("Ha ocurrido un error al modificar la perfil");
     }
-
-    handleBack = () => {
-        this.props.history.go(-1);
-    }
-   
 
     handleBack = () => {
         this.props.history.go(-1);
@@ -54,7 +52,7 @@ class _SwitchnModificarPerfil extends React.Component {
                 <Row>
                     <Col></Col>
                     <Col>
-                        <ModPerfil onSubmit={this.modificarPerfil.bind(this)}   onBackPress={this.handleBack}/>
+                        <ModPerfil onSubmit={this.modificarPerfil.bind(this)} initialValues={this.state.cliente}   onBackPress={this.handleBack}/>
                         
                     </Col>
                     <Col></Col>

@@ -18,11 +18,11 @@ class _ModPerfil extends React.Component {
                 <fieldset>
                     <legend>Modificar informacion del perfil </legend>
                    
-                    <TextField label={"Nombre"} name={"nombre"} /* onChange={this.handleUserChange} */ />
-                    <TextField label={"Apellido"} name={"apellido"} /* onChange={this.handleUserChange} */ />
+                    <TextField label={"Nombre"} name={"datos_personales.nombre"} /* onChange={this.handleUserChange} */ />
+                    <TextField label={"Apellido"} name={"datos_personales.apellido"} /* onChange={this.handleUserChange} */ />
                     
                     <NumberField label={"Nro de tarjeta de credito"} name={"tarjeta_credito"}/>
-                    <DateField label={"Fecha de nacimiento"} name={"fecha_nacimiento"}/>
+                    <DateField label={"Fecha de nacimiento"} name={"datos_personales.fecha_nacimiento"}/>
                     <div className="form-group">
                         <ButtonGroup>
                             <Button onClick={this.props.onBackPress}>Volver</Button>
