@@ -101,7 +101,7 @@ class DetallePropiedadSubastas extends React.Component {
     }
 
     cargarSubastas = () => {
-        SwitchnAPI.propiedades.getDetailEndpoint(this.propiedad.id)
+        SwitchnAPI.propiedades.getDetailEndpoint(this.props.propiedad.id)
             .subastas.list()
                 .then(data => this.setState({subastas: data.subastas}))
                 .catch(err => alert('Hubo un error al traer las subastas'));
