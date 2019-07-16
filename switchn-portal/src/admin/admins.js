@@ -70,7 +70,7 @@ const RowAdmin = (props) => {
             <td>{admin.nombre}</td>
             <td>{admin.email}</td>
             <td>
-                <ButtonGroup>
+                <ButtonGroup block>
                     <Button size='sm' onClick={props.toggleActivate} variant={admin.is_active ? 'danger' : 'success'}>
                     {
                     admin.is_active ? 

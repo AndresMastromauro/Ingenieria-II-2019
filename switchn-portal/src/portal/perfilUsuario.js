@@ -9,7 +9,7 @@ import { Link } from '../common/base';
 import { SwitchnPortalPage } from './base';
 import { SwitchnAPI } from "../utils/client";
 import { ListadoHotale, ListadoReservas, ListadoSubastas} from "./detallePropiedad";
-import { Tabs, Tab, Table } from "react-bootstrap";
+import { Tabs, Tab, Table, Button } from "react-bootstrap";
 
 
 
@@ -222,10 +222,14 @@ class PerfilUsuario extends React.Component {
                                 }
                                 </div>
                             <div>
-                    
+                            {/*
                             {this.renderRedirect()}
                             {<button className="btn btn-warning" 
                                 onClick={this.setRedirect} >Modificar Datos</button> }
+                            */}
+                            <Button href={`modPerfil/${cliente.datos_personales.id}`} variant='warning'>
+                                Modificar Datos
+                            </Button>
                         </div>
                     </div>
                 </div> 

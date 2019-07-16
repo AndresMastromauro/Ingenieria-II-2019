@@ -182,7 +182,7 @@ const TablaSubastas = (props) => {
                         <th scope="col">{"Precio Base"}</th>
                         <th scope="col">{"Mejor oferta"}</th>
                         <th scope="col">{"Ganador"}</th>
-                        <th scope="col">{"Acciones"}</th>
+                        {/* <th scope="col">{"Acciones"}</th> */}
                     </tr>
                 </thead>
                 <tbody>
