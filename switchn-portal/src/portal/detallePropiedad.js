@@ -96,9 +96,24 @@ class DetallePropiedadSubastasEntry extends React.Component {
 }
 
 class DetallePropiedadSubastas extends React.Component {
+    state = {
+        subastas: []
+    }
+
+    cargarSubastas = () => {
+        SwitchnAPI.propiedades.getDetailEndpoint(this.propiedad.id)
+            .subastas.list()
+                .then(data => this.setState({subastas: data.subastas}))
+                .catch(err => alert('Hubo un error al traer las subastas'));
+    }
+
+    componentDidMount() {
+        this.cargarSubastas();
+    }
+
     render() {
         var content = null;
-        var {subastas} = this.props;
+        var {subastas} = this.state;
         if (subastas) {
             content = subastas.map(
                 (sub, i) => <DetallePropiedadSubastasEntry key={i} subasta={sub} />
@@ -367,7 +382,7 @@ class DetallePropiedad extends React.Component {
                     <div className="col-8">
                         <Tabs defaultActiveKey='subastas'>
                             <Tab eventKey='subastas' title='Subastas'>
-                                <DetallePropiedadSubastas subastas={subasta} />
+                                <DetallePropiedadSubastas propiedad={propiedad} />
                             </Tab>
                             <Tab eventKey='hotsales' title='Hotsales'>
                                 <SwitchnPortalPropiedadHotsales propiedad={propiedad} />
@@ -392,10 +407,10 @@ class SwitchnDetallePropiedad extends React.Component {
 
     cargarPropiedad = () => {
         const id = this.props.match.params.idPropiedad;
-        const params = {
+        /* const params = {
             "include[]": "subastas."
-        };
-        SwitchnAPI.propiedades.retrieve(id, params)
+        }; */
+        SwitchnAPI.propiedades.retrieve(id)
             .then(data => { this.setState({propiedad: data.propiedad})})
             .catch(err => { console.log(err) });
     }
