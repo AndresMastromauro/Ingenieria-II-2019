@@ -36,8 +36,15 @@ class PagoSerializer(DynamicModelSerializer):
         model = Pago
         fields = (
             'monto',
-            'pendiente'
+            'pendiente',
+            'fecha',
+            'detalle'
         )
+
+    detalle = DynamicMethodField()
+
+    def get_detalle(self, p):
+        return p.get_detalle()
 
 class ClienteSerializer(DynamicModelSerializer):
     class Meta:

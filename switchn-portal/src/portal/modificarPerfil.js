@@ -22,6 +22,7 @@ class _SwitchnModificarPerfil extends React.Component {
     }
 
     modificarPerfil(values) {
+        values = Object.assign(values);
         values.nombre = values.datos_personales.nombre;
         values.apellido = values.datos_personales.apellido;
         values.fecha_nacimiento = values.datos_personales.fecha_nacimiento;

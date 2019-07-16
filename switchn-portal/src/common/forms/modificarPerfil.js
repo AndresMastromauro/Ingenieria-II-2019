@@ -26,7 +26,7 @@ class _ModPerfil extends React.Component {
                     <div className="form-group">
                         <ButtonGroup>
                             <Button onClick={this.props.onBackPress}>Volver</Button>
-                            <SubmitButton>Modificar</SubmitButton>
+                            <Button type='submit'>Modificar</Button>
                         </ButtonGroup>
                     </div>
                     

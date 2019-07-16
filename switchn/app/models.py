@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 
 from datetime import date, timedelta
 
@@ -121,7 +122,7 @@ class Cliente(models.Model):
         return super(Cliente, self).delete(using, keep_parents)
 
     def cargar_pago(self, tipo, monto):
-        self.pagos.create(monto=monto, tipo=tipo)
+        return self.pagos.create(monto=monto, tipo=tipo)
 
 
 class Credit(models.Model):
@@ -402,10 +403,6 @@ class Subasta(models.Model):
         # self.fecha_fin = timezone.now()
         self.es_activa = False
         self.save()
-        try:
-            self.propiedad.create_subasta((self.semana + timedelta(days=7)), self.precio_base)
-        except:
-            pass
 
 
 
@@ -440,7 +437,12 @@ class Pago(models.Model):
     def get_detalle(self):
         if self.tipo == '':
             return None
-        if self.tipo == 'H':
-            return self.detalle_hotsale
-        if self.tipo == 'S':
-            return self.detalle_subasta
+        try:
+            if self.tipo == 'H':
+                det = self.detalle_hotsale
+                return f'[HOTSALE] {det.propiedad} ({det.semana})'
+            if self.tipo == 'S':
+                det = self.detalle_subasta
+                return f'[SUBASTA] {det.propiedad} ({det.semana})'
+        except ObjectDoesNotExist:
+            return None
