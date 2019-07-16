@@ -28,20 +28,16 @@ class SwitchnAdminNavbarUserActions extends React.Component {
     }
 }
 
-SwitchnAdminNavbarUserActions = connect(
-    (state) => {
-        return {
-            user: state.auth.user
-        }
-    }
-)(SwitchnAdminNavbarUserActions);
-
 class SwitchnAdminNavbarTabs extends React.Component {
     render() {
+        let {user} = this.props;
         return (
             <SwitchnNavbarTabs>
                 <SwitchnNavbarLink url={'/admin/propiedades'}>Propiedades</SwitchnNavbarLink>
                 <SwitchnNavbarLink url={'/admin/usuarios'}>Usuarios</SwitchnNavbarLink>
+                { user.is_superuser &&
+                    <SwitchnNavbarLink url={'/admin/administradores'}>Administradores</SwitchnNavbarLink>
+                }
             </SwitchnNavbarTabs>
         );
     }
@@ -52,13 +48,21 @@ class SwitchnAdminHeader extends React.Component {
         return (
             <SwitchnHeader title={this.props.title}>
                 <SwitchnNavbar brandURL={'/admin'}>
-                    <SwitchnAdminNavbarTabs />
-                    <SwitchnAdminNavbarUserActions />
+                    <SwitchnAdminNavbarTabs user={this.props.user} />
+                    <SwitchnAdminNavbarUserActions user={this.props.user} />
                 </SwitchnNavbar>
             </SwitchnHeader>
         )
     }
 }
+
+SwitchnAdminHeader = connect(
+    (state) => {
+        return {
+            user: state.auth.user
+        }
+    }
+)(SwitchnAdminHeader);
 
 
 export class SwitchnAdminPage extends React.Component {

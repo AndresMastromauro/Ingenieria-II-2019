@@ -15,8 +15,11 @@ class SwitchnPortalNavbarTabs extends React.Component {
     render() {
         return (
             <SwitchnNavbarTabs>
-                <SwitchnNavbarLink url={'/'}>Home</SwitchnNavbarLink>
-                <SwitchnNavbarLink url={'/hotsales'}>Ver Hotsales</SwitchnNavbarLink>
+                { this.props.user && 
+                <>
+                    <SwitchnNavbarLink url={'/'}>Home</SwitchnNavbarLink>
+                    <SwitchnNavbarLink url={'/hotsales'}>Ver Hotsales</SwitchnNavbarLink>
+                </> }
             </SwitchnNavbarTabs>
         );
     }
@@ -32,7 +35,7 @@ class SwitchnPortalNavbarUserActions extends React.Component {
                         Bienvenido <u>{this.props.user.nombre}</u>
                     </SwitchnNavbarLink>
                     {
-                        this.props.user.is_admin &&
+                        this.props.user.is_admin || this.props.user.is_superuser &&
                             <SwitchnNavbarLink url={"/admin"}>Administrar</SwitchnNavbarLink>
                     }
                     <SwitchnNavbarLink url={"/logout"}>Logout</SwitchnNavbarLink>
@@ -49,27 +52,27 @@ class SwitchnPortalNavbarUserActions extends React.Component {
     }
 }
 
-SwitchnPortalNavbarUserActions = connect(
-    (state) => {
-        return {
-            user: state.auth.user
-        }
-    }
-)(SwitchnPortalNavbarUserActions);
-
 
 class SwitchnPortalHeader extends React.Component {
     render() {
         return (
             <SwitchnHeader title={this.props.title}>
                 <SwitchnNavbar brandURL="/">
-                    <SwitchnPortalNavbarTabs />
+                    <SwitchnPortalNavbarTabs user={this.props.user} />
                     <SwitchnPortalNavbarUserActions user={this.props.user} />
                 </SwitchnNavbar>
             </SwitchnHeader>
         );
     }
 }
+
+SwitchnPortalHeader = connect(
+    (state) => {
+        return {
+            user: state.auth.user
+        }
+    }
+)(SwitchnPortalHeader);
 
 export class SwitchnPortalPropiedad extends React.Component {
     getDireccion() {

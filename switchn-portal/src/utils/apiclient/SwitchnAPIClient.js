@@ -5,6 +5,7 @@ import ClientesAPIClient from './ClientesAPIClient';
 import AuthAPIClient from './AuthAPIClient';
 import GeoAPIClient from './GeoAPIClient';
 import HotsalesAPIClient from './HotsalesAPIClient';
+import AdminsAPIClient from './AdminsAPIClient';
 
 
 class SwitchnAPIClient extends APIClient {
@@ -16,6 +17,7 @@ class SwitchnAPIClient extends APIClient {
         this.registerEndpoint('clientes', ClientesAPIClient);
         this.registerEndpoint('geo', GeoAPIClient);
         this.registerEndpoint('auth', AuthAPIClient);
+        this.registerEndpoint('switchn_users', AdminsAPIClient);
     }
 
     login(sEmail, sPassword) {

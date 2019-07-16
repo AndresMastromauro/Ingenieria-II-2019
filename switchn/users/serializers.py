@@ -17,7 +17,9 @@ class SwitchnUserSerializer(DynamicModelSerializer):
             'fecha_nacimiento',
             'email',
             'is_admin',
-            'membresia'
+            'is_superuser',
+            'membresia',
+            'is_active'
         )
     membresia = DynamicMethodField()
 

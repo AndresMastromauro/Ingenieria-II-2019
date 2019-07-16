@@ -6,6 +6,7 @@ from .views.subastas import SubastaViewSet
 from .views.usuarios import ClienteViewSet
 from .views.utils import CallesViewSet, ProvinciasViewSet, PaisesViewSet, LocalidadesViewSet
 from .views.hotsales import HotsalesViewSet
+from .views.admins import AdminsViewSet
 from knox.views import LogoutView
 
 router = DynamicRouter()
@@ -15,6 +16,7 @@ router.register_resource(PropiedadesViewSet)
 router.register_resource(SubastaViewSet)
 router.register_resource(ClienteViewSet)
 router.register_resource(HotsalesViewSet)
+router.register_resource(AdminsViewSet)
 
 geo_router = DynamicRouter()
 geo_router.register(r'geo/paises', PaisesViewSet, base_name='paises')

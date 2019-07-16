@@ -12,7 +12,7 @@ class IsNotAnonymous(IsAuthenticated):
 class IsAdmin (IsNotAnonymous):
     def has_permission(self, request, view):
         is_authenticated = super(IsAdmin, self).has_permission(request, view)
-        return is_authenticated and request.user.is_admin
+        return is_authenticated and (request.user.is_superuser or request.user.is_admin)
 
 
 class IsCliente (IsNotAnonymous):
@@ -25,3 +25,8 @@ class IsClientePremium (IsCliente):
     def has_permission(self, request, view):
         is_cliente = super(IsClientePremium, self).has_permission(request, view)
         return is_cliente and request.user.cliente.is_premium()
+
+class IsSuperAdmin (IsAuthenticated):
+    def has_permission(self, request, view):
+        is_authenticated = super(IsSuperAdmin, self).has_permission(request, view)
+        return is_authenticated and request.user.is_superuser

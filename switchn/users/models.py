@@ -15,6 +15,11 @@ class SwitchnUserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def create_superuser(self, email, password):
+        user = self.create_user(email, password, 'Super', 'Poderoso')
+        user.is_superuser = True
+        user.save(using=self._db)
+
 
 class SwitchnUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(

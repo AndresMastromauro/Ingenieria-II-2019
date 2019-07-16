@@ -20,6 +20,7 @@ import { loadUser } from "./redux/auth/actions";
 import { store } from './redux/store';
 import { SwitchnAdminCrearSubastaPage } from './admin/subasta_creacion';
 import { SwitchnAdminUsuariosPage } from './admin/usuarios';
+import { SwitchnAdminAdmins } from './admin/admins';
 
 // import './App.css';
 
@@ -64,6 +65,7 @@ class App extends React.Component {
             <PrivateRoute exact path="/admin/propiedad/:idPropiedad/subastas/crear" component={SwitchnAdminCrearSubastaPage} />
             <PrivateRoute exact path="/admin/propiedades/crear" component={SwitchnAdminCrearPropiedadPage} />
             <PrivateRoute exact path="/admin/usuarios" component={SwitchnAdminUsuariosPage} />
+            <PrivateRoute exact path="/admin/administradores" component={SwitchnAdminAdmins} />
             <PrivateRoute exact path="/logout" component={SwitchnPortalLogout} />
           </Router>
         </div>
