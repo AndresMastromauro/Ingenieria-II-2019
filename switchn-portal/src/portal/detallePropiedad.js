@@ -81,18 +81,18 @@ class SwitchHotsalePropVista extends React.Component {
 }
 
 
-class DetallePropiedadSubastasEntry extends React.Component {
-    render() {
-        var {subasta} = this.props;
-        return (
+const DetallePropiedadSubastasEntry = (props) => {
+    var {subasta} = props;
+    return (
+        <>
             <tr>
                 <td>Semana del {moment(subasta.semana).format("L")}</td>
                 <td>${subasta.precio_base}</td>
                 <td>${subasta.precio_actual}</td>
                 <td><Button variant="info"></Button></td>
             </tr>
-        )
-    }
+        </>
+    )
 }
 
 class DetallePropiedadSubastas extends React.Component {
@@ -115,7 +115,7 @@ class DetallePropiedadSubastas extends React.Component {
         var content = null;
         var {subastas} = this.state;
         if (subastas) {
-            content = subastas.map(
+            content = subastas.filter(s => s.es_activa).map(
                 (sub, i) => <DetallePropiedadSubastasEntry key={i} subasta={sub} />
             );
         }
@@ -126,8 +126,8 @@ class DetallePropiedadSubastas extends React.Component {
                     <h4>No hay subastas para mostrar</h4>
                 </div>
                 :
-                <div className="row">
-                    <table className="table table-borderless table-hover table-sm table-active">
+                /* <div className="row"> */
+                    <table className="table table-borderless table-hover table-active">
                         <thead className="thead-dark">
                             <tr>
                                 <th scope="col">Fecha</th>
@@ -140,7 +140,7 @@ class DetallePropiedadSubastas extends React.Component {
                             {content}
                         </tbody>
                     </table>
-                </div>
+                /* </div> */
                 }
             </div>
         )
@@ -349,7 +349,6 @@ class DetallePropiedad extends React.Component {
         if (!propiedad) {
             return null;
         }
-        var {subasta} = propiedad.subastas;
         return (
             <div className="container">
                 <div className="row">
@@ -407,9 +406,6 @@ class SwitchnDetallePropiedad extends React.Component {
 
     cargarPropiedad = () => {
         const id = this.props.match.params.idPropiedad;
-        /* const params = {
-            "include[]": "subastas."
-        }; */
         SwitchnAPI.propiedades.retrieve(id)
             .then(data => { this.setState({propiedad: data.propiedad})})
             .catch(err => { console.log(err) });
