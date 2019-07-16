@@ -32,7 +32,7 @@ export class ListadoSubastas extends React.Component {
                     : `$${subasta.mejor_oferta_user.monto}`
                 }
                 </td>
-                <td><Link url="/">Detalle</Link></td>
+                {/* <td><Link url="/">Detalle</Link></td> */}
             </tr>
         );
     }
@@ -45,7 +45,7 @@ export class ListadoReservas extends React.Component {
             <tr>
                 <th scope='row'><FormatFecha fecha={reserva.semana} /></th>
                 <td><FormatPropiedad propiedad={reserva.propiedad} /></td>
-                <td><Link url={`/detaPropiedad/${this.props.reserva.propiedad.id}`}>Detalle</Link> </td>
+                <td><Link url={`/detaPropiedad/${this.props.reserva.propiedad.id}`}>Ver Propiedad</Link> </td>
             </tr>
         );
     }
@@ -57,8 +57,9 @@ export class ListadoHotale extends React.Component {
         return (
             <tr>
                 <td><FormatFecha fecha={hotsale.semana} /></td>
+                {/* <td>{hotsale.propiedad.titulo}</td> */}
                 <td>${hotsale.precio}</td>
-                <td><Link url="/">Detalle</Link> </td>
+                {/* <td><Link url="/">Detalle</Link> </td> */}
             </tr>
         );
     }
