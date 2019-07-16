@@ -296,7 +296,6 @@ class SubastaSerializer(DynamicModelSerializer):
             'ofertas'
         )
         deferred_fields = (
-            'es_activa',
             'ofertas'
         )
         read_only_fields = (
