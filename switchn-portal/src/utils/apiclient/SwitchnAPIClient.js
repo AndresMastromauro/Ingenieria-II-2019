@@ -26,6 +26,7 @@ class SwitchnAPIClient extends APIClient {
                     resolve(data);
                 })
                 .catch(err => {
+                    alert('Algo salió mal. Verifica los datos y vuelve a intentarlo');
                     reject(err);
                 })
             }

@@ -203,9 +203,9 @@ class PerfilUsuario extends React.Component {
         }
         var {cliente} = this.props;
         if (!cliente) {
-            return null;
+            return <div>.</div>;
         }
-        let bool = this.props.cliente.solicitud;
+        let bool = cliente.solicitud;
 
         return (
             <div className="container">

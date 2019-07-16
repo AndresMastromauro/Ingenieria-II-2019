@@ -1,6 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Redirect} from 'react-router-dom';
 import { Provider, connect } from 'react-redux';
+import LoadingOverlay from 'react-loading-overlay';
+
 /* import { SwitchnLanding } from './main'; */
 import { SwitchnAdminHome } from './admin/home';
 import { SwitchnAdminPropiedades } from './admin/propiedades';
@@ -23,7 +25,7 @@ import { SwitchnAdminUsuariosPage } from './admin/usuarios';
 
 
 
-class _App extends React.Component {
+class App extends React.Component {
   componentDidMount() {
     this.props.loadUser();
   }
@@ -32,7 +34,7 @@ class _App extends React.Component {
     return (
       <Route {...rest} render={(props) => {
         if (this.props.auth.isLoading) {
-          return (<h2>Cargando...</h2>);
+          return null;
         } else if (!this.props.auth.isAuthenticated) {
           return (<Redirect to="/login" />);
         } else {
@@ -45,25 +47,27 @@ class _App extends React.Component {
   render() {
     let {PrivateRoute} = this;
     return (
-        <div className="App">
-            <Router>
-              <PrivateRoute exact path="/" component={SwitchnHome} />
-              <Route exact path="/login" component={SwitchnPortalLogin} />
-              <Route exact path="/registrar" component={SwitchnPortalSignUp} />
-              <PrivateRoute exact path="/detaPropiedad/:idPropiedad" component={SwitchnDetallePropiedad} />
-              <PrivateRoute exact path="/hotsales" component={SwitchnPortalHotsalesPage} />
-              <PrivateRoute exact path="/profile/:idProfile" component={_DetalleProfile} />
+      <LoadingOverlay spinner fadeSpeed={1000} active={this.props.showOverlay}>
+        <div className="App" style={{height: '100%'}}>
+          <Router>
+            <PrivateRoute exact path="/" component={SwitchnHome} />
+            <Route exact path="/login" component={SwitchnPortalLogin} />
+            <Route exact path="/registrar" component={SwitchnPortalSignUp} />
+            <PrivateRoute exact path="/detaPropiedad/:idPropiedad" component={SwitchnDetallePropiedad} />
+            <PrivateRoute exact path="/hotsales" component={SwitchnPortalHotsalesPage} />
+            <PrivateRoute exact path="/profile/:idProfile" component={_DetalleProfile} />
 
-              <PrivateRoute exact path="/admin" component={SwitchnAdminHome} />
-              <PrivateRoute exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
-              <PrivateRoute exact strict path="/admin/propiedad/:idPropiedad" component={SwitchnAdminPropiedadPage} />
-              <PrivateRoute exact path="/admin/propiedad/:idPropiedad/editar" component={SwitchnAdminModificarPropiedadPage} />
-              <PrivateRoute exact path="/admin/propiedad/:idPropiedad/subastas/crear" component={SwitchnAdminCrearSubastaPage} />
-              <PrivateRoute exact path="/admin/propiedades/crear" component={SwitchnAdminCrearPropiedadPage} />
-              <PrivateRoute exact path="/admin/usuarios" component={SwitchnAdminUsuariosPage} />
-              <PrivateRoute exact path="/logout" component={SwitchnPortalLogout} />
-            </Router>
+            <PrivateRoute exact path="/admin" component={SwitchnAdminHome} />
+            <PrivateRoute exact path="/admin/propiedades" component={SwitchnAdminPropiedades} />
+            <PrivateRoute exact strict path="/admin/propiedad/:idPropiedad" component={SwitchnAdminPropiedadPage} />
+            <PrivateRoute exact path="/admin/propiedad/:idPropiedad/editar" component={SwitchnAdminModificarPropiedadPage} />
+            <PrivateRoute exact path="/admin/propiedad/:idPropiedad/subastas/crear" component={SwitchnAdminCrearSubastaPage} />
+            <PrivateRoute exact path="/admin/propiedades/crear" component={SwitchnAdminCrearPropiedadPage} />
+            <PrivateRoute exact path="/admin/usuarios" component={SwitchnAdminUsuariosPage} />
+            <PrivateRoute exact path="/logout" component={SwitchnPortalLogout} />
+          </Router>
         </div>
+      </LoadingOverlay>
     );
   }
 }
@@ -71,6 +75,7 @@ class _App extends React.Component {
 const mapStateToProps = state => {
   return {
     auth: state.auth,
+    showOverlay: state.overlay.show
   }
 }
 
@@ -82,7 +87,7 @@ const mapDispatchToProps = dispatch => {
   }
 }
 
-let App = connect(mapStateToProps, mapDispatchToProps)(_App);
+App = connect(mapStateToProps, mapDispatchToProps)(App);
 
 
 class SwitchnApp extends React.Component {

@@ -105,32 +105,34 @@ class DetallePropiedadSubastas extends React.Component {
             );
         }
         return (
-            <div /* className="row" */>
-                {/* <h2>Subastas disponibles</h2> */}
-                { 
-            !subastas || subastas.length === 0 ?
-                <h2>No hay subastas para mostrar</h2>
+            <div className="container" style={{margin: "4pt", padding: "4pt"}}>
+            { !subastas || subastas.length === 0 ?
+                <div>
+                    <h4>No hay subastas para mostrar</h4>
+                </div>
                 :
-                <table className="table table-borderless table-hover table-sm table-active">
-                    <thead className="thead-dark">
-                        <tr>
-                            <th scope="col">Fecha</th>
-                            <th scope="col">Precio Base</th>
-                            <th scope="col">Precio Actual</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {content}
-                    </tbody>
-                </table>
+                <div className="row">
+                    <table className="table table-borderless table-hover table-sm table-active">
+                        <thead className="thead-dark">
+                            <tr>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Precio Base</th>
+                                <th scope="col">Precio Actual</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {content}
+                        </tbody>
+                    </table>
+                </div>
                 }
             </div>
         )
     }
 }
 
-class DetallePropiedadHotsales extends React.Component {
+/* class DetallePropiedadHotsales extends React.Component {
     render() {
         return (
             <div className="row">
@@ -150,9 +152,24 @@ class DetallePropiedadHotsales extends React.Component {
             </div>
         )
     }
-}
+} */
 
 class ReservaDirectaForm extends React.Component {
+    getDisabledDays = () => {
+        var disabledDays = [];
+        let {propiedad: {semanas_reservadas}} = this.props;
+        for (var semana of semanas_reservadas) {
+            var dias = [];
+            var dia = moment(semana);
+            for (var i = 0; i < 7; i++) {
+                dias.push(dia.toDate());
+                dia = dia.add(1, 'days');
+            }
+            disabledDays = disabledDays.concat(dias);
+        }
+        return disabledDays;
+    }
+
     render() {
         let {user} = this.props;
         let disabled = user.membresia !== 'PREMIUM';
@@ -163,6 +180,7 @@ class ReservaDirectaForm extends React.Component {
                         <Card.Title>Reserva Directa</Card.Title>
                         <WeekField
                             disabled={disabled}
+                            disabledDays={this.getDisabledDays()}
                             offsetSemanaDesde={26}
                             offsetSemanaHasta={53}
                             name="semana" />
@@ -182,14 +200,17 @@ ReservaDirectaForm = reduxForm({
 class DetallePropiedadReservaDirecta extends React.Component {
     // TODO: Bloquear cuando user no es premium
     onSubmit = (values) => {
-        const id = this.props.idPropiedad;
+        const id = this.props.propiedad.id;
         SwitchnAPI.propiedades.getDetailEndpoint(id).reservaDirecta(values)
-            .then(data => alert(data.detail))
+            .then(data => {
+                alert(data.detail);
+                this.props.refrescar();
+            })
             .catch(data => alert(data.detail));
     }
 
     render() { 
-        return (<ReservaDirectaForm user={this.props.user} onSubmit={this.onSubmit} />);
+        return (<ReservaDirectaForm user={this.props.user} propiedad={this.props.propiedad} onSubmit={this.onSubmit} />);
     }
 }
 
@@ -314,7 +335,6 @@ class DetallePropiedad extends React.Component {
             return null;
         }
         var {subasta} = propiedad.subastas;
-        var {reserva} = this.props;
         return (
             <div className="container">
                 <div className="row">
@@ -355,7 +375,7 @@ class DetallePropiedad extends React.Component {
                         </Tabs>
                     </div>
                     <div className="col-4">
-                        <DetallePropiedadReservaDirecta idPropiedad={propiedad.id} />
+                        <DetallePropiedadReservaDirecta refrescar={this.props.refrescar} propiedad={propiedad} />
                     </div>
                 </div>
             </div>
@@ -370,18 +390,25 @@ class SwitchnDetallePropiedad extends React.Component {
         propiedad: null
     }
 
-    componentDidMount() {
+    cargarPropiedad = () => {
         const id = this.props.match.params.idPropiedad;
-        SwitchnAPI.propiedades.retrieve(id, {"include[]": "subastas."})
+        const params = {
+            "include[]": "subastas."
+        };
+        SwitchnAPI.propiedades.retrieve(id, params)
             .then(data => { this.setState({propiedad: data.propiedad})})
             .catch(err => { console.log(err) });
+    }
+
+    componentDidMount() {
+        this.cargarPropiedad();
     }
 
     render() {
         let {propiedad} = this.state;
         return (
             <SwitchnPortalPage title={propiedad && propiedad.titulo}>
-                <DetallePropiedad propiedad={propiedad}/>
+                <DetallePropiedad refrescar={this.cargarPropiedad} propiedad={propiedad}/>
             </SwitchnPortalPage>
 
         )

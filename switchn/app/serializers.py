@@ -139,9 +139,6 @@ class PropiedadSerializer(DynamicModelSerializer):
             'dpto',
             'es_activa'
         )
-        deferred_fields = (
-            'semanas_reservadas',
-        )
         read_only_fields = (
             'subastas',
             'hotsales',

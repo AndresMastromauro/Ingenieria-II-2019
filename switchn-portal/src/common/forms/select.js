@@ -241,17 +241,19 @@ class __WeekField extends React.Component {
 
     getNextMonday(date) {
         const today = moment();
+        if (today.weekday() == 0) return moment();
         return ((date && moment(date)) || moment()).add((7 - today.weekday()), 'days');
     }
 
-    getDisabledDays() {
+    getDisabledDays = () => {
+        let {disabledDays} = this.props;
         if (this.props.disabled) {
             return [
                 { after: new Date() },
                 { before: new Date() }
             ];
         }
-        return this.getDisabledRange().concat(this.props.disabledDays);
+        return this.getDisabledRange().concat(disabledDays);
     }
 
     getFirstAvailableWeek = () => {

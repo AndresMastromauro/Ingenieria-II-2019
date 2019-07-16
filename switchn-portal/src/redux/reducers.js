@@ -3,6 +3,7 @@ import { reducer as formReducer } from 'redux-form';
 
 import auth from './auth/reducer';
 import {propiedad, subasta, reserva} from './propiedad/reducer';
+import { overlay } from './overlay/overlay';
 import dataprovider from './dataprovider/reducer';
 
 export default combineReducers({
@@ -11,5 +12,6 @@ export default combineReducers({
     subasta,
     reserva,
     dataprovider,
+    overlay,
     form: formReducer
 });
