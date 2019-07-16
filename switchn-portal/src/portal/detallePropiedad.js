@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Tabs, Tab, Card } from "react-bootstrap";
+import { Button, Tabs, Tab, Card, Modal } from "react-bootstrap";
 import { reduxForm } from "redux-form";
 import { connect } from "react-redux";
 import moment from 'moment';
@@ -8,7 +8,7 @@ import { WeekField } from '../common/forms/select';
 import { SwitchnPortalPage } from './base';
 import { ListadoSubastas, ListadoReservas, ListadoHotale } from "./listadoDeSubastas"
 import defaultPic from '../img/default-no-picture.png';
-import { SubmitButton } from "../common/forms/inputs";
+import { SubmitButton, NumberField } from "../common/forms/inputs";
 import { SwitchnAPI } from "../utils/client";
 
 
@@ -86,18 +86,34 @@ const DetallePropiedadSubastasEntry = (props) => {
     return (
         <>
             <tr>
-                <td>Semana del {moment(subasta.semana).format("L")}</td>
+                <td>{moment(subasta.semana).format('D [de] MMMM (Y)')}</td>
                 <td>${subasta.precio_base}</td>
                 <td>${subasta.precio_actual}</td>
-                <td><Button variant="info"></Button></td>
+                <td><Button onClick={props.handleOferta} variant="info">Ofertar</Button></td>
             </tr>
         </>
     )
 }
 
+var FormOferta = (props) => {
+    return (
+        <form onSubmit={props.handleSubmit}>
+            <NumberField name={'monto'} label='$' />
+            <Button type='submit'>Ofertar</Button>
+        </form>
+    );
+}
+
+FormOferta = reduxForm({
+    form: 'oferta-subasta'
+})(FormOferta);
+
+
 class DetallePropiedadSubastas extends React.Component {
     state = {
-        subastas: []
+        subastas: [],
+        showModal: false,
+        id: null
     }
 
     cargarSubastas = () => {
@@ -107,6 +123,29 @@ class DetallePropiedadSubastas extends React.Component {
                 .catch(err => alert('Hubo un error al traer las subastas'));
     }
 
+    handleOferta = (values) => {
+        SwitchnAPI.subastas.getDetailEndpoint(this.state.id)
+            .hacerOferta(values.monto)
+                .then(data => alert(data.detail))
+                .catch(err => alert(err.detail))
+                .finally(this.handleCloseModal);
+    }
+
+    handleShowModal = (id) => {
+        this.setState({
+            id: id,
+            showModal: true
+        });
+    }
+
+    handleCloseModal = () => {
+        this.setState({
+            id: false,
+            showModal: false
+        });
+        this.cargarSubastas();
+    }
+    
     componentDidMount() {
         this.cargarSubastas();
     }
@@ -116,7 +155,10 @@ class DetallePropiedadSubastas extends React.Component {
         var {subastas} = this.state;
         if (subastas) {
             content = subastas.filter(s => s.es_activa).map(
-                (sub, i) => <DetallePropiedadSubastasEntry key={i} subasta={sub} />
+                (sub, i) => <DetallePropiedadSubastasEntry
+                                key={i}
+                                handleOferta={() => { this.handleShowModal(sub.id) }}
+                                subasta={sub} />
             );
         }
         return (
@@ -126,11 +168,11 @@ class DetallePropiedadSubastas extends React.Component {
                     <h4>No hay subastas para mostrar</h4>
                 </div>
                 :
-                /* <div className="row"> */
-                    <table className="table table-borderless table-hover table-active">
+                <div className="row">
+                    <table className="table" /* table-borderless table-hover table-active" */>
                         <thead className="thead-dark">
                             <tr>
-                                <th scope="col">Fecha</th>
+                                <th scope="col">Semana</th>
                                 <th scope="col">Precio Base</th>
                                 <th scope="col">Precio Actual</th>
                                 <th></th>
@@ -140,8 +182,14 @@ class DetallePropiedadSubastas extends React.Component {
                             {content}
                         </tbody>
                     </table>
-                /* </div> */
+                </div>
                 }
+                <Modal show={this.state.showModal} onHide={this.onCloseModal}>
+                    <Modal.Header>Subasta</Modal.Header>
+                    <Modal.Body>
+                        <FormOferta onSubmit={this.handleOferta} />
+                    </Modal.Body>
+                </Modal>
             </div>
         )
     }
@@ -250,7 +298,7 @@ class SwitchnPortalHotsale extends React.Component {
         return (
             <>
             <tr>
-                <td>{moment(hotsale.semana).format('L')}</td>
+                <td>{moment(hotsale.semana).format('D [de] MMMM (Y)')}</td>
                 <td>{hotsale.precio ? '$'.concat(hotsale.precio) : '-'}</td>
                 <td> 
                     <Button variant='success' onClick={this.handleBuy}>Comprar</Button>
